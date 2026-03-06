@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
+  <link rel="manifest" href="manifest.json">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+</script>
 
 <head>
   <meta charset="UTF-8">
@@ -328,3 +334,4 @@
 </script>
 </body>
 </html>
+
