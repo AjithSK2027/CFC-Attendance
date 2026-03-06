@@ -53,8 +53,20 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-  </style>
+  input[type="date"] {
+      color-scheme: dark; 
+      position: relative;
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    ::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: auto; height: auto;
+      color: transparent;
+      background: transparent;
+    }
 </head>
 
 <body class="h-full">
@@ -385,5 +397,6 @@
 </script>
 </body>
 </html>
+
 
 
