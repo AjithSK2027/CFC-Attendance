@@ -93,35 +93,36 @@
     </header>
 
     <main class="space-y-10">
-      <section class="glass rounded-[2rem] p-6 md:p-12 premium-shadow reveal">
-        <h2 class="text-2xl font-bold text-white mb-8">Start Session</h2>
-        <form id="session-form" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Coach</label>
-            <select id="coach-name" class="px-6 py-4 rounded-2xl text-white font-bold cursor-pointer appearance-none" required>
-              <option value="" disabled selected>Select Coach</option>
-              <option value="Lexi">Lexi</option><option value="Nithin">Nithin</option><option value="Appu">Appu</option>
-              <option value="Calvin">Calvin</option><option value="Ajay">Ajay</option><option value="Rayan">Rayan</option>
-              <option value="Syed">Syed</option>
-            </select>
-          </div>
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Group</label>
-            <select id="batch-name" class="px-6 py-4 rounded-2xl text-white font-bold cursor-pointer appearance-none" required>
-              <option value="" disabled selected>Select Group</option>
-              <option value="Kalyan Nagar">Kalyan Nagar</option><option value="Xavier's School">Xavier's School</option>
-              <option value="Monti Angels">Monti Angels</option><option value="District Field Morning">District Field Morning</option>
-              <option value="District Field Evening">District Field Evening</option>
-            </select>
-          </div>
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Date</label>
-            <input type="date" id="attendance-date" class="px-6 py-4 rounded-2xl text-white font-bold" required>
-          </div>
-          <div class="md:col-span-3 pt-4">
-            <button type="button" id="btn-load" class="w-full py-5 rounded-2xl btn-primary text-white font-bold text-sm uppercase tracking-widest">Load Players</button>
-          </div>
-        </form>
+  
+  <div id="page-attendance" class="space-y-10">
+    <section class="glass rounded-[2rem] p-6 md:p-12 premium-shadow reveal">
+      <h2 class="text-2xl font-bold text-white mb-8">Start Session</h2>
+      
+      <form id="session-form" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="md:col-span-3 pt-4">
+          <button type="button" id="btn-load" class="w-full py-5 rounded-2xl btn-primary text-white font-bold text-sm uppercase tracking-widest">
+            Load Players
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section id="students-section" class="hidden space-y-6 reveal">
+       </section>
+  </div>
+
+  <div id="page-fees" class="hidden space-y-10">
+    <section class="glass rounded-[2rem] p-6 md:p-12 premium-shadow reveal">
+      <h2 class="text-2xl font-bold text-white mb-2 font-display">Fee Collector</h2>
+      <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Manage Payments & Reminders</p>
+      
+      <div id="fees-container" class="space-y-4">
+        <p class="text-center py-10 text-slate-600 text-xs italic">Select a Group in Attendance to load fee data.</p>
+      </div>
+    </section>
+  </div>
+
+</main>
       </section>
 
       <div id="sheets-config" class="hidden glass rounded-[2rem] p-6 md:p-10 reveal">
@@ -339,10 +340,40 @@
   document.getElementById('btn-cancel').onclick = () => { document.getElementById('students-section').classList.add('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   document.getElementById('attendance-date').valueAsDate = new Date();
   refreshRecords();
+// Navigation Logic
+const btnNavAttendance = document.getElementById('nav-attendance');
+const btnNavFees = document.getElementById('nav-fees');
+const pageAttendance = document.getElementById('page-attendance');
+const pageFees = document.getElementById('page-fees');
+
+btnNavFees.onclick = () => {
+  // Switch visual buttons
+  btnNavFees.classList.add('btn-primary');
+  btnNavFees.classList.remove('text-slate-500');
+  btnNavAttendance.classList.remove('btn-primary');
+  btnNavAttendance.classList.add('text-slate-500');
+  
+  // Switch Pages
+  pageAttendance.classList.add('hidden');
+  pageFees.classList.remove('hidden');
+};
+
+btnNavAttendance.onclick = () => {
+  // Switch visual buttons
+  btnNavAttendance.classList.add('btn-primary');
+  btnNavAttendance.classList.remove('text-slate-500');
+  btnNavFees.classList.remove('btn-primary');
+  btnNavFees.classList.add('text-slate-500');
+  
+  // Switch Pages
+  pageFees.classList.add('hidden');
+  pageAttendance.classList.remove('hidden');
+};
 })();
 </script>
 </body>
 </html>
+
 
 
 
