@@ -74,6 +74,15 @@
     .coach-badge {
       background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
     }
+    
+    .batch-chip {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 8px;
+      font-weight: bold;
+      color: #94a3b8;
+    }
   </style>
 </head>
 
@@ -123,7 +132,7 @@
             <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Group</label>
             <select id="batch-name" style="background-color: #0f172a !important; color: white !important;" class="px-6 py-4 rounded-2xl text-white font-bold bg-transparent border border-white/10 appearance-none w-full cursor-pointer" required>
               <option value="" disabled selected>Select Group</option>
-              <option value="COACHES/STAFF">⭐ COACH ATTENDANCE</option>
+              <option value="COACHES/STAFF">⭐ COACH ATTENDANCE (ALL)</option>
               <option value="Kalyan Nagar">Kalyan Nagar</option><option value="Xavier's School">Xavier's School</option>
               <option value="Monti Angels">Monti Angels</option><option value="District Field Morning">District Field Morning</option>
               <option value="District Field Evening">District Field Evening</option>
@@ -155,13 +164,9 @@
               <input type="text" id="sheet-id" class="px-5 py-4 rounded-xl text-white text-sm" placeholder="Paste ID here">
             </div>
             <div>
-              <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Student Sheet Name</label>
+              <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Sheet Name</label>
               <input type="text" id="sheet-name" class="px-5 py-4 rounded-xl text-white text-sm" value="Attendance">
             </div>
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Coach Sheet Name</label>
-            <input type="text" id="coach-sheet-name" class="px-5 py-4 rounded-xl text-white text-sm" value="Coach_Attendance">
           </div>
           <button id="save-config" class="w-full py-4 rounded-xl btn-primary text-white font-bold text-xs uppercase tracking-widest">Save Settings</button>
         </div>
@@ -205,7 +210,7 @@
         </div>
       </section>
 
-      <!-- Coach Attendance Section -->
+      <!-- Coach Attendance Section - Fixed for batch assignments -->
       <section id="coach-section" class="hidden space-y-6 reveal">
         <div class="glass rounded-[2rem] overflow-hidden premium-shadow border-amber-500/20 border-2">
           <div class="px-6 py-6 bg-gradient-to-r from-amber-500/10 to-transparent border-b border-amber-500/20">
@@ -213,15 +218,28 @@
               <div>
                 <h2 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
                   <span class="coach-badge w-8 h-8 rounded-lg flex items-center justify-center text-black">👥</span>
-                  Coach Attendance
+                  Coach Attendance by Batch
                 </h2>
                 <p id="coach-date-display" class="text-amber-500 text-[10px] font-bold uppercase tracking-widest mt-1"></p>
               </div>
-              <button onclick="window.markAllCoaches('present')" class="px-4 py-2 rounded-xl bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-widest border border-green-500/20">All Present</button>
+              <div class="flex gap-2">
+                <button onclick="window.markAllCoaches('present')" class="px-4 py-2 rounded-xl bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-widest border border-green-500/20">All Present</button>
+                <button onclick="window.markAllCoaches('absent')" class="px-4 py-2 rounded-xl bg-white/5 text-slate-400 text-[10px] font-bold uppercase tracking-widest border border-white/10">All Absent</button>
+              </div>
             </div>
           </div>
           
-          <div id="coaches-grid" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+          <!-- Batch filter for coaches -->
+          <div class="px-6 pt-4 flex gap-2 overflow-x-auto">
+            <button onclick="window.filterCoachBatch('all')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs" id="filter-all">All Batches</button>
+            <button onclick="window.filterCoachBatch('Kalyan Nagar')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs">Kalyan Nagar</button>
+            <button onclick="window.filterCoachBatch('Xavier\'s School')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs">Xavier's</button>
+            <button onclick="window.filterCoachBatch('Monti Angels')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs">Monti</button>
+            <button onclick="window.filterCoachBatch('District Field Morning')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs">DF Morning</button>
+            <button onclick="window.filterCoachBatch('District Field Evening')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs">DF Evening</button>
+          </div>
+          
+          <div id="coaches-grid" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto"></div>
 
           <div class="p-6 border-t border-amber-500/20 bg-black/20 flex flex-col gap-3">
             <button id="btn-save-coach" class="w-full py-5 rounded-2xl coach-badge text-white font-bold text-sm uppercase tracking-widest">Save Coach Attendance</button>
@@ -259,6 +277,7 @@
 </div>
 
 <div id="toast-container" class="fixed bottom-6 right-6 left-6 md:left-auto z-[100] flex flex-col gap-3 pointer-events-none"></div>
+<div id="debug-console" class="fixed top-0 left-0 right-0 bg-black/90 text-green-400 text-xs p-2 hidden font-mono z-50 max-h-40 overflow-auto"></div>
 
 <script>
 (function() {
@@ -279,17 +298,41 @@
     'District Field Evening': 3500
   };
 
+  // Coach to Batch assignments (customize this based on your actual assignments)
+  const coachBatchAssignments = {
+    'Lexi': ['Kalyan Nagar', 'Xavier\'s School'],
+    'Nithin': ['Monti Angels', 'District Field Morning'],
+    'Appu': ['District Field Evening', 'Xavier\'s School'],
+    'Calvin': ['Kalyan Nagar', 'Monti Angels'],
+    'Ajay': ['District Field Morning'],
+    'Rayan': ['District Field Evening', 'Kalyan Nagar'],
+    'Syed': ['Monti Angels', 'District Field Morning']
+  };
+
   const coaches = ['Lexi', 'Nithin', 'Appu', 'Calvin', 'Ajay', 'Rayan', 'Syed'];
   
   let sessionAttendance = {};
   let coachAttendance = {};
+  let currentCoachFilter = 'all';
   let currentSession = { coach: '', batch: '', date: '' };
   let config = {
     scriptUrl: 'https://script.google.com/macros/s/AKfycbyCP6IRw20-RABegAyiGeGkpugqkhsYII9dEbRpyz-MwKfUDDK60-zx7TvamE-KqQvP/exec',
     sheetId: '',
-    sheetName: 'Attendance',
-    coachSheetName: 'Coach_Attendance'
+    sheetName: 'Attendance'
   };
+
+  function debugLog(message, data = null) {
+    const debugDiv = document.getElementById('debug-console');
+    debugDiv.classList.remove('hidden');
+    const timestamp = new Date().toLocaleTimeString();
+    let logMessage = `[${timestamp}] ${message}`;
+    if (data) {
+      logMessage += `\n${JSON.stringify(data, null, 2)}`;
+    }
+    debugDiv.innerHTML += `<div>${logMessage}</div>`;
+    debugDiv.scrollTop = debugDiv.scrollHeight;
+    console.log(message, data);
+  }
 
   function showToast(msg, type = 'success') {
     const container = document.getElementById('toast-container');
@@ -301,15 +344,24 @@
   }
 
   async function callSheetsAPI(payload) {
+    debugLog('Sending to AppScript:', payload);
     try {
       const response = await fetch(config.scriptUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
-      return await response.json();
+      const responseText = await response.text();
+      debugLog('Raw response:', responseText);
+      
+      try {
+        return JSON.parse(responseText);
+      } catch (e) {
+        debugLog('Response is not JSON:', responseText);
+        return { result: 'error', message: responseText };
+      }
     } catch (e) { 
-      console.error('API Error:', e);
+      debugLog('Fetch error:', e.message);
       return null; 
     }
   }
@@ -337,13 +389,29 @@
     const date = document.getElementById('attendance-date').value;
     document.getElementById('coach-date-display').textContent = `Date: ${date || 'Not selected'}`;
     
-    grid.innerHTML = coaches.map((name, i) => {
+    // Filter coaches based on selected batch
+    let filteredCoaches = coaches;
+    if (currentCoachFilter !== 'all') {
+      filteredCoaches = coaches.filter(coach => 
+        coachBatchAssignments[coach] && coachBatchAssignments[coach].includes(currentCoachFilter)
+      );
+    }
+    
+    grid.innerHTML = filteredCoaches.map((name, i) => {
       const isPresent = coachAttendance[name] === 'present';
+      const batches = coachBatchAssignments[name] || [];
+      const batchLabels = batches.map(b => `<span class="batch-chip ml-1">${b}</span>`).join('');
+      
       return `
-        <div onclick="window.toggleCoach(${i})" class="p-4 rounded-xl border cursor-pointer glass transition-all flex items-center justify-between ${isPresent ? 'border-amber-500/40 bg-amber-500/5' : 'border-white/5'}">
+        <div onclick="window.toggleCoach('${name}')" class="p-4 rounded-xl border cursor-pointer glass transition-all flex items-center justify-between ${isPresent ? 'border-amber-500/40 bg-amber-500/5' : 'border-white/5'}">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg coach-badge flex items-center justify-center text-black font-bold text-xs">${name.substring(0,2)}</div>
-            <p class="text-xs font-bold ${isPresent ? 'text-white' : 'text-slate-400'}">${name}</p>
+            <div>
+              <p class="text-xs font-bold ${isPresent ? 'text-white' : 'text-slate-400'}">${name}</p>
+              <div class="flex flex-wrap gap-1 mt-1">
+                ${batchLabels}
+              </div>
+            </div>
           </div>
           <div class="w-8 h-4 rounded-full relative ${isPresent ? 'bg-amber-500' : 'bg-slate-800'}">
             <div class="absolute top-1 left-1 w-2 h-2 rounded-full bg-white transition-transform" style="transform: translateX(${isPresent ? '16px' : '0'})"></div>
@@ -351,6 +419,10 @@
         </div>
       `;
     }).join('');
+    
+    if (filteredCoaches.length === 0) {
+      grid.innerHTML = '<div class="col-span-2 text-center p-8 text-slate-500 text-xs">No coaches assigned to this batch</div>';
+    }
   }
 
   function updateStats() {
@@ -372,8 +444,7 @@
     renderGrid();
   };
 
-  window.toggleCoach = (idx) => {
-    const name = coaches[idx];
+  window.toggleCoach = (name) => {
     coachAttendance[name] = coachAttendance[name] === 'present' ? 'absent' : 'present';
     renderCoaches();
   };
@@ -385,6 +456,13 @@
 
   window.markAllCoaches = (status) => {
     coaches.forEach(name => coachAttendance[name] = status);
+    renderCoaches();
+  };
+
+  window.filterCoachBatch = (batch) => {
+    currentCoachFilter = batch;
+    document.querySelectorAll('.batch-chip').forEach(el => el.classList.remove('bg-white/30'));
+    document.getElementById(`filter-${batch === 'all' ? 'all' : batch}`)?.classList.add('bg-white/30');
     renderCoaches();
   };
 
@@ -504,6 +582,8 @@
       status: status
     }));
     
+    debugLog('Saving student attendance:', records);
+    
     const res = await callSheetsAPI({ 
       action: 'append', 
       spreadsheetId: config.sheetId, 
@@ -514,19 +594,20 @@
     btn.disabled = false; 
     btn.textContent = 'Save Attendance';
     
-    if (res) { 
+    if (res && res.result === 'success') { 
       showToast('Attendance saved!'); 
       document.getElementById('students-section').classList.add('hidden'); 
       refreshRecords(); 
       window.scrollTo({ top: 0, behavior: 'smooth' }); 
     } else { 
-      showToast('Error saving', 'error'); 
+      showToast('Error saving: ' + (res?.message || 'Unknown error'), 'error'); 
     }
   };
 
   document.getElementById('btn-save-coach').onclick = async () => {
     const btn = document.getElementById('btn-save-coach');
     const date = document.getElementById('attendance-date').value;
+    const coach = document.getElementById('coach-name').value;
     
     if (!date) {
       showToast('Please select a date', 'error');
@@ -536,30 +617,36 @@
     btn.disabled = true; 
     btn.textContent = 'Saving...';
     
+    // Create a record for EACH coach attendance, but we need to match the AppScript format
+    // Your AppScript expects: [timestamp, date, coach, batch, student_name, status]
+    // For coach attendance, we'll put the coach name in both coach AND student_name fields
     const records = Object.entries(coachAttendance).map(([name, status]) => ({
       timestamp: new Date().toLocaleString(),
       date: date,
-      coach_name: name,  // Note: Your sheet has "Coach Name" column
-      batch: 'COACHES/STAFF',
+      coach: name,                    // Coach name in coach field
+      batch: 'COACHES/STAFF',          // Batch identifier
+      student_name: name,              // Coach name also in student_name field to match format
       status: status
     }));
+    
+    debugLog('Saving coach attendance (matching AppScript format):', records);
     
     const res = await callSheetsAPI({ 
       action: 'append', 
       spreadsheetId: config.sheetId, 
-      sheetName: config.coachSheetName || 'Coach_Attendance', 
+      sheetName: config.sheetName,      // Using same sheet as students
       data: records 
     });
     
     btn.disabled = false; 
     btn.textContent = 'Save Coach Attendance';
     
-    if (res) { 
+    if (res && res.result === 'success') { 
       showToast('Coach attendance saved!'); 
       document.getElementById('coach-section').classList.add('hidden');
       refreshRecords();
     } else { 
-      showToast('Error saving coach attendance', 'error'); 
+      showToast('Error saving: ' + (res?.message || 'Unknown error'), 'error'); 
     }
   };
 
@@ -567,7 +654,6 @@
     config.scriptUrl = document.getElementById('script-url').value;
     config.sheetId = document.getElementById('sheet-id').value;
     config.sheetName = document.getElementById('sheet-name').value;
-    config.coachSheetName = document.getElementById('coach-sheet-name').value;
     document.getElementById('sheets-config').classList.add('hidden');
     showToast('Settings saved');
     refreshRecords();
