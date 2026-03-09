@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 
@@ -131,11 +132,6 @@
           </div>
         </form>
       </section>
-     <div class="md:col-span-3 space-y-2">
-            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Assisting Coaches</label>
-            <div id="assisting-coaches-list" class="grid grid-cols-2 md:grid-cols-4 gap-2 p-4 rounded-2xl glass border border-white/10 max-h-32 overflow-y-auto">
-              </div>
-          </div>
 
       <div id="sheets-config" class="hidden glass rounded-[2rem] p-6 md:p-10 reveal">
         <div class="flex items-center justify-between mb-8">
@@ -231,14 +227,6 @@
 <script>
 /* (All of your Javascript remains the same) */
 (function() {
- const allCoaches = ["Lexi", "Nithin", "Appu", "Calvin", "Ajay", "Rayan", "Syed"];
-  const assistList = document.getElementById('assisting-coaches-list');
-  assistList.innerHTML = allCoaches.map(name => `
-    <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-all border border-white/5">
-      <input type="checkbox" name="assist-coach" value="${name}" class="w-4 h-4 rounded border-white/20 bg-transparent">
-      <span class="text-[10px] font-bold text-slate-300 uppercase">${name}</span>
-    </label>
-  `).join('');
   const studentsByBatch = {
     'Kalyan Nagar': ['MOHITH.S','Rishanth R Shekar','Gahan','RUTVIK','Sohan R Prasad','Gagan gowda.B.M','Mohith T','Gokul','THEJAS KN','CHIRANTH BK','Shrinik U Y','HIMAVANTH CJ','Ganav r','SHAMAN GOWDA N N','SHRIMAN GOWDA N N','Dhanvith p Gowda','Dhanyatha p','Swayam','Samanvith Rao D M','Sai pranav','Dishanth HL','Manvith.S','RAJATH .S','Nishanth S. V','Hoysala M Hrushikesh'],
     'Xavier\'s School': ['AIMA','PREETHAM HM','SAMBRAMA.S','DHANVISH','VISMITHA','YASHWANTH BJ','ULLAS','JASHITH C','SAMARTH','SARVAJITH','THANUSH','PUNITH','PAVAN','BHUVAN S','CHIRANTH','AARIZ','RIVON','DEEKSHA','PRAJWAL','ANHAR','UMAIR','AVINASH','LIKITH','SOHAN','KRUTHIK','SAAMAR','LIKITHA','IBRAHIM','MALCUM','SAMARTH B','VINISH','SHAUN D','GOKUL','CHIRANJITH M','HUSNA','ASJAD','IMPAN'],
@@ -376,55 +364,17 @@
     section.classList.remove('hidden');
     section.scrollIntoView({ behavior: 'smooth' });
   };
- document.getElementById('btn-save').onclick = async () => {
-    const btn = document.getElementById('btn-save');
-    btn.disabled = true; btn.textContent = 'Saving...';
-
-    // Collect all coaches present
-    const primaryCoach = document.getElementById('coach-name').value;
-    const assistingCoaches = Array.from(document.querySelectorAll('input[name="assist-coach"]:checked'))
-                                 .map(cb => cb.value);
-    
-    // Combine them for the Student sheet, and prepare for Coach sheet
-    const coachesPresent = assistingCoaches.includes(primaryCoach) ? assistingCoaches : [primaryCoach, ...assistingCoaches];
-
-    const records = Object.entries(sessionAttendance).map(([name, status]) => ({
-      timestamp: new Date().toLocaleString(), 
-      date: currentSession.date, 
-      coach: primaryCoach, 
-      assisting: assistingCoaches.join(', '), // Logs assistants in student sheet
-      batch: currentSession.batch, 
-      student_name: name, 
-      status: status
-    }));
-
-    // This payload now includes a separate key for the Coach_Attendance sheet
-    const payload = { 
-      action: 'append', 
-      spreadsheetId: config.sheetId, 
-      sheetName: config.sheetName, // Default: Attendance
-      coachSheetName: 'Coach_Attendance', // Name of your new tab
-      data: records,
-      coachData: coachesPresent.map(c => ({
-        timestamp: new Date().toLocaleString(),
-        date: currentSession.date,
-        batch: currentSession.batch,
-        coach_name: c,
-        role: c === primaryCoach ? 'Lead' : 'Assistant'
-      }))
-    };
-
-    const res = await callSheetsAPI(payload);
-    btn.disabled = false; btn.textContent = 'Save Attendance';
-    if (res) { 
-      showToast('Attendance & Coaches Saved'); 
-      document.getElementById('students-section').classList.add('hidden'); 
-      refreshRecords(); 
-      window.scrollTo({ top: 0, behavior: 'smooth' }); 
-    } else { 
-      showToast('Error', 'error'); 
-    }
-  };
+  document.getElementById('btn-load').onclick = () => {
+    const coach = document.getElementById('coach-name').value;
+    const batch = document.getElementById('batch-name').value;
+    const date = document.getElementById('attendance-date').value;
+    if (!coach || !batch || !date) return showToast('Fill all fields', 'error');
+    currentSession = { coach, batch, date };
+    sessionAttendance = {};
+    (studentsByBatch[batch] || []).forEach(name => sessionAttendance[name] = 'absent');
+    document.getElementById('students-section').classList.remove('hidden');
+    renderGrid();
+    document.getElementById('students-section').scrollIntoView({ behavior: 'smooth' });
   };
 
   document.getElementById('btn-save').onclick = async () => {
@@ -456,7 +406,6 @@
 </script>
 </body>
 </html>
-
 
 
 
