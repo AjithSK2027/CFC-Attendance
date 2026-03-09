@@ -604,15 +604,60 @@
     }
   };
 
-  document.getElementById('btn-save-coach').onclick = async () => {
-    const btn = document.getElementById('btn-save-coach');
-    const date = document.getElementById('attendance-date').value;
-    const coach = document.getElementById('coach-name').value;
+ document.getElementById('btn-save-coach').onclick = async () => {
+  const btn = document.getElementById('btn-save-coach');
+  const date = document.getElementById('attendance-date').value;
+  
+  if (!date) {
+    showToast('Please select a date', 'error');
+    return;
+  }
+  
+  btn.disabled = true; 
+  btn.textContent = 'Saving...';
+  
+  // Format records for Coach_Attendance sheet (5 columns)
+  const records = Object.entries(coachAttendance).map(([name, status]) => {
+    return {
+      timestamp: new Date().toLocaleString(),
+      date: date,
+      batch: 'COACHES/STAFF',        // This goes to "Batch Name" column
+      coach: name,                    // This goes to "Coach Name" column
+      status: status                  // This goes to "Status" column
+      // IMPORTANT: No student_name field here!
+    };
+  });
+  
+  // Debug log
+  console.log('Saving coach records (5 columns):', records);
+  
+  try {
+    const res = await callSheetsAPI({ 
+      action: 'append', 
+      spreadsheetId: config.sheetId, 
+      sheetName: 'Coach_Attendance',  // Must match exactly
+      data: records 
+    });
     
-    if (!date) {
-      showToast('Please select a date', 'error');
-      return;
+    if (res && res.result === 'success') { 
+      showToast(`✅ Saved ${records.length} coach attendance records!`); 
+      document.getElementById('coach-section').classList.add('hidden');
+      
+      // Reset coach attendance for next time
+      coachAttendance = {};
+      
+      // Refresh the records display
+      refreshRecords();
+    } else { 
+      showToast('❌ Error saving: ' + (res?.message || 'Unknown error'), 'error'); 
     }
+  } catch (error) {
+    showToast('❌ Error: ' + error.message, 'error');
+  } finally {
+    btn.disabled = false; 
+    btn.textContent = 'Save Coach Attendance';
+  }
+};
     
     btn.disabled = true; 
     btn.textContent = 'Saving...';
@@ -679,3 +724,4 @@
 </script>
 </body>
 </html>
+
