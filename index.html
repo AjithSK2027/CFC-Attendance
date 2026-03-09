@@ -2,9 +2,9 @@
 <html lang="en" class="h-full">
 
 <head>
- <link rel="icon" type="image/png" href="https://i.ibb.co/KjC62kc0/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/png" href="https://i.ibb.co/KjC62kc0/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Coffeeland FC · Attendance</title>
@@ -77,11 +77,34 @@
     
     .batch-chip {
       background: rgba(255, 255, 255, 0.1);
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 8px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 10px;
       font-weight: bold;
       color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .batch-chip:hover, .batch-chip.active {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fbbf24;
+    }
+    
+    #debug-console {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.95);
+      color: #4ade80;
+      font-family: monospace;
+      font-size: 11px;
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      border-top: 2px solid #fbbf24;
     }
   </style>
 </head>
@@ -121,7 +144,7 @@
         <form id="session-form" class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="space-y-2">
             <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Coach</label>
-            <select id="coach-name" style="background-color: #0f172a !important; color: white !important;" class="px-6 py-4 rounded-2xl text-white font-bold bg-transparent border border-white/10 appearance-none w-full cursor-pointer" required>
+            <select id="coach-name" class="px-6 py-4 rounded-2xl text-white font-bold bg-transparent border border-white/10 appearance-none w-full cursor-pointer" required>
               <option value="" disabled selected>Select Coach</option>
               <option value="Lexi">Lexi</option><option value="Nithin">Nithin</option><option value="Appu">Appu</option>
               <option value="Calvin">Calvin</option><option value="Ajay">Ajay</option><option value="Rayan">Rayan</option>
@@ -130,17 +153,18 @@
           </div>
           <div class="space-y-2">
             <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Group</label>
-            <select id="batch-name" style="background-color: #0f172a !important; color: white !important;" class="px-6 py-4 rounded-2xl text-white font-bold bg-transparent border border-white/10 appearance-none w-full cursor-pointer" required>
+            <select id="batch-name" class="px-6 py-4 rounded-2xl text-white font-bold bg-transparent border border-white/10 appearance-none w-full cursor-pointer" required>
               <option value="" disabled selected>Select Group</option>
-              <option value="COACHES/STAFF">⭐ COACH ATTENDANCE (ALL)</option>
-              <option value="Kalyan Nagar">Kalyan Nagar</option><option value="Xavier's School">Xavier's School</option>
-              <option value="Monti Angels">Monti Angels</option><option value="District Field Morning">District Field Morning</option>
+              <option value="Kalyan Nagar">Kalyan Nagar</option>
+              <option value="Xavier's School">Xavier's School</option>
+              <option value="Monti Angels">Monti Angels</option>
+              <option value="District Field Morning">District Field Morning</option>
               <option value="District Field Evening">District Field Evening</option>
             </select>
           </div>
           <div class="space-y-2">
             <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Date</label>
-          <input type="date" id="attendance-date" class="px-6 py-5 rounded-2xl text-white font-bold bg-transparent border border-white/10 appearance-none w-full" style="color-scheme: dark; min-height: 60px;">
+            <input type="date" id="attendance-date" class="px-6 py-5 rounded-2xl text-white font-bold bg-transparent border border-white/10 appearance-none w-full" style="color-scheme: dark; min-height: 60px;">
           </div>
           <div class="md:col-span-3 pt-4">
             <button type="button" id="btn-load" class="w-full py-5 rounded-2xl btn-primary text-white font-bold text-sm uppercase tracking-widest">Load Players</button>
@@ -156,7 +180,7 @@
         <div class="space-y-6">
           <div>
             <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Web App URL</label>
-            <input type="url" id="script-url" class="px-5 py-4 rounded-xl text-white font-mono text-xs" value="https://script.google.com/macros/s/AKfycbyCP6IRw20-RABegAyiGeGkpugqkhsYII9dEbRpyz-MwKfUDDK60-zx7TvamE-KqQvP/exec">
+            <input type="url" id="script-url" class="px-5 py-4 rounded-xl text-white font-mono text-xs" value="YOUR_SCRIPT_URL_HERE">
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -210,7 +234,7 @@
         </div>
       </section>
 
-      <!-- Coach Attendance Section - Fixed for batch assignments -->
+      <!-- Coach Attendance Section -->
       <section id="coach-section" class="hidden space-y-6 reveal">
         <div class="glass rounded-[2rem] overflow-hidden premium-shadow border-amber-500/20 border-2">
           <div class="px-6 py-6 bg-gradient-to-r from-amber-500/10 to-transparent border-b border-amber-500/20">
@@ -218,7 +242,7 @@
               <div>
                 <h2 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
                   <span class="coach-badge w-8 h-8 rounded-lg flex items-center justify-center text-black">👥</span>
-                  Coach Attendance by Batch
+                  Coach Attendance
                 </h2>
                 <p id="coach-date-display" class="text-amber-500 text-[10px] font-bold uppercase tracking-widest mt-1"></p>
               </div>
@@ -227,16 +251,6 @@
                 <button onclick="window.markAllCoaches('absent')" class="px-4 py-2 rounded-xl bg-white/5 text-slate-400 text-[10px] font-bold uppercase tracking-widest border border-white/10">All Absent</button>
               </div>
             </div>
-          </div>
-          
-          <!-- Batch filter for coaches -->
-          <div class="px-6 pt-4 flex gap-2 overflow-x-auto">
-            <button onclick="window.filterCoachBatch('all')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs" id="filter-all">All Batches</button>
-            <button onclick="window.filterCoachBatch('Kalyan Nagar')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs">Kalyan Nagar</button>
-            <button onclick="window.filterCoachBatch('Xavier\'s School')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs">Xavier's</button>
-            <button onclick="window.filterCoachBatch('Monti Angels')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs">Monti</button>
-            <button onclick="window.filterCoachBatch('District Field Morning')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs">DF Morning</button>
-            <button onclick="window.filterCoachBatch('District Field Evening')" class="batch-chip hover:bg-white/20 transition-all px-3 py-1 text-xs">DF Evening</button>
           </div>
           
           <div id="coaches-grid" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto"></div>
@@ -256,15 +270,14 @@
           </div>
           <button onclick="document.getElementById('fee-tracker-section').classList.add('hidden')" class="text-slate-500 hover:text-white font-bold text-xs uppercase">✕ Close</button>
         </div>
-        <div id="fees-list-container" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-          </div>
+        <div id="fees-list-container" class="space-y-4 max-h-[500px] overflow-y-auto pr-2"></div>
       </section>
 
       <section class="reveal px-2">
         <h2 class="text-lg font-bold text-white mb-4">Previous Records</h2>
         <div class="glass rounded-3xl overflow-hidden">
           <div id="attendance-list" class="divide-y divide-white/5">
-             <div class="p-10 text-center text-slate-600 text-xs">Connecting...</div>
+            <div class="p-10 text-center text-slate-600 text-xs">Configure settings and save to load records</div>
           </div>
         </div>
       </section>
@@ -277,12 +290,12 @@
 </div>
 
 <div id="toast-container" class="fixed bottom-6 right-6 left-6 md:left-auto z-[100] flex flex-col gap-3 pointer-events-none"></div>
-<div id="debug-console" class="fixed top-0 left-0 right-0 bg-black/90 text-green-400 text-xs p-2 hidden font-mono z-50 max-h-40 overflow-auto"></div>
+<div id="debug-console" class="hidden"></div>
 
 <script>
 (function() {
+  // ==================== DATA ====================
   const studentsByBatch = {
-    'COACHES/STAFF': ['Lexi', 'Nithin', 'Appu', 'Calvin', 'Ajay', 'Rayan', 'Syed'],
     'Kalyan Nagar': ['MOHITH.S','Rishanth R Shekar','Gahan','RUTVIK','Sohan R Prasad','Gagan gowda.B.M','Mohith T','Gokul','THEJAS KN','CHIRANTH BK','Shrinik U Y','HIMAVANTH CJ','Ganav r','SHAMAN GOWDA N N','SHRIMAN GOWDA N N','Dhanvith p Gowda','Dhanyatha p','Swayam','Samanvith Rao D M','Sai pranav','Dishanth HL','Manvith.S','RAJATH .S','Nishanth S. V','Hoysala M Hrushikesh'],
     'Xavier\'s School': ['AIMA','PREETHAM HM','SAMBRAMA.S','DHANVISH','VISMITHA','YASHWANTH BJ','ULLAS','JASHITH C','SAMARTH','SARVAJITH','THANUSH','PUNITH','PAVAN','BHUVAN S','CHIRANTH','AARIZ','RIVON','DEEKSHA','PRAJWAL','ANHAR','UMAIR','AVINASH','LIKITH','SOHAN','KRUTHIK','SAAMAR','LIKITHA','IBRAHIM','MALCUM','SAMARTH B','VINISH','SHAUN D','GOKUL','CHIRANJITH M','HUSNA','ASJAD','IMPAN'],
     'Monti Angels': ['MD IFAZ','AAHIL','MD RAAFI','MD AAZZ','UMAR','UNAIZ','AFFAN','RISHAN','MD ARHAAN','MD YUSUF ARMAN','KSHAMAN U.G','RISHIK PONNAPPA','IRSHAD BAIG','MD HAMZA','SK SAMDHANI','MD SHAYAN','MD UMAR','NOUFAL U.S','MD RIFAHATH','MD ARHAN','MD ARMAAN NAWAZ','MD MUBASHER','ABDUL AZEEM','SHINAF IBRAHIM','ANTHONY','TANISH SHANBOGH','MOHAN GOWDA','MOHAMMED SHARIQ','MD RAHIL','SK AZIZ','AMAN BAIG','HARSHAVARDHANA','MD RAYAAN','AARIZ RAZA','MEHHAROOF','PAYAM','PAIMAN','RISHAB','TALHA','RAHIL','ISMAIL','YADHUVAMSHIK','AFNAN','SHISHIR'],
@@ -298,38 +311,29 @@
     'District Field Evening': 3500
   };
 
-  // Coach to Batch assignments (customize this based on your actual assignments)
-  const coachBatchAssignments = {
-    'Lexi': ['Kalyan Nagar', 'Xavier\'s School'],
-    'Nithin': ['Monti Angels', 'District Field Morning'],
-    'Appu': ['District Field Evening', 'Xavier\'s School'],
-    'Calvin': ['Kalyan Nagar', 'Monti Angels'],
-    'Ajay': ['District Field Morning'],
-    'Rayan': ['District Field Evening', 'Kalyan Nagar'],
-    'Syed': ['Monti Angels', 'District Field Morning']
-  };
-
   const coaches = ['Lexi', 'Nithin', 'Appu', 'Calvin', 'Ajay', 'Rayan', 'Syed'];
   
+  // ==================== STATE ====================
   let sessionAttendance = {};
   let coachAttendance = {};
-  let currentCoachFilter = 'all';
   let currentSession = { coach: '', batch: '', date: '' };
   let config = {
-    scriptUrl: 'https://script.google.com/macros/s/AKfycbyCP6IRw20-RABegAyiGeGkpugqkhsYII9dEbRpyz-MwKfUDDK60-zx7TvamE-KqQvP/exec',
+    scriptUrl: '',
     sheetId: '',
     sheetName: 'Attendance'
   };
 
+  // ==================== HELPER FUNCTIONS ====================
   function debugLog(message, data = null) {
     const debugDiv = document.getElementById('debug-console');
     debugDiv.classList.remove('hidden');
     const timestamp = new Date().toLocaleTimeString();
-    let logMessage = `[${timestamp}] ${message}`;
+    let logMessage = `<div style="border-bottom:1px solid #333; padding:4px 0;"><span style="color:#fbbf24;">[${timestamp}]</span> ${message}`;
     if (data) {
-      logMessage += `\n${JSON.stringify(data, null, 2)}`;
+      logMessage += `<pre style="margin:4px 0 0 12px; color:#4ade80; font-size:10px;">${JSON.stringify(data, null, 2)}</pre>`;
     }
-    debugDiv.innerHTML += `<div>${logMessage}</div>`;
+    logMessage += '</div>';
+    debugDiv.innerHTML += logMessage;
     debugDiv.scrollTop = debugDiv.scrollHeight;
     console.log(message, data);
   }
@@ -340,39 +344,65 @@
     toast.className = `glass px-6 py-4 rounded-2xl shadow-xl font-bold text-white reveal pointer-events-auto border-l-4 ${type === 'success' ? 'border-green-500' : 'border-red-500'}`;
     toast.innerHTML = `<span class="text-xs">${msg}</span>`;
     container.appendChild(toast);
-    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 4000);
+    setTimeout(() => { 
+      toast.style.opacity = '0'; 
+      setTimeout(() => toast.remove(), 400); 
+    }, 4000);
   }
 
   async function callSheetsAPI(payload) {
+    if (!config.scriptUrl || !config.sheetId) {
+      showToast('Please configure settings first', 'error');
+      return null;
+    }
+    
     debugLog('Sending to AppScript:', payload);
+    
     try {
-      const response = await fetch(config.scriptUrl, {
+      // Add cache buster
+      const url = config.scriptUrl + '?t=' + Date.now();
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
+      
       const responseText = await response.text();
       debugLog('Raw response:', responseText);
       
+      // Try to parse JSON
       try {
-        return JSON.parse(responseText);
+        const jsonResponse = JSON.parse(responseText);
+        debugLog('Parsed response:', jsonResponse);
+        return jsonResponse;
       } catch (e) {
         debugLog('Response is not JSON:', responseText);
-        return { result: 'error', message: responseText };
+        showToast('Server returned invalid response', 'error');
+        return { result: 'error', message: 'Invalid JSON response' };
       }
+      
     } catch (e) { 
       debugLog('Fetch error:', e.message);
+      showToast('Network error: ' + e.message, 'error');
       return null; 
     }
   }
 
+  // ==================== RENDER FUNCTIONS ====================
   function renderGrid() {
     const grid = document.getElementById('students-grid');
     const students = studentsByBatch[currentSession.batch] || [];
+    
+    if (students.length === 0) {
+      grid.innerHTML = '<div class="col-span-3 text-center p-8 text-slate-500">No students in this batch</div>';
+      return;
+    }
+    
     grid.innerHTML = students.map((name, i) => {
       const isPresent = sessionAttendance[name] === 'present';
       return `
-        <div onclick="window.toggle(${i})" class="p-4 rounded-xl border cursor-pointer glass transition-all flex items-center justify-between ${isPresent ? 'border-green-500/40 bg-green-500/5' : 'border-white/5'}">
+        <div onclick="window.toggle(${i})" class="p-4 rounded-xl border cursor-pointer glass transition-all flex items-center justify-between ${isPresent ? 'border-green-500/40 bg-green-500/5' : 'border-white/5 hover:border-white/20'}">
           <p class="text-xs font-bold ${isPresent ? 'text-white' : 'text-slate-400'}">${name}</p>
           <div class="w-8 h-4 rounded-full relative ${isPresent ? 'bg-green-500' : 'bg-slate-800'}">
             <div class="absolute top-1 left-1 w-2 h-2 rounded-full bg-white transition-transform" style="transform: translateX(${isPresent ? '16px' : '0'})"></div>
@@ -389,29 +419,13 @@
     const date = document.getElementById('attendance-date').value;
     document.getElementById('coach-date-display').textContent = `Date: ${date || 'Not selected'}`;
     
-    // Filter coaches based on selected batch
-    let filteredCoaches = coaches;
-    if (currentCoachFilter !== 'all') {
-      filteredCoaches = coaches.filter(coach => 
-        coachBatchAssignments[coach] && coachBatchAssignments[coach].includes(currentCoachFilter)
-      );
-    }
-    
-    grid.innerHTML = filteredCoaches.map((name, i) => {
+    grid.innerHTML = coaches.map((name) => {
       const isPresent = coachAttendance[name] === 'present';
-      const batches = coachBatchAssignments[name] || [];
-      const batchLabels = batches.map(b => `<span class="batch-chip ml-1">${b}</span>`).join('');
-      
       return `
-        <div onclick="window.toggleCoach('${name}')" class="p-4 rounded-xl border cursor-pointer glass transition-all flex items-center justify-between ${isPresent ? 'border-amber-500/40 bg-amber-500/5' : 'border-white/5'}">
+        <div onclick="window.toggleCoach('${name}')" class="p-4 rounded-xl border cursor-pointer glass transition-all flex items-center justify-between ${isPresent ? 'border-amber-500/40 bg-amber-500/5' : 'border-white/5 hover:border-white/20'}">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg coach-badge flex items-center justify-center text-black font-bold text-xs">${name.substring(0,2)}</div>
-            <div>
-              <p class="text-xs font-bold ${isPresent ? 'text-white' : 'text-slate-400'}">${name}</p>
-              <div class="flex flex-wrap gap-1 mt-1">
-                ${batchLabels}
-              </div>
-            </div>
+            <p class="text-xs font-bold ${isPresent ? 'text-white' : 'text-slate-400'}">${name}</p>
           </div>
           <div class="w-8 h-4 rounded-full relative ${isPresent ? 'bg-amber-500' : 'bg-slate-800'}">
             <div class="absolute top-1 left-1 w-2 h-2 rounded-full bg-white transition-transform" style="transform: translateX(${isPresent ? '16px' : '0'})"></div>
@@ -419,10 +433,6 @@
         </div>
       `;
     }).join('');
-    
-    if (filteredCoaches.length === 0) {
-      grid.innerHTML = '<div class="col-span-2 text-center p-8 text-slate-500 text-xs">No coaches assigned to this batch</div>';
-    }
   }
 
   function updateStats() {
@@ -438,6 +448,7 @@
     document.getElementById('marked-count').textContent = stats.total ? Math.round(((stats.present + stats.absent) / stats.total) * 100) + '%' : '0%';
   }
 
+  // ==================== WINDOW FUNCTIONS ====================
   window.toggle = (idx) => {
     const name = studentsByBatch[currentSession.batch][idx];
     sessionAttendance[name] = sessionAttendance[name] === 'present' ? 'absent' : 'present';
@@ -459,52 +470,17 @@
     renderCoaches();
   };
 
-  window.filterCoachBatch = (batch) => {
-    currentCoachFilter = batch;
-    document.querySelectorAll('.batch-chip').forEach(el => el.classList.remove('bg-white/30'));
-    document.getElementById(`filter-${batch === 'all' ? 'all' : batch}`)?.classList.add('bg-white/30');
-    renderCoaches();
-  };
-
-  async function refreshRecords() {
-    const list = document.getElementById('attendance-list');
-    list.innerHTML = '<div class="p-10 text-center text-slate-500 text-[10px] font-bold animate-pulse">LOADING...</div>';
-    const res = await callSheetsAPI({ 
-      action: 'read', 
-      spreadsheetId: config.sheetId, 
-      sheetName: config.sheetName, 
-      limit: 10 
-    });
-    
-    if (res && res.records) {
-      list.innerHTML = res.records.map(r => `
-        <div class="flex items-center justify-between px-6 py-4">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-[8px] font-black text-slate-600 border border-white/5">${r.student_name ? r.student_name.substring(0,2) : 'NA'}</div>
-            <div>
-              <p class="text-xs font-bold text-white">${r.student_name || 'Unknown'}</p>
-              <p class="text-[8px] text-slate-500 font-bold uppercase">${r.batch || 'No batch'}</p>
-            </div>
-          </div>
-          <div class="px-3 py-1 rounded-md text-[8px] font-bold uppercase ${r.status === 'present' ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'}">${r.status || 'unknown'}</div>
-        </div>
-      `).join('') || '<div class="p-10 text-center text-slate-600">Empty</div>';
-    } else {
-      list.innerHTML = '<div class="p-10 text-center text-slate-700 text-[10px] uppercase font-bold tracking-widest">Connect to sheets</div>';
-    }
-  }
-
   window.sendReminder = (name, amount) => {
     const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date());
     const msg = `*COFFEELAND FC - FEE REMINDER*%0A%0AHi! Friendly reminder that the fees for *${name}* for ${month} is *₹${amount}*.%0A%0APlease ignore if already paid. Thank you! ⚽`;
     window.open(`https://wa.me/?text=${msg}`, '_blank');
   };
 
-  // Event Listeners
+  // ==================== EVENT LISTENERS ====================
   document.getElementById('btn-open-fees').onclick = () => {
     const batch = document.getElementById('batch-name').value;
-    if (!batch || batch === 'COACHES/STAFF') {
-        showToast('Please select a student Group first!', 'error');
+    if (!batch) {
+        showToast('Please select a Group first!', 'error');
         return;
     }
 
@@ -538,8 +514,10 @@
       return;
     }
     
+    // Initialize all coaches as absent
     coachAttendance = {};
     coaches.forEach(name => coachAttendance[name] = 'absent');
+    
     document.getElementById('coach-section').classList.remove('hidden');
     renderCoaches();
     document.getElementById('coach-section').scrollIntoView({ behavior: 'smooth' });
@@ -551,18 +529,16 @@
     const date = document.getElementById('attendance-date').value;
     
     if (!coach || !batch || !date) {
-      showToast('Fill all fields', 'error');
-      return;
-    }
-    
-    if (batch === 'COACHES/STAFF') {
-      showToast('Use Coach Attendance button for staff', 'error');
+      showToast('Please fill all fields', 'error');
       return;
     }
     
     currentSession = { coach, batch, date };
     sessionAttendance = {};
-    (studentsByBatch[batch] || []).forEach(name => sessionAttendance[name] = 'absent');
+    
+    const students = studentsByBatch[batch] || [];
+    students.forEach(name => sessionAttendance[name] = 'absent');
+    
     document.getElementById('students-section').classList.remove('hidden');
     renderGrid();
     document.getElementById('students-section').scrollIntoView({ behavior: 'smooth' });
@@ -570,9 +546,16 @@
 
   document.getElementById('btn-save').onclick = async () => {
     const btn = document.getElementById('btn-save');
+    
+    if (!config.scriptUrl || !config.sheetId) {
+      showToast('Please configure settings first', 'error');
+      return;
+    }
+    
     btn.disabled = true; 
     btn.textContent = 'Saving...';
     
+    // Format for Attendance sheet (6 columns)
     const records = Object.entries(sessionAttendance).map(([name, status]) => ({
       timestamp: new Date().toLocaleString(), 
       date: currentSession.date, 
@@ -595,114 +578,106 @@
     btn.textContent = 'Save Attendance';
     
     if (res && res.result === 'success') { 
-      showToast('Attendance saved!'); 
+      showToast(`✅ Saved ${records.length} attendance records!`); 
       document.getElementById('students-section').classList.add('hidden'); 
+      
+      // Clear the attendance
+      sessionAttendance = {};
+      
+      // Refresh records display
       refreshRecords(); 
-      window.scrollTo({ top: 0, behavior: 'smooth' }); 
     } else { 
-      showToast('Error saving: ' + (res?.message || 'Unknown error'), 'error'); 
+      showToast('❌ Error saving: ' + (res?.message || 'Unknown error'), 'error'); 
     }
   };
 
- document.getElementById('btn-save-coach').onclick = async () => {
-  const btn = document.getElementById('btn-save-coach');
-  const date = document.getElementById('attendance-date').value;
-  
-  if (!date) {
-    showToast('Please select a date', 'error');
-    return;
-  }
-  
-  btn.disabled = true; 
-  btn.textContent = 'Saving...';
-  
-  // Format records for Coach_Attendance sheet (5 columns)
-  const records = Object.entries(coachAttendance).map(([name, status]) => {
-    return {
+  document.getElementById('btn-save-coach').onclick = async () => {
+    const btn = document.getElementById('btn-save-coach');
+    const date = document.getElementById('attendance-date').value;
+    
+    if (!date) {
+      showToast('Please select a date', 'error');
+      return;
+    }
+    
+    if (!config.scriptUrl || !config.sheetId) {
+      showToast('Please configure settings first', 'error');
+      return;
+    }
+    
+    btn.disabled = true; 
+    btn.textContent = 'Saving...';
+    
+    // Format for Coach_Attendance sheet (5 columns)
+    // IMPORTANT: No student_name field here!
+    const records = Object.entries(coachAttendance).map(([name, status]) => ({
       timestamp: new Date().toLocaleString(),
       date: date,
       batch: 'COACHES/STAFF',        // This goes to "Batch Name" column
       coach: name,                    // This goes to "Coach Name" column
       status: status                  // This goes to "Status" column
-      // IMPORTANT: No student_name field here!
-    };
-  });
-  
-  // Debug log
-  console.log('Saving coach records (5 columns):', records);
-  
-  try {
+    }));
+    
+    debugLog('Saving coach attendance (5 columns):', records);
+    
     const res = await callSheetsAPI({ 
       action: 'append', 
       spreadsheetId: config.sheetId, 
-      sheetName: 'Coach_Attendance',  // Must match exactly
+      sheetName: 'Coach_Attendance',  // Use exact sheet name
       data: records 
     });
+    
+    btn.disabled = false; 
+    btn.textContent = 'Save Coach Attendance';
     
     if (res && res.result === 'success') { 
       showToast(`✅ Saved ${records.length} coach attendance records!`); 
       document.getElementById('coach-section').classList.add('hidden');
       
-      // Reset coach attendance for next time
+      // Clear coach attendance
       coachAttendance = {};
       
-      // Refresh the records display
+      // Refresh records display
       refreshRecords();
     } else { 
       showToast('❌ Error saving: ' + (res?.message || 'Unknown error'), 'error'); 
     }
-  } catch (error) {
-    showToast('❌ Error: ' + error.message, 'error');
-  } finally {
-    btn.disabled = false; 
-    btn.textContent = 'Save Coach Attendance';
-  }
-};
-    
-    btn.disabled = true; 
-    btn.textContent = 'Saving...';
-    
-    // Create a record for EACH coach attendance, but we need to match the AppScript format
-    // Your AppScript expects: [timestamp, date, coach, batch, student_name, status]
-    // For coach attendance, we'll put the coach name in both coach AND student_name fields
-    const records = Object.entries(coachAttendance).map(([name, status]) => ({
-      timestamp: new Date().toLocaleString(),
-      date: date,
-      coach: name,                    // Coach name in coach field
-      batch: 'COACHES/STAFF',          // Batch identifier
-      student_name: name,              // Coach name also in student_name field to match format
-      status: status
-    }));
-    
-    debugLog('Saving coach attendance (matching AppScript format):', records);
-    
-    const res = await callSheetsAPI({ 
-      action: 'append', 
-      spreadsheetId: config.sheetId, 
-      sheetName: config.sheetName,      // Using same sheet as students
-      data: records 
-    });
-    
-    btn.disabled = false; 
-    btn.textContent = 'Save Coach Attendance';
-    
-    if (res && res.result === 'success') { 
-      showToast('Coach attendance saved!'); 
-      document.getElementById('coach-section').classList.add('hidden');
-      refreshRecords();
-    } else { 
-      showToast('Error saving: ' + (res?.message || 'Unknown error'), 'error'); 
-    }
   };
 
   document.getElementById('save-config').onclick = () => {
-    config.scriptUrl = document.getElementById('script-url').value;
-    config.sheetId = document.getElementById('sheet-id').value;
-    config.sheetName = document.getElementById('sheet-name').value;
+    const scriptUrl = document.getElementById('script-url').value.trim();
+    const sheetId = document.getElementById('sheet-id').value.trim();
+    const sheetName = document.getElementById('sheet-name').value.trim();
+    
+    if (!scriptUrl || !sheetId || !sheetName) {
+      showToast('Please fill all fields', 'error');
+      return;
+    }
+    
+    config.scriptUrl = scriptUrl;
+    config.sheetId = sheetId;
+    config.sheetName = sheetName;
+    
     document.getElementById('sheets-config').classList.add('hidden');
-    showToast('Settings saved');
-    refreshRecords();
+    showToast('✅ Settings saved');
+    
+    // Test the connection
+    testConnection();
   };
+  
+  async function testConnection() {
+    const res = await callSheetsAPI({ 
+      action: 'test', 
+      spreadsheetId: config.sheetId 
+    });
+    
+    if (res && res.result === 'success') {
+      showToast('✅ Connected to Google Sheets!');
+      refreshRecords();
+    } else {
+      showToast('⚠️ Settings saved but connection test failed', 'error');
+    }
+  }
 
   document.getElementById('toggle-config').onclick = () => {
     document.getElementById('sheets-config').classList.toggle('hidden');
@@ -717,11 +692,79 @@
     document.getElementById('coach-section').classList.add('hidden'); 
   };
 
+  async function refreshRecords() {
+    if (!config.scriptUrl || !config.sheetId) return;
+    
+    const list = document.getElementById('attendance-list');
+    list.innerHTML = '<div class="p-10 text-center text-slate-500 text-[10px] font-bold animate-pulse">LOADING...</div>';
+    
+    const res = await callSheetsAPI({ 
+      action: 'read', 
+      spreadsheetId: config.sheetId, 
+      sheetName: config.sheetName, 
+      limit: 10 
+    });
+    
+    if (res && res.records && res.records.length > 0) {
+      list.innerHTML = res.records.map(r => `
+        <div class="flex items-center justify-between px-6 py-4 hover:bg-white/5 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-[8px] font-black text-slate-600 border border-white/5">${r.student_name ? r.student_name.substring(0,2).toUpperCase() : 'NA'}</div>
+            <div>
+              <p class="text-xs font-bold text-white">${r.student_name || 'Unknown'}</p>
+              <p class="text-[8px] text-slate-500 font-bold uppercase">${r.batch || 'No batch'} • ${r.date || ''}</p>
+            </div>
+          </div>
+          <div class="px-3 py-1 rounded-md text-[8px] font-bold uppercase ${r.status === 'present' ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'}">${r.status || 'unknown'}</div>
+        </div>
+      `).join('');
+    } else {
+      list.innerHTML = '<div class="p-10 text-center text-slate-600 text-xs">No records found. Start by saving attendance!</div>';
+    }
+  }
+
   // Initialize
   document.getElementById('attendance-date').valueAsDate = new Date();
-  refreshRecords();
+  
+  // Load saved config from localStorage if available
+  try {
+    const savedConfig = localStorage.getItem('coffeeland_config');
+    if (savedConfig) {
+      const parsed = JSON.parse(savedConfig);
+      config = { ...config, ...parsed };
+      document.getElementById('script-url').value = config.scriptUrl;
+      document.getElementById('sheet-id').value = config.sheetId;
+      document.getElementById('sheet-name').value = config.sheetName;
+    }
+  } catch (e) {
+    console.log('No saved config');
+  }
+  
+  // Save config to localStorage when changed
+  document.getElementById('save-config').onclick = () => {
+    const scriptUrl = document.getElementById('script-url').value.trim();
+    const sheetId = document.getElementById('sheet-id').value.trim();
+    const sheetName = document.getElementById('sheet-name').value.trim();
+    
+    if (!scriptUrl || !sheetId || !sheetName) {
+      showToast('Please fill all fields', 'error');
+      return;
+    }
+    
+    config.scriptUrl = scriptUrl;
+    config.sheetId = sheetId;
+    config.sheetName = sheetName;
+    
+    // Save to localStorage
+    localStorage.setItem('coffeeland_config', JSON.stringify(config));
+    
+    document.getElementById('sheets-config').classList.add('hidden');
+    showToast('✅ Settings saved');
+    
+    // Test the connection
+    testConnection();
+  };
 })();
 </script>
 </body>
 </html>
-
