@@ -378,16 +378,63 @@
     document.getElementById('students-section').scrollIntoView({ behavior: 'smooth' });
   };
 
-  document.getElementById('btn-save').onclick = async () => {
+ document.getElementById('btn-save').onclick = async () => {
     const btn = document.getElementById('btn-save');
-    btn.disabled = true; btn.textContent = 'Saving...';
+    btn.disabled = true; 
+    btn.textContent = 'Saving...';
+    
+    // ROUTING LOGIC: 
+    // If the selected group is "COACHES/STAFF", use the Coach_Attendance sheet.
+    // Otherwise, use the standard sheetName from your config.
+    const targetSheet = (currentSession.batch === 'COACHES/STAFF') ? 'Coach_Attendance' : config.sheetName;
+
     const records = Object.entries(sessionAttendance).map(([name, status]) => ({
-      timestamp: new Date().toLocaleString(), date: currentSession.date, coach: currentSession.coach, batch: currentSession.batch, student_name: name, status: status
+      timestamp: new Date().toLocaleString(), 
+      date: currentSession.date, 
+      coach: currentSession.coach, 
+      batch: currentSession.batch, 
+      student_name: name, 
+      status: status
     }));
-    const res = await callSheetsAPI({ action: 'append', spreadsheetId: config.sheetId, sheetName: config.sheetName, data: records });
+
+    // Pass the 'targetSheet' to the API call
+    const res = await callSheetsAPI({ 
+      action: 'append', 
+      spreadsheetId: config.sheetId, 
+      sheetName: targetSheet, 
+      data: records 
+    });
+
+    btn.disabled = false; 
+    btn.textContent = 'Save Attendance';
+
+    if (res) { 
+      showToast('Saved to ' + targetSheet); 
+      document.getElementById('students-section').classList.add('hidden'); 
+      refreshRecords(); 
+      window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    } 
+    else { 
+      showToast('Error: Check Script Connection', 'error'); 
+    }
+  };
+
+    const res = await callSheetsAPI({ 
+      action: 'append', 
+      spreadsheetId: config.sheetId, 
+      sheetName: targetSheet, // This tells the backend where to go
+      data: records 
+    });
+
     btn.disabled = false; btn.textContent = 'Save Attendance';
-    if (res) { showToast('Saved'); document.getElementById('students-section').classList.add('hidden'); refreshRecords(); window.scrollTo({ top: 0, behavior: 'smooth' }); } 
+    if (res) { 
+      showToast('Saved to ' + targetSheet); 
+      document.getElementById('students-section').classList.add('hidden'); 
+      refreshRecords(); 
+      window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    } 
     else { showToast('Error', 'error'); }
+  };
   };
 
   document.getElementById('save-config').onclick = () => {
@@ -407,6 +454,7 @@
 </script>
 </body>
 </html>
+
 
 
 
