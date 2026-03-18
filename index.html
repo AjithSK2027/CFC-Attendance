@@ -1,770 +1,1294 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
-
+<html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="https://i.ibb.co/KjC62kc0/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Coffeeland FC · Attendance</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root { --brand-gold: #fbbf24; }
-    * { font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
-    h1, h2, .font-display { font-family: 'Outfit', sans-serif; }
-    
-    body {
-      background: radial-gradient(circle at top left, #0f172a 0%, #020617 40%, #000000 100%);
-      color: #f1f5f9;
-      letter-spacing: -0.01em;
-      margin: 0;
-      overflow-x: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffeeland FC • Elite Attendance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .glass {
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #030014;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-    .premium-shadow { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); }
+        /* Premium animated background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.03) 0%, transparent 30%),
+                        radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.03) 0%, transparent 30%),
+                        linear-gradient(180deg, #030014 0%, #0A0A1F 100%);
+            z-index: -2;
+        }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+        .stars::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 80px 120px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 50px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 300px 180px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 450px 250px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 600px 400px, #fff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 800px 800px;
+            opacity: 0.3;
+            animation: stars 200s linear infinite;
+        }
 
-    .btn-success {
-      background: linear-gradient(135deg, #10b981 0%, #064e3b 100%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+        @keyframes stars {
+            from { transform: translateY(0); }
+            to { transform: translateY(-800px); }
+        }
 
-    select, input {
-      background: rgba(255, 255, 255, 0.05) !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      color: white !important;
-      width: 100% !important;
-    }
+        .gradient-orb {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            top: -200px;
+            right: -200px;
+            z-index: -1;
+            animation: orbFloat 30s ease-in-out infinite;
+        }
 
-    .reveal { animation: revealUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-    @keyframes revealUp {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+        .gradient-orb-2 {
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle at center, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(100px);
+            bottom: -400px;
+            left: -200px;
+            z-index: -1;
+            animation: orbFloat 40s ease-in-out infinite reverse;
+        }
 
-    input[type="date"] {
-      color-scheme: dark;
-      position: relative;
-    }
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -50px) scale(1.1); }
+            66% { transform: translate(-30px, 30px) scale(0.9); }
+        }
 
-    ::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      cursor: pointer;
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      width: auto; height: auto;
-      color: transparent;
-      background: transparent;
-    }
+        /* Main container */
+        .app {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px;
+            position: relative;
+            z-index: 1;
+        }
 
-    .coach-badge {
-      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-    }
-    
-    .batch-chip {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: bold;
-      color: #94a3b8;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .batch-chip:hover, .batch-chip.active {
-      background: rgba(251, 191, 36, 0.2);
-      color: #fbbf24;
-    }
-    
-    #debug-console {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(0, 0, 0, 0.95);
-      color: #4ade80;
-      font-family: monospace;
-      font-size: 11px;
-      padding: 10px;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 1000;
-      border-top: 2px solid #fbbf24;
-    }
-  </style>
+        /* Premium header with glass effect */
+        .header {
+            background: rgba(10, 10, 20, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 32px;
+            padding: 20px 32px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.05), transparent);
+            animation: shimmer 8s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-container {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 30px -10px rgba(255, 215, 0, 0.3);
+            position: relative;
+        }
+
+        .logo-container::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 22px;
+            opacity: 0.3;
+            filter: blur(10px);
+            z-index: -1;
+        }
+
+        .logo-container img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+        }
+
+        .brand-text h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .brand-text p {
+            color: #94A3B8;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .date-chip {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 40px;
+            padding: 12px 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .date-chip:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .date-chip span:first-child {
+            font-size: 20px;
+        }
+
+        .date-chip span:last-child {
+            color: #FFD700;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        /* Premium controls */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .control-card {
+            background: rgba(10, 10, 20, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 28px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .control-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 30px 60px -20px rgba(255, 215, 0, 0.2);
+        }
+
+        .control-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .control-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #94A3B8;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .control-label span:first-child {
+            font-size: 20px;
+        }
+
+        .premium-select, .premium-date {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            color: white;
+            font-family: "Inter", sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23FFD700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 20px;
+        }
+
+        .premium-select:hover, .premium-date:hover {
+            border-color: #FFD700;
+            background-color: rgba(255, 215, 0, 0.05);
+        }
+
+        .premium-select:focus, .premium-date:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.1);
+        }
+
+        /* Main content with glass panels */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .glass-panel {
+            background: rgba(10, 10, 20, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 32px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(255, 215, 0, 0.2);
+            box-shadow: 0 30px 60px -30px rgba(255, 215, 0, 0.15);
+        }
+
+        .panel-header {
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .panel-title h2 {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .panel-title p {
+            color: #94A3B8;
+            font-size: 13px;
+            margin-top: 2px;
+        }
+
+        .panel-badge {
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Premium list styling */
+        .premium-list {
+            max-height: 480px;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .premium-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .premium-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+        }
+
+        .premium-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .premium-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 215, 0, 0.4);
+        }
+
+        .premium-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid transparent;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: #FFD700;
+            transform: scaleY(0);
+            transition: transform 0.2s ease;
+        }
+
+        .premium-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 215, 0, 0.2);
+            transform: translateX(4px);
+        }
+
+        .premium-item.selected {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .premium-item.selected::before {
+            transform: scaleY(1);
+        }
+
+        .item-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: #030014;
+            margin-right: 16px;
+            box-shadow: 0 10px 20px -5px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .premium-item:hover .item-avatar {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .item-role {
+            color: #94A3B8;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-toggle {
+            display: flex;
+            gap: 8px;
+            margin-left: 12px;
+        }
+
+        .status-btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            background: transparent;
+            color: #94A3B8;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: "Inter", sans-serif;
+        }
+
+        .status-btn.present {
+            background: rgba(0, 255, 100, 0.1);
+            border-color: rgba(0, 255, 100, 0.3);
+            color: #00ff9d;
+        }
+
+        .status-btn.absent {
+            background: rgba(255, 70, 70, 0.1);
+            border-color: rgba(255, 70, 70, 0.3);
+            color: #ff6b6b;
+        }
+
+        .status-btn:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: #FFD700;
+            color: #FFD700;
+        }
+
+        .premium-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+        }
+
+        .premium-checkbox.checked {
+            background: #FFD700;
+            border-color: #FFD700;
+        }
+
+        .premium-checkbox.checked::after {
+            content: '✓';
+            color: #030014;
+            font-weight: bold;
+        }
+
+        /* Action bar */
+        .action-bar {
+            padding: 20px 24px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 40px;
+            color: #94A3B8;
+            font-family: "Inter", sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            border-color: #FFD700;
+            color: #FFD700;
+            background: rgba(255, 215, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: none;
+            color: #030014;
+            font-weight: 700;
+            box-shadow: 0 10px 20px -5px rgba(255, 215, 0, 0.3);
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -5px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Premium stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(10, 10, 20, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 28px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1), transparent 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #FFD700;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #94A3B8;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-trend {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #00ff9d;
+        }
+
+        /* Premium toast */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: rgba(20, 20, 30, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 24px;
+            padding: 16px 24px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(400px);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-color: #00ff9d;
+        }
+
+        .toast.error {
+            border-color: #ff6b6b;
+        }
+
+        .toast-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .toast.success .toast-icon {
+            background: rgba(0, 255, 157, 0.1);
+            color: #00ff9d;
+        }
+
+        .toast.error .toast-icon {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            color: #94A3B8;
+            font-size: 13px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 0, 20, 0.7);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(255, 215, 0, 0.1);
+            border-top-color: #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loader-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app {
+                padding: 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .brand {
+                flex-direction: column;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+<body>
+    <div class="stars"></div>
+    <div class="gradient-orb"></div>
+    <div class="gradient-orb-2"></div>
 
-<body class="h-full">
-<div id="app" class="h-full w-full overflow-x-hidden overflow-y-auto pb-20">
-  <div class="max-w-6xl mx-auto px-4 py-8 md:py-16">
-    
-    <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 reveal">
-      <div class="flex items-center gap-4">
-        <div class="bg-white rounded-full p-1 shadow-2xl shrink-0">
-          <img src="https://i.ibb.co/KjC62kc0/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png" alt="Logo" class="w-16 h-16 md:w-24 md:h-24 object-contain">
-        </div>
-        <div>
-          <h1 class="text-3xl md:text-5xl font-black text-white tracking-tight">COFFEELAND <span class="text-amber-500">FC</span></h1>
-          <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">Attendance Manager</p>
-        </div>
-      </div>
-      <button id="toggle-config" class="flex items-center justify-center gap-3 px-5 py-3 rounded-2xl glass hover:bg-white/5 transition-all w-fit">
-        <span class="text-sm font-bold text-slate-300">Settings</span>
-        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-      </button>
-    </header>
+    <div class="app">
+        <!-- Premium Header -->
+        <header class="header">
+            <div class="brand">
+                <div class="logo-container">
+                    <img src="https://i.ibb.co/KjC62kc0/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png" alt="Coffeeland FC">
+                </div>
+                <div class="brand-text">
+                    <h1>Coffeeland FC</h1>
+                    <p>Elite Attendance System</p>
+                </div>
+            </div>
+            <div class="date-chip" id="dateChip">
+                <span>📅</span>
+                <span></span>
+            </div>
+        </header>
 
-    <main class="space-y-10">
-      <section class="glass rounded-[2rem] p-6 md:p-12 premium-shadow reveal">
-        <div class="flex flex-wrap gap-3 mb-8">
-          <button id="btn-open-fees" class="flex-1 py-4 rounded-2xl glass border-amber-500/30 text-amber-500 font-bold text-xs uppercase tracking-widest hover:bg-amber-500/10 transition-all flex items-center justify-center gap-2">
-            <span>💳</span> Fees & Reminders
-          </button>
-          <button id="btn-coach-attendance" class="flex-1 py-4 rounded-2xl coach-badge text-white font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-all flex items-center justify-center gap-2">
-            <span>👥</span> Coach Attendance
-          </button>
+        <!-- Premium Controls -->
+        <div class="controls-grid">
+            <div class="control-card">
+                <div class="control-label">
+                    <span>📆</span>
+                    <span>Session Date</span>
+                </div>
+                <input type="date" class="premium-date" id="attendanceDate" required>
+            </div>
+            
+            <div class="control-card">
+                <div class="control-label">
+                    <span>⚽</span>
+                    <span>Training Batch</span>
+                </div>
+                <select class="premium-select" id="batchSelect" onchange="loadBatchStudents()">
+                    <option value="" disabled selected>Select training batch</option>
+                    <option value="Morning Batch">🌅 Morning Batch</option>
+                    <option value="Evening Batch">🌆 Evening Batch</option>
+                    <option value="Kalyan Nagar">📍 Kalyan Nagar</option>
+                    <option value="Xavier's School">🏫 Xavier's School</option>
+                    <option value="Monti Angels">😇 Monti Angels</option>
+                    <option value="District Field Morning">⚡ District Field Morning</option>
+                    <option value="District Field Evening">✨ District Field Evening</option>
+                </select>
+            </div>
         </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Coaches Panel -->
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="panel-icon">👨‍⚖️</div>
+                        <div>
+                            <h2>Coaching Staff</h2>
+                            <p>Elite coaches</p>
+                        </div>
+                    </div>
+                    <div class="panel-badge" id="coachBadge">0</div>
+                </div>
+                <div class="premium-list" id="coachList"></div>
+                <div class="action-bar">
+                    <button class="action-btn" onclick="selectAllCoaches('P')">
+                        <span>✅</span> All Present
+                    </button>
+                    <button class="action-btn" onclick="selectAllCoaches('A')">
+                        <span>❌</span> All Absent
+                    </button>
+                    <button class="action-btn" onclick="clearAllCoaches()">
+                        <span>🔄</span> Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- Students Panel -->
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="panel-icon">⚽</div>
+                        <div>
+                            <h2>Players</h2>
+                            <p>Academy athletes</p>
+                        </div>
+                    </div>
+                    <div class="panel-badge" id="studentBadge">0</div>
+                </div>
+                <div class="premium-list" id="studentList"></div>
+                <div class="action-bar">
+                    <button class="action-btn" onclick="selectAllStudents('P')">
+                        <span>✅</span> All Present
+                    </button>
+                    <button class="action-btn" onclick="selectAllStudents('A')">
+                        <span>❌</span> All Absent
+                    </button>
+                    <button class="action-btn" onclick="clearAllStudents()">
+                        <span>🔄</span> Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="totalSelected">0</div>
+                <div class="stat-label">Total Selected</div>
+                <div class="stat-trend" id="totalSelectedTrend"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="totalPresent">0</div>
+                <div class="stat-label">Present</div>
+                <div class="stat-trend" id="presentTrend"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">❌</div>
+                <div class="stat-value" id="totalAbsent">0</div>
+                <div class="stat-label">Absent</div>
+                <div class="stat-trend" id="absentTrend"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="attendanceRate">0%</div>
+                <div class="stat-label">Attendance Rate</div>
+                <div class="stat-trend" id="rateTrend"></div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 16px; margin-top: 24px;">
+            <button class="action-btn primary" onclick="submitAttendance()" style="flex: 2; padding: 18px;">
+                <span>💾</span>
+                Save Attendance Record
+            </button>
+            <button class="action-btn" onclick="resetAll()" style="flex: 1; padding: 18px;">
+                <span>🔄</span>
+                Reset Form
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="text-align: center;">
+            <div class="loader"></div>
+            <div class="loader-text">Saving attendance...</div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const SHEET_ID = '1EhkGO3omreFx_cbIWM9ZMQbTtWkTT2tm4ePgN-Ii8GQ';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbypXr25QqsLa_IFhWRcGygqglmom8NPbMxk5HBIFSur3rYf0X-ygLo0hpzXhjyp-PJT/exec';
         
-        <h2 class="text-2xl font-bold text-white mb-8">Start Session</h2>
-        <form id="session-form" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Coach</label>
-            <select id="coach-name" class="px-6 py-4 rounded-2xl text-white font-bold bg-transparent border border-white/10 appearance-none w-full cursor-pointer" required>
-              <option value="" disabled selected>Select Coach</option>
-              <option value="Lexi">Lexi</option><option value="Nithin">Nithin</option><option value="Appu">Appu</option>
-              <option value="Calvin">Calvin</option><option value="Ajay">Ajay</option><option value="Rayan">Rayan</option>
-              <option value="Syed">Syed</option>
-            </select>
-          </div>
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Group</label>
-            <select id="batch-name" class="px-6 py-4 rounded-2xl text-white font-bold bg-transparent border border-white/10 appearance-none w-full cursor-pointer" required>
-              <option value="" disabled selected>Select Group</option>
-              <option value="Kalyan Nagar">Kalyan Nagar</option>
-              <option value="Xavier's School">Xavier's School</option>
-              <option value="Monti Angels">Monti Angels</option>
-              <option value="District Field Morning">District Field Morning</option>
-              <option value="District Field Evening">District Field Evening</option>
-            </select>
-          </div>
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Date</label>
-            <input type="date" id="attendance-date" class="px-6 py-5 rounded-2xl text-white font-bold bg-transparent border border-white/10 appearance-none w-full" style="color-scheme: dark; min-height: 60px;">
-          </div>
-          <div class="md:col-span-3 pt-4">
-            <button type="button" id="btn-load" class="w-full py-5 rounded-2xl btn-primary text-white font-bold text-sm uppercase tracking-widest">Load Players</button>
-          </div>
-        </form>
-      </section>
-
-      <div id="sheets-config" class="hidden glass rounded-[2rem] p-6 md:p-10 reveal">
-        <div class="flex items-center justify-between mb-8">
-          <h2 class="text-xl font-bold text-white">Settings</h2>
-          <button onclick="document.getElementById('sheets-config').classList.add('hidden')" class="text-slate-500 hover:text-white font-bold">✕</button>
-        </div>
-        <div class="space-y-6">
-          <div>
-            <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Web App URL</label>
-            <input type="url" id="script-url" class="px-5 py-4 rounded-xl text-white font-mono text-xs" value="YOUR_SCRIPT_URL_HERE">
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Spreadsheet ID</label>
-              <input type="text" id="sheet-id" class="px-5 py-4 rounded-xl text-white text-sm" placeholder="Paste ID here">
-            </div>
-            <div>
-              <label class="block text-[10px] font-bold text-slate-500 mb-2 uppercase">Sheet Name</label>
-              <input type="text" id="sheet-name" class="px-5 py-4 rounded-xl text-white text-sm" value="Attendance">
-            </div>
-          </div>
-          <button id="save-config" class="w-full py-4 rounded-xl btn-primary text-white font-bold text-xs uppercase tracking-widest">Save Settings</button>
-        </div>
-      </div>
-
-      <section id="students-section" class="hidden space-y-6 reveal">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="glass p-4 rounded-2xl text-center">
-            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total</p>
-            <p id="total-students" class="text-2xl font-black text-white">0</p>
-          </div>
-          <div class="glass p-4 rounded-2xl text-center border-green-500/20">
-            <p class="text-[9px] font-bold text-green-500 uppercase tracking-widest mb-1">Present</p>
-            <p id="marked-present" class="text-2xl font-black text-white">0</p>
-          </div>
-          <div class="glass p-4 rounded-2xl text-center border-red-500/20">
-            <p class="text-[9px] font-bold text-red-500 uppercase tracking-widest mb-1">Absent</p>
-            <p id="marked-absent" class="text-2xl font-black text-white">0</p>
-          </div>
-          <div class="glass p-4 rounded-2xl text-center border-amber-500/20">
-            <p class="text-[9px] font-bold text-amber-500 uppercase tracking-widest mb-1">Ready</p>
-            <p id="marked-count" class="text-2xl font-black text-white">0%</p>
-          </div>
-        </div>
-
-        <div class="glass rounded-[2rem] overflow-hidden premium-shadow">
-          <div class="px-6 py-6 border-b border-white/5 bg-white/5 flex flex-col gap-4">
-            <h2 class="text-xl font-bold text-white tracking-tight">Mark Attendance</h2>
-            <div class="flex gap-2">
-              <button onclick="window.markAll('present')" class="flex-1 py-2 rounded-xl bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-widest border border-green-500/20">Select All</button>
-              <button onclick="window.markAll('absent')" class="flex-1 py-2 rounded-xl bg-white/5 text-slate-400 text-[10px] font-bold uppercase tracking-widest border border-white/10">Clear</button>
-            </div>
-          </div>
-          
-          <div id="students-grid" class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[400px] overflow-y-auto"></div>
-
-          <div class="p-6 border-t border-white/5 bg-black/20 flex flex-col gap-3">
-            <button id="btn-save" class="w-full py-5 rounded-2xl btn-success text-white font-bold text-sm uppercase tracking-widest">Save Attendance</button>
-            <button id="btn-cancel" class="w-full py-4 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs uppercase tracking-widest">Cancel</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Coach Attendance Section -->
-      <section id="coach-section" class="hidden space-y-6 reveal">
-        <div class="glass rounded-[2rem] overflow-hidden premium-shadow border-amber-500/20 border-2">
-          <div class="px-6 py-6 bg-gradient-to-r from-amber-500/10 to-transparent border-b border-amber-500/20">
-            <div class="flex items-center justify-between">
-              <div>
-                <h2 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                  <span class="coach-badge w-8 h-8 rounded-lg flex items-center justify-center text-black">👥</span>
-                  Coach Attendance
-                </h2>
-                <p id="coach-date-display" class="text-amber-500 text-[10px] font-bold uppercase tracking-widest mt-1"></p>
-              </div>
-              <div class="flex gap-2">
-                <button onclick="window.markAllCoaches('present')" class="px-4 py-2 rounded-xl bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-widest border border-green-500/20">All Present</button>
-                <button onclick="window.markAllCoaches('absent')" class="px-4 py-2 rounded-xl bg-white/5 text-slate-400 text-[10px] font-bold uppercase tracking-widest border border-white/10">All Absent</button>
-              </div>
-            </div>
-          </div>
-          
-          <div id="coaches-grid" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto"></div>
-
-          <div class="p-6 border-t border-amber-500/20 bg-black/20 flex flex-col gap-3">
-            <button id="btn-save-coach" class="w-full py-5 rounded-2xl coach-badge text-white font-bold text-sm uppercase tracking-widest">Save Coach Attendance</button>
-            <button id="btn-cancel-coach" class="w-full py-4 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs uppercase tracking-widest">Close</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="fee-tracker-section" class="hidden glass rounded-[2rem] p-6 md:p-12 premium-shadow reveal mt-10">
-        <div class="flex justify-between items-center mb-8">
-          <div>
-            <h2 class="text-2xl font-bold text-white font-display">Fee Collector</h2>
-            <p id="fee-batch-label" class="text-amber-500 text-[10px] font-bold uppercase tracking-widest mt-1">Select a group first</p>
-          </div>
-          <button onclick="document.getElementById('fee-tracker-section').classList.add('hidden')" class="text-slate-500 hover:text-white font-bold text-xs uppercase">✕ Close</button>
-        </div>
-        <div id="fees-list-container" class="space-y-4 max-h-[500px] overflow-y-auto pr-2"></div>
-      </section>
-
-      <section class="reveal px-2">
-        <h2 class="text-lg font-bold text-white mb-4">Previous Records</h2>
-        <div class="glass rounded-3xl overflow-hidden">
-          <div id="attendance-list" class="divide-y divide-white/5">
-            <div class="p-10 text-center text-slate-600 text-xs">Configure settings and save to load records</div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="mt-16 text-center opacity-30">
-      <p class="text-slate-500 text-[9px] font-bold uppercase tracking-[0.4em]">Coffeeland Football Club</p>
-    </footer>
-  </div>
-</div>
-
-<div id="toast-container" class="fixed bottom-6 right-6 left-6 md:left-auto z-[100] flex flex-col gap-3 pointer-events-none"></div>
-<div id="debug-console" class="hidden"></div>
-
-<script>
-(function() {
-  // ==================== DATA ====================
-  const studentsByBatch = {
-    'Kalyan Nagar': ['MOHITH.S','Rishanth R Shekar','Gahan','RUTVIK','Sohan R Prasad','Gagan gowda.B.M','Mohith T','Gokul','THEJAS KN','CHIRANTH BK','Shrinik U Y','HIMAVANTH CJ','Ganav r','SHAMAN GOWDA N N','SHRIMAN GOWDA N N','Dhanvith p Gowda','Dhanyatha p','Swayam','Samanvith Rao D M','Sai pranav','Dishanth HL','Manvith.S','RAJATH .S','Nishanth S. V','Hoysala M Hrushikesh'],
-    'Xavier\'s School': ['AIMA','PREETHAM HM','SAMBRAMA.S','DHANVISH','VISMITHA','YASHWANTH BJ','ULLAS','JASHITH C','SAMARTH','SARVAJITH','THANUSH','PUNITH','PAVAN','BHUVAN S','CHIRANTH','AARIZ','RIVON','DEEKSHA','PRAJWAL','ANHAR','UMAIR','AVINASH','LIKITH','SOHAN','KRUTHIK','SAAMAR','LIKITHA','IBRAHIM','MALCUM','SAMARTH B','VINISH','SHAUN D','GOKUL','CHIRANJITH M','HUSNA','ASJAD','IMPAN'],
-    'Monti Angels': ['MD IFAZ','AAHIL','MD RAAFI','MD AAZZ','UMAR','UNAIZ','AFFAN','RISHAN','MD ARHAAN','MD YUSUF ARMAN','KSHAMAN U.G','RISHIK PONNAPPA','IRSHAD BAIG','MD HAMZA','SK SAMDHANI','MD SHAYAN','MD UMAR','NOUFAL U.S','MD RIFAHATH','MD ARHAN','MD ARMAAN NAWAZ','MD MUBASHER','ABDUL AZEEM','SHINAF IBRAHIM','ANTHONY','TANISH SHANBOGH','MOHAN GOWDA','MOHAMMED SHARIQ','MD RAHIL','SK AZIZ','AMAN BAIG','HARSHAVARDHANA','MD RAYAAN','AARIZ RAZA','MEHHAROOF','PAYAM','PAIMAN','RISHAB','TALHA','RAHIL','ISMAIL','YADHUVAMSHIK','AFNAN','SHISHIR'],
-    'District Field Morning': ['Player A', 'Player B'],
-    'District Field Evening': ['Player X', 'Player Y']
-  };
-  
-  const pricingByBatch = {
-    'Kalyan Nagar': 2500,
-    "Xavier's School": 2000,
-    'Monti Angels': 1800,
-    'District Field Morning': 3000,
-    'District Field Evening': 3500
-  };
-
-  const coaches = ['Lexi', 'Nithin', 'Appu', 'Calvin', 'Ajay', 'Rayan', 'Syed'];
-  
-  // ==================== STATE ====================
-  let sessionAttendance = {};
-  let coachAttendance = {};
-  let currentSession = { coach: '', batch: '', date: '' };
-  let config = {
-    scriptUrl: '',
-    sheetId: '',
-    sheetName: 'Attendance'
-  };
-
-  // ==================== HELPER FUNCTIONS ====================
-  function debugLog(message, data = null) {
-    const debugDiv = document.getElementById('debug-console');
-    debugDiv.classList.remove('hidden');
-    const timestamp = new Date().toLocaleTimeString();
-    let logMessage = `<div style="border-bottom:1px solid #333; padding:4px 0;"><span style="color:#fbbf24;">[${timestamp}]</span> ${message}`;
-    if (data) {
-      logMessage += `<pre style="margin:4px 0 0 12px; color:#4ade80; font-size:10px;">${JSON.stringify(data, null, 2)}</pre>`;
-    }
-    logMessage += '</div>';
-    debugDiv.innerHTML += logMessage;
-    debugDiv.scrollTop = debugDiv.scrollHeight;
-    console.log(message, data);
-  }
-
-  function showToast(msg, type = 'success') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = `glass px-6 py-4 rounded-2xl shadow-xl font-bold text-white reveal pointer-events-auto border-l-4 ${type === 'success' ? 'border-green-500' : 'border-red-500'}`;
-    toast.innerHTML = `<span class="text-xs">${msg}</span>`;
-    container.appendChild(toast);
-    setTimeout(() => { 
-      toast.style.opacity = '0'; 
-      setTimeout(() => toast.remove(), 400); 
-    }, 4000);
-  }
-
-  async function callSheetsAPI(payload) {
-    if (!config.scriptUrl || !config.sheetId) {
-      showToast('Please configure settings first', 'error');
-      return null;
-    }
-    
-    debugLog('Sending to AppScript:', payload);
-    
-    try {
-      // Add cache buster
-      const url = config.scriptUrl + '?t=' + Date.now();
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      });
-      
-      const responseText = await response.text();
-      debugLog('Raw response:', responseText);
-      
-      // Try to parse JSON
-      try {
-        const jsonResponse = JSON.parse(responseText);
-        debugLog('Parsed response:', jsonResponse);
-        return jsonResponse;
-      } catch (e) {
-        debugLog('Response is not JSON:', responseText);
-        showToast('Server returned invalid response', 'error');
-        return { result: 'error', message: 'Invalid JSON response' };
-      }
-      
-    } catch (e) { 
-      debugLog('Fetch error:', e.message);
-      showToast('Network error: ' + e.message, 'error');
-      return null; 
-    }
-  }
-
-  // ==================== RENDER FUNCTIONS ====================
-  function renderGrid() {
-    const grid = document.getElementById('students-grid');
-    const students = studentsByBatch[currentSession.batch] || [];
-    
-    if (students.length === 0) {
-      grid.innerHTML = '<div class="col-span-3 text-center p-8 text-slate-500">No students in this batch</div>';
-      return;
-    }
-    
-    grid.innerHTML = students.map((name, i) => {
-      const isPresent = sessionAttendance[name] === 'present';
-      return `
-        <div onclick="window.toggle(${i})" class="p-4 rounded-xl border cursor-pointer glass transition-all flex items-center justify-between ${isPresent ? 'border-green-500/40 bg-green-500/5' : 'border-white/5 hover:border-white/20'}">
-          <p class="text-xs font-bold ${isPresent ? 'text-white' : 'text-slate-400'}">${name}</p>
-          <div class="w-8 h-4 rounded-full relative ${isPresent ? 'bg-green-500' : 'bg-slate-800'}">
-            <div class="absolute top-1 left-1 w-2 h-2 rounded-full bg-white transition-transform" style="transform: translateX(${isPresent ? '16px' : '0'})"></div>
-          </div>
-        </div>
-      `;
-    }).join('');
-    
-    updateStats();
-  }
-
-  function renderCoaches() {
-    const grid = document.getElementById('coaches-grid');
-    const date = document.getElementById('attendance-date').value;
-    document.getElementById('coach-date-display').textContent = `Date: ${date || 'Not selected'}`;
-    
-    grid.innerHTML = coaches.map((name) => {
-      const isPresent = coachAttendance[name] === 'present';
-      return `
-        <div onclick="window.toggleCoach('${name}')" class="p-4 rounded-xl border cursor-pointer glass transition-all flex items-center justify-between ${isPresent ? 'border-amber-500/40 bg-amber-500/5' : 'border-white/5 hover:border-white/20'}">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg coach-badge flex items-center justify-center text-black font-bold text-xs">${name.substring(0,2)}</div>
-            <p class="text-xs font-bold ${isPresent ? 'text-white' : 'text-slate-400'}">${name}</p>
-          </div>
-          <div class="w-8 h-4 rounded-full relative ${isPresent ? 'bg-amber-500' : 'bg-slate-800'}">
-            <div class="absolute top-1 left-1 w-2 h-2 rounded-full bg-white transition-transform" style="transform: translateX(${isPresent ? '16px' : '0'})"></div>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  function updateStats() {
-    const students = studentsByBatch[currentSession.batch] || [];
-    const stats = {
-      total: students.length,
-      present: Object.values(sessionAttendance).filter(v => v === 'present').length,
-      absent: Object.values(sessionAttendance).filter(v => v === 'absent').length
-    };
-    document.getElementById('total-students').textContent = stats.total;
-    document.getElementById('marked-present').textContent = stats.present;
-    document.getElementById('marked-absent').textContent = stats.absent;
-    document.getElementById('marked-count').textContent = stats.total ? Math.round(((stats.present + stats.absent) / stats.total) * 100) + '%' : '0%';
-  }
-
-  // ==================== WINDOW FUNCTIONS ====================
-  window.toggle = (idx) => {
-    const name = studentsByBatch[currentSession.batch][idx];
-    sessionAttendance[name] = sessionAttendance[name] === 'present' ? 'absent' : 'present';
-    renderGrid();
-  };
-
-  window.toggleCoach = (name) => {
-    coachAttendance[name] = coachAttendance[name] === 'present' ? 'absent' : 'present';
-    renderCoaches();
-  };
-
-  window.markAll = (status) => {
-    Object.keys(sessionAttendance).forEach(k => sessionAttendance[k] = status);
-    renderGrid();
-  };
-
-  window.markAllCoaches = (status) => {
-    coaches.forEach(name => coachAttendance[name] = status);
-    renderCoaches();
-  };
-
-  window.sendReminder = (name, amount) => {
-    const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date());
-    const msg = `*COFFEELAND FC - FEE REMINDER*%0A%0AHi! Friendly reminder that the fees for *${name}* for ${month} is *₹${amount}*.%0A%0APlease ignore if already paid. Thank you! ⚽`;
-    window.open(`https://wa.me/?text=${msg}`, '_blank');
-  };
-
-  // ==================== EVENT LISTENERS ====================
-  document.getElementById('btn-open-fees').onclick = () => {
-    const batch = document.getElementById('batch-name').value;
-    if (!batch) {
-        showToast('Please select a Group first!', 'error');
-        return;
-    }
-
-    const price = pricingByBatch[batch] || 0;
-    const students = studentsByBatch[batch] || [];
-    const container = document.getElementById('fees-list-container');
-    const section = document.getElementById('fee-tracker-section');
-
-    document.getElementById('fee-batch-label').textContent = `Group: ${batch} (₹${price}/month)`;
-    
-    container.innerHTML = students.map(name => `
-      <div class="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 hover:border-white/10 transition-all">
-        <div>
-          <p class="text-xs font-bold text-white">${name}</p>
-          <p class="text-[10px] text-amber-500 font-bold uppercase tracking-widest mt-0.5">₹${price}</p>
-        </div>
-        <button onclick="window.sendReminder('${name}', ${price})" class="px-4 py-2 rounded-xl bg-green-500/10 text-green-500 text-[9px] font-bold uppercase border border-green-500/20 hover:bg-green-500 hover:text-white transition-all">
-          Remind
-        </button>
-      </div>
-    `).join('');
-
-    section.classList.remove('hidden');
-    section.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  document.getElementById('btn-coach-attendance').onclick = () => {
-    const date = document.getElementById('attendance-date').value;
-    if (!date) {
-      showToast('Please select a date first!', 'error');
-      return;
-    }
-    
-    // Initialize all coaches as absent
-    coachAttendance = {};
-    coaches.forEach(name => coachAttendance[name] = 'absent');
-    
-    document.getElementById('coach-section').classList.remove('hidden');
-    renderCoaches();
-    document.getElementById('coach-section').scrollIntoView({ behavior: 'smooth' });
-  };
-
-  document.getElementById('btn-load').onclick = () => {
-    const coach = document.getElementById('coach-name').value;
-    const batch = document.getElementById('batch-name').value;
-    const date = document.getElementById('attendance-date').value;
-    
-    if (!coach || !batch || !date) {
-      showToast('Please fill all fields', 'error');
-      return;
-    }
-    
-    currentSession = { coach, batch, date };
-    sessionAttendance = {};
-    
-    const students = studentsByBatch[batch] || [];
-    students.forEach(name => sessionAttendance[name] = 'absent');
-    
-    document.getElementById('students-section').classList.remove('hidden');
-    renderGrid();
-    document.getElementById('students-section').scrollIntoView({ behavior: 'smooth' });
-  };
-
-  document.getElementById('btn-save').onclick = async () => {
-    const btn = document.getElementById('btn-save');
-    
-    if (!config.scriptUrl || !config.sheetId) {
-      showToast('Please configure settings first', 'error');
-      return;
-    }
-    
-    btn.disabled = true; 
-    btn.textContent = 'Saving...';
-    
-    // Format for Attendance sheet (6 columns)
-    const records = Object.entries(sessionAttendance).map(([name, status]) => ({
-      timestamp: new Date().toLocaleString(), 
-      date: currentSession.date, 
-      coach: currentSession.coach, 
-      batch: currentSession.batch, 
-      student_name: name, 
-      status: status
-    }));
-    
-    debugLog('Saving student attendance:', records);
-    
-    const res = await callSheetsAPI({ 
-      action: 'append', 
-      spreadsheetId: config.sheetId, 
-      sheetName: config.sheetName, 
-      data: records 
-    });
-    
-    btn.disabled = false; 
-    btn.textContent = 'Save Attendance';
-    
-    if (res && res.result === 'success') { 
-      showToast(`✅ Saved ${records.length} attendance records!`); 
-      document.getElementById('students-section').classList.add('hidden'); 
-      
-      // Clear the attendance
-      sessionAttendance = {};
-      
-      // Refresh records display
-      refreshRecords(); 
-    } else { 
-      showToast('❌ Error saving: ' + (res?.message || 'Unknown error'), 'error'); 
-    }
-  };
-
-  document.getElementById('btn-save-coach').onclick = async () => {
-    const btn = document.getElementById('btn-save-coach');
-    const date = document.getElementById('attendance-date').value;
-    
-    if (!date) {
-      showToast('Please select a date', 'error');
-      return;
-    }
-    
-    if (!config.scriptUrl || !config.sheetId) {
-      showToast('Please configure settings first', 'error');
-      return;
-    }
-    
-    btn.disabled = true; 
-    btn.textContent = 'Saving...';
-    
-    // Format for Coach_Attendance sheet (5 columns)
-    // IMPORTANT: No student_name field here!
-    const records = Object.entries(coachAttendance).map(([name, status]) => ({
-      timestamp: new Date().toLocaleString(),
-      date: date,
-      batch: 'COACHES/STAFF',        // This goes to "Batch Name" column
-      coach: name,                    // This goes to "Coach Name" column
-      status: status                  // This goes to "Status" column
-    }));
-    
-    debugLog('Saving coach attendance (5 columns):', records);
-    
-    const res = await callSheetsAPI({ 
-      action: 'append', 
-      spreadsheetId: config.sheetId, 
-      sheetName: 'Coach_Attendance',  // Use exact sheet name
-      data: records 
-    });
-    
-    btn.disabled = false; 
-    btn.textContent = 'Save Coach Attendance';
-    
-    if (res && res.result === 'success') { 
-      showToast(`✅ Saved ${records.length} coach attendance records!`); 
-      document.getElementById('coach-section').classList.add('hidden');
-      
-      // Clear coach attendance
-      coachAttendance = {};
-      
-      // Refresh records display
-      refreshRecords();
-    } else { 
-      showToast('❌ Error saving: ' + (res?.message || 'Unknown error'), 'error'); 
-    }
-  };
-
-  document.getElementById('save-config').onclick = () => {
-    const scriptUrl = document.getElementById('script-url').value.trim();
-    const sheetId = document.getElementById('sheet-id').value.trim();
-    const sheetName = document.getElementById('sheet-name').value.trim();
-    
-    if (!scriptUrl || !sheetId || !sheetName) {
-      showToast('Please fill all fields', 'error');
-      return;
-    }
-    
-    config.scriptUrl = scriptUrl;
-    config.sheetId = sheetId;
-    config.sheetName = sheetName;
-    
-    document.getElementById('sheets-config').classList.add('hidden');
-    showToast('✅ Settings saved');
-    
-    // Test the connection
-    testConnection();
-  };
-  
-  async function testConnection() {
-    const res = await callSheetsAPI({ 
-      action: 'test', 
-      spreadsheetId: config.sheetId 
-    });
-    
-    if (res && res.result === 'success') {
-      showToast('✅ Connected to Google Sheets!');
-      refreshRecords();
-    } else {
-      showToast('⚠️ Settings saved but connection test failed', 'error');
-    }
-  }
-
-  document.getElementById('toggle-config').onclick = () => {
-    document.getElementById('sheets-config').classList.toggle('hidden');
-  };
-  
-  document.getElementById('btn-cancel').onclick = () => { 
-    document.getElementById('students-section').classList.add('hidden'); 
-    window.scrollTo({ top: 0, behavior: 'smooth' }); 
-  };
-  
-  document.getElementById('btn-cancel-coach').onclick = () => { 
-    document.getElementById('coach-section').classList.add('hidden'); 
-  };
-
-  async function refreshRecords() {
-    if (!config.scriptUrl || !config.sheetId) return;
-    
-    const list = document.getElementById('attendance-list');
-    list.innerHTML = '<div class="p-10 text-center text-slate-500 text-[10px] font-bold animate-pulse">LOADING...</div>';
-    
-    const res = await callSheetsAPI({ 
-      action: 'read', 
-      spreadsheetId: config.sheetId, 
-      sheetName: config.sheetName, 
-      limit: 10 
-    });
-    
-    if (res && res.records && res.records.length > 0) {
-      list.innerHTML = res.records.map(r => `
-        <div class="flex items-center justify-between px-6 py-4 hover:bg-white/5 transition-all">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-[8px] font-black text-slate-600 border border-white/5">${r.student_name ? r.student_name.substring(0,2).toUpperCase() : 'NA'}</div>
-            <div>
-              <p class="text-xs font-bold text-white">${r.student_name || 'Unknown'}</p>
-              <p class="text-[8px] text-slate-500 font-bold uppercase">${r.batch || 'No batch'} • ${r.date || ''}</p>
-            </div>
-          </div>
-          <div class="px-3 py-1 rounded-md text-[8px] font-bold uppercase ${r.status === 'present' ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'}">${r.status || 'unknown'}</div>
-        </div>
-      `).join('');
-    } else {
-      list.innerHTML = '<div class="p-10 text-center text-slate-600 text-xs">No records found. Start by saving attendance!</div>';
-    }
-  }
-
-  // Initialize
-  document.getElementById('attendance-date').valueAsDate = new Date();
-  
-  // Load saved config from localStorage if available
-  try {
-    const savedConfig = localStorage.getItem('coffeeland_config');
-    if (savedConfig) {
-      const parsed = JSON.parse(savedConfig);
-      config = { ...config, ...parsed };
-      document.getElementById('script-url').value = config.scriptUrl;
-      document.getElementById('sheet-id').value = config.sheetId;
-      document.getElementById('sheet-name').value = config.sheetName;
-    }
-  } catch (e) {
-    console.log('No saved config');
-  }
-  
-  // Save config to localStorage when changed
-  document.getElementById('save-config').onclick = () => {
-    const scriptUrl = document.getElementById('script-url').value.trim();
-    const sheetId = document.getElementById('sheet-id').value.trim();
-    const sheetName = document.getElementById('sheet-name').value.trim();
-    
-    if (!scriptUrl || !sheetId || !sheetName) {
-      showToast('Please fill all fields', 'error');
-      return;
-    }
-    
-    config.scriptUrl = scriptUrl;
-    config.sheetId = sheetId;
-    config.sheetName = sheetName;
-    
-    // Save to localStorage
-    localStorage.setItem('coffeeland_config', JSON.stringify(config));
-    
-    document.getElementById('sheets-config').classList.add('hidden');
-    showToast('✅ Settings saved');
-    
-    // Test the connection
-    testConnection();
-  };
-})();
-</script>
+        // Updated Coaches List
+        const COACHES = ['Lexi', 'Nithin', 'Ajey', 'Rayan', 'Calvin', 'Rajesh'];
+        
+        // Students by Batch
+        const STUDENTS_BY_BATCH = {
+            'Morning Batch': ['Player A', 'Player B', 'Player C', 'Player D', 'Player E'],
+            'Evening Batch': ['Player X', 'Player Y', 'Player Z', 'Player W', 'Player V'],
+            'Kalyan Nagar': [
+                'MOHITH.S', 'Rishanth R Shekar', 'Gahan', 'RUTVIK', 'Sohan R Prasad',
+                'Gagan gowda.B.M', 'Mohith T', 'Gokul', 'THEJAS KN', 'CHIRANTH BK',
+                'Shrinik U Y', 'HIMAVANTH CJ', 'Ganav r', 'SHAMAN GOWDA N N',
+                'SHRIMAN GOWDA N N', 'Dhanvith p Gowda', 'Dhanyatha p', 'Swayam',
+                'Samanvith Rao D M', 'Sai pranav', 'Dishanth HL', 'Manvith.S',
+                'RAJATH .S', 'Nishanth S. V', 'Hoysala M Hrushikesh'
+            ],
+            'Xavier\'s School': [
+                'AIMA', 'PREETHAM HM', 'SAMBRAMA.S', 'DHANVISH', 'VISMITHA',
+                'YASHWANTH BJ', 'ULLAS', 'JASHITH C', 'SAMARTH', 'SARVAJITH',
+                'THANUSH', 'PUNITH', 'PAVAN', 'BHUVAN S', 'CHIRANTH', 'AARIZ',
+                'RIVON', 'DEEKSHA', 'PRAJWAL', 'ANHAR', 'UMAIR', 'AVINASH',
+                'LIKITH', 'SOHAN', 'KRUTHIK', 'SAAMAR', 'LIKITHA', 'IBRAHIM',
+                'MALCUM', 'SAMARTH B', 'VINISH', 'SHAUN D', 'GOKUL', 'CHIRANJITH M',
+                'HUSNA', 'ASJAD', 'IMPAN'
+            ],
+            'Monti Angels': [
+                'MD IFAZ', 'AAHIL', 'MD RAAFI', 'MD AAZZ', 'UMAR', 'UNAIZ',
+                'AFFAN', 'RISHAN', 'MD ARHAAN', 'MD YUSUF ARMAN', 'KSHAMAN U.G',
+                'RISHIK PONNAPPA', 'IRSHAD BAIG', 'MD HAMZA', 'SK SAMDHANI',
+                'MD SHAYAN', 'MD UMAR', 'NOUFAL U.S', 'MD RIFAHATH', 'MD ARHAN',
+                'MD ARMAAN NAWAZ', 'MD MUBASHER', 'ABDUL AZEEM', 'SHINAF IBRAHIM',
+                'ANTHONY', 'TANISH SHANBOGH', 'MOHAN GOWDA', 'MOHAMMED SHARIQ',
+                'MD RAHIL', 'SK AZIZ', 'AMAN BAIG', 'HARSHAVARDHANA', 'MD RAYAAN',
+                'AARIZ RAZA', 'MEHHAROOF', 'PAYAM', 'PAIMAN', 'RISHAB', 'TALHA',
+                'RAHIL', 'ISMAIL', 'YADHUVAMSHIK', 'AFNAN', 'SHISHIR'
+            ],
+            'District Field Morning': ['Player A', 'Player B'],
+            'District Field Evening': ['Player X', 'Player Y']
+        };
+        
+        // State
+        let coachStatus = {};
+        let studentStatus = {};
+        let currentBatch = '';
+        
+        // Initialize
+        function initDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const formattedDate = `${yyyy}-${mm}-${dd}`;
+            
+            document.getElementById('attendanceDate').value = formattedDate;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const displayDate = today.toLocaleDateString('en-US', options);
+            document.querySelector('#dateChip span:last-child').textContent = displayDate;
+        }
+        
+        // Load coaches with premium styling
+        function loadCoaches() {
+            const coachList = document.getElementById('coachList');
+            coachList.innerHTML = '';
+            
+            COACHES.forEach((coach, index) => {
+                if (!coachStatus[coach]) {
+                    coachStatus[coach] = null;
+                }
+                
+                const item = document.createElement('div');
+                item.className = `premium-item ${coachStatus[coach] ? 'selected' : ''}`;
+                
+                const initials = coach.substring(0, 2).toUpperCase();
+                
+                item.innerHTML = `
+                    <div class="premium-checkbox ${coachStatus[coach] === 'P' ? 'checked' : ''}" onclick="toggleCoachStatus('${coach}')"></div>
+                    <div class="item-avatar">${initials}</div>
+                    <div class="item-info">
+                        <div class="item-name">${coach}</div>
+                        <div class="item-role">
+                            <span>⚡ Head Coach</span>
+                            <span>•</span>
+                            <span>${coachStatus[coach] === 'P' ? 'Present' : coachStatus[coach] === 'A' ? 'Absent' : 'Not marked'}</span>
+                        </div>
+                    </div>
+                    <div class="status-toggle">
+                        <button class="status-btn present ${coachStatus[coach] === 'P' ? 'present' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach}', 'P')">P</button>
+                        <button class="status-btn absent ${coachStatus[coach] === 'A' ? 'absent' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach}', 'A')">A</button>
+                    </div>
+                `;
+                
+                coachList.appendChild(item);
+            });
+            
+            updateStats();
+        }
+        
+        // Load students
+        function loadBatchStudents() {
+            const batch = document.getElementById('batchSelect').value;
+            currentBatch = batch;
+            
+            const studentList = document.getElementById('studentList');
+            studentList.innerHTML = '';
+            
+            if (!batch || !STUDENTS_BY_BATCH[batch]) {
+                studentList.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">✨ Select a batch to view players</div>';
+                studentStatus = {};
+                updateStats();
+                return;
+            }
+            
+            const students = STUDENTS_BY_BATCH[batch];
+            
+            students.forEach(student => {
+                if (!studentStatus[student]) {
+                    studentStatus[student] = null;
+                }
+                
+                const item = document.createElement('div');
+                item.className = `premium-item ${studentStatus[student] ? 'selected' : ''}`;
+                
+                const initials = student.substring(0, 2).toUpperCase();
+                
+                item.innerHTML = `
+                    <div class="premium-checkbox ${studentStatus[student] === 'P' ? 'checked' : ''}" onclick="toggleStudentStatus('${student.replace(/'/g, "\\'")}')"></div>
+                    <div class="item-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">${initials}</div>
+                    <div class="item-info">
+                        <div class="item-name">${student}</div>
+                        <div class="item-role">
+                            <span>⚽ Player</span>
+                            <span>•</span>
+                            <span>${studentStatus[student] === 'P' ? 'Present' : studentStatus[student] === 'A' ? 'Absent' : 'Not marked'}</span>
+                        </div>
+                    </div>
+                    <div class="status-toggle">
+                        <button class="status-btn present ${studentStatus[student] === 'P' ? 'present' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.replace(/'/g, "\\'")}', 'P')">P</button>
+                        <button class="status-btn absent ${studentStatus[student] === 'A' ? 'absent' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.replace(/'/g, "\\'")}', 'A')">A</button>
+                    </div>
+                `;
+                
+                studentList.appendChild(item);
+            });
+            
+            updateStats();
+        }
+        
+        // Status management functions
+        function toggleCoachStatus(coach) {
+            if (coachStatus[coach] === 'P') {
+                coachStatus[coach] = null;
+            } else {
+                coachStatus[coach] = 'P';
+            }
+            loadCoaches();
+        }
+        
+        function toggleStudentStatus(student) {
+            if (studentStatus[student] === 'P') {
+                studentStatus[student] = null;
+            } else {
+                studentStatus[student] = 'P';
+            }
+            loadBatchStudents();
+        }
+        
+        function setCoachStatus(coach, status) {
+            if (coachStatus[coach] === status) {
+                coachStatus[coach] = null;
+            } else {
+                coachStatus[coach] = status;
+            }
+            loadCoaches();
+        }
+        
+        function setStudentStatus(student, status) {
+            if (studentStatus[student] === status) {
+                studentStatus[student] = null;
+            } else {
+                studentStatus[student] = status;
+            }
+            loadBatchStudents();
+        }
+        
+        function selectAllCoaches(status) {
+            COACHES.forEach(coach => {
+                coachStatus[coach] = status;
+            });
+            loadCoaches();
+        }
+        
+        function selectAllStudents(status) {
+            const students = STUDENTS_BY_BATCH[currentBatch] || [];
+            students.forEach(student => {
+                studentStatus[student] = status;
+            });
+            loadBatchStudents();
+        }
+        
+        function clearAllCoaches() {
+            COACHES.forEach(coach => {
+                coachStatus[coach] = null;
+            });
+            loadCoaches();
+        }
+        
+        function clearAllStudents() {
+            const students = STUDENTS_BY_BATCH[currentBatch] || [];
+            students.forEach(student => {
+                studentStatus[student] = null;
+            });
+            loadBatchStudents();
+        }
+        
+        function resetAll() {
+            coachStatus = {};
+            studentStatus = {};
+            currentBatch = '';
+            document.getElementById('batchSelect').value = '';
+            initDate();
+            loadCoaches();
+            loadBatchStudents();
+        }
+        
+        // Update stats with trends
+        function updateStats() {
+            const coachSelected = Object.values(coachStatus).filter(s => s !== null).length;
+            const studentSelected = Object.values(studentStatus).filter(s => s !== null).length;
+            const presentCount = [...Object.values(coachStatus), ...Object.values(studentStatus)].filter(s => s === 'P').length;
+            const absentCount = [...Object.values(coachStatus), ...Object.values(studentStatus)].filter(s => s === 'A').length;
+            const totalSelected = coachSelected + studentSelected;
+            const attendanceRate = totalSelected > 0 ? Math.round((presentCount / totalSelected) * 100) : 0;
+            
+            document.getElementById('coachBadge').textContent = coachSelected;
+            document.getElementById('studentBadge').textContent = studentSelected;
+            document.getElementById('totalSelected').textContent = totalSelected;
+            document.getElementById('totalPresent').textContent = presentCount;
+            document.getElementById('totalAbsent').textContent = absentCount;
+            document.getElementById('attendanceRate').textContent = attendanceRate + '%';
+            
+            // Update trends
+            document.getElementById('totalSelectedTrend').textContent = `${coachSelected} coaches, ${studentSelected} players`;
+            document.getElementById('presentTrend').textContent = `${presentCount} attending`;
+            document.getElementById('absentTrend').textContent = `${absentCount} absent`;
+            document.getElementById('rateTrend').textContent = attendanceRate > 75 ? '✨ Excellent' : attendanceRate > 50 ? '📈 Good' : '📉 Needs improvement';
+        }
+        
+        // Toast notification
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">${type === 'success' ? '✅' : '❌'}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+        
+        // Submit attendance
+        async function submitAttendance() {
+            const date = document.getElementById('attendanceDate').value;
+            const batch = document.getElementById('batchSelect').value;
+            
+            if (!date) {
+                showToast('Error', 'Please select a date', 'error');
+                return;
+            }
+            
+            if (!batch) {
+                showToast('Error', 'Please select a batch', 'error');
+                return;
+            }
+            
+            const records = [];
+            
+            for (const [name, status] of Object.entries(coachStatus)) {
+                if (status) {
+                    records.push({ type: 'coach', name, status });
+                }
+            }
+            
+            for (const [name, status] of Object.entries(studentStatus)) {
+                if (status) {
+                    records.push({ type: 'student', name, status });
+                }
+            }
+            
+            if (records.length === 0) {
+                showToast('Error', 'No attendance records to save', 'error');
+                return;
+            }
+            
+            document.getElementById('loadingOverlay').classList.add('show');
+            
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sheetId: SHEET_ID,
+                        date: date,
+                        batchName: batch,
+                        records: records
+                    })
+                });
+                
+                showToast('Success', `Saved ${records.length} attendance records`, 'success');
+                
+                // Optional: Clear after save
+                // resetAll();
+                
+            } catch (error) {
+                showToast('Error', 'Failed to save attendance', 'error');
+            } finally {
+                document.getElementById('loadingOverlay').classList.remove('show');
+            }
+        }
+        
+        // Initialize on load
+        window.onload = function() {
+            initDate();
+            loadCoaches();
+        };
+    </script>
 </body>
 </html>
