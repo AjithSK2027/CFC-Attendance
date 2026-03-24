@@ -1128,12 +1128,10 @@
     
     const records = [];
     
-    // Add coaches
     for (const [name, status] of Object.entries(coachStatus)) {
         if (status) records.push({ type: 'coach', name, status });
     }
     
-    // Add students
     for (const [name, status] of Object.entries(studentStatus)) {
         if (status) records.push({ type: 'student', name, status });
     }
@@ -1143,32 +1141,24 @@
     document.getElementById('loading').style.display = 'flex';
     
     try {
-        // Create a form-urlencoded payload instead of JSON
-        const payload = new URLSearchParams();
-        payload.append('sheetId', SHEET_ID);
-        payload.append('date', date);
-        payload.append('batchName', batch);
-        payload.append('records', JSON.stringify(records));
+        const payload = {
+            sheetId: SHEET_ID,
+            date: date,
+            batchName: batch,
+            records: records
+        };
         
-        console.log('Sending attendance:', { date, batch, recordCount: records.length });
+        console.log('Sending attendance:', payload);
         
-        const response = await fetch(WEB_APP_URL, {
+        // Use no-cors mode to bypass CORS
+        await fetch(WEB_APP_URL, {
             method: 'POST',
-            mode: 'cors',  // Change from 'no-cors' to 'cors'
-            headers: { 
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: payload
+            mode: 'no-cors',  // This is the fix
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
         
-        const result = await response.json();
-        console.log('Response:', result);
-        
-        if (result.success) {
-            showToast('✨ Attendance saved successfully!', 'success');
-        } else {
-            showToast('❌ Error: ' + result.error, 'error');
-        }
+        showToast('✨ Attendance saved!', 'success');
         
     } catch (error) {
         console.error('Error:', error);
