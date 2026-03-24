@@ -304,19 +304,6 @@
             border-color: rgba(255, 215, 0, 0.1);
         }
 
-        .list-item.selected {
-            background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
-            border-left: 3px solid #FFD700;
-        }
-
-        .list-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 14px;
-            accent-color: #FFD700;
-            cursor: pointer;
-        }
-
         .avatar {
             width: 40px;
             height: 40px;
@@ -376,20 +363,34 @@
         }
 
         .small-btn {
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 215, 0, 0.15);
+            padding: 6px 12px;
             border-radius: 30px;
-            color: #94A3B8;
+            border: none;
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .small-btn:hover {
-            border-color: #FFD700;
-            color: #FFD700;
+        .present-btn {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .present-btn.active {
+            background: #10b981;
+            color: white;
+        }
+
+        .absent-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .absent-btn.active {
+            background: #ef4444;
+            color: white;
         }
 
         .summary-card {
@@ -599,7 +600,8 @@
                 </div>
                 <select id="batchSelect" onchange="loadStudents()">
                     <option value="">Choose a batch...</option>
-                    <option value="Kalyan Nagar">📍 Kalyan Nagar</option>
+                    <option value="Kalyan Nagar Morning">🌅 Kalyan Nagar Morning</option>
+                    <option value="Kalyan Nagar Evening">🌙 Kalyan Nagar Evening</option>
                     <option value="Xavier's School">🏫 Xavier's School</option>
                     <option value="Monti Angels">😇 Monti Angels</option>
                     <option value="District Field Morning">⚽ District Field Morning</option>
@@ -686,7 +688,8 @@
             <h3>➕ Add New Student</h3>
             <input type="text" id="newStudentName" placeholder="Student Full Name *">
             <select id="newStudentBatch">
-                <option value="Kalyan Nagar">Kalyan Nagar</option>
+                <option value="Kalyan Nagar Morning">Kalyan Nagar Morning</option>
+                <option value="Kalyan Nagar Evening">Kalyan Nagar Evening</option>
                 <option value="Xavier's School">Xavier's School</option>
                 <option value="Monti Angels">Monti Angels</option>
                 <option value="District Field Morning">District Field Morning</option>
@@ -734,7 +737,7 @@
         const ATTENDANCE_SHEET_ID = '1EhkGO3omreFx_cbIWM9ZMQbTtWkTT2tm4ePgN-Ii8GQ';
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzkeqXrcOYuJ6a5foJbnmAp33c-qq0s05O1krTKCjRQOy6kGcFXDDYZHIaXkMkWDyMh/exec';
 
-        // Coaches (will be loaded from sheet)
+        // Coaches
         let COACHES = ['Lexi', 'Nithin', 'Ajey', 'Rayan', 'Calvin', 'Rajesh'];
 
         // State
@@ -762,7 +765,7 @@
             document.querySelector('#currentDateDisplay span:last-child').textContent = today.toLocaleDateString('en-US', options);
         }
 
-        // Load coaches from Master Sheet
+        // Load coaches
         async function loadCoaches() {
             try {
                 const params = new URLSearchParams({ action: 'getCoaches', sheetId: MASTER_SHEET_ID });
@@ -792,7 +795,10 @@
                 const initials = coach.substring(0, 2);
                 
                 div.innerHTML = `
-                    <input type="checkbox" ${coachStatus[coach] === 'P' ? 'checked' : ''} onchange="toggleCoach('${coach.replace(/'/g, "\\'")}', this.checked ? 'P' : null)">
+                    <div style="display: flex; gap: 8px; margin-right: 12px;">
+                        <button class="small-btn present-btn ${coachStatus[coach] === 'P' ? 'active' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach.replace(/'/g, "\\'")}', 'P')">P</button>
+                        <button class="small-btn absent-btn ${coachStatus[coach] === 'A' ? 'active' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach.replace(/'/g, "\\'")}', 'A')">A</button>
+                    </div>
                     <div class="avatar">${initials}</div>
                     <div class="info">
                         <div class="name">${coach}</div>
@@ -803,6 +809,11 @@
                 coachList.appendChild(div);
             });
             updateSummary();
+        }
+
+        function setCoachStatus(coach, status) {
+            coachStatus[coach] = status;
+            renderCoaches();
         }
 
         // Load students from Master Sheet
@@ -848,30 +859,29 @@
             
             allStudents.forEach(student => {
                 const div = document.createElement('div');
-                div.className = `list-item ${studentStatus[student.name] ? 'selected' : ''}`;
+                div.className = 'list-item';
                 const initials = student.name.substring(0, 2);
+                const status = studentStatus[student.name];
                 
                 div.innerHTML = `
-                    <input type="checkbox" ${studentStatus[student.name] === 'P' ? 'checked' : ''} onchange="toggleStudent('${student.name.replace(/'/g, "\\'")}', this.checked ? 'P' : null)">
+                    <div style="display: flex; gap: 8px; margin-right: 12px;">
+                        <button class="small-btn present-btn ${status === 'P' ? 'active' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.name.replace(/'/g, "\\'")}', 'P')">P</button>
+                        <button class="small-btn absent-btn ${status === 'A' ? 'active' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.name.replace(/'/g, "\\'")}', 'A')">A</button>
+                    </div>
                     <div class="avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">${initials}</div>
                     <div class="info">
                         <div class="name">${student.name}</div>
                         <div class="role">Player • Fees: ₹${student.fees}</div>
                     </div>
-                    ${studentStatus[student.name] ? `<span class="status-badge status-${studentStatus[student.name]}">${studentStatus[student.name] === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
+                    ${status ? `<span class="status-badge status-${status}">${status === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
                     <button class="small-btn" style="margin-left: auto; background: rgba(239,68,68,0.15); color:#ef4444;" onclick="event.stopPropagation(); showInactiveModal('${student.name.replace(/'/g, "\\'")}')">📝 Inactive</button>
                 `;
                 studentList.appendChild(div);
             });
         }
 
-        function toggleCoach(coach, status) {
-            coachStatus[coach] = status;
-            renderCoaches();
-        }
-
-        function toggleStudent(student, status) {
-            studentStatus[student] = status;
+        function setStudentStatus(studentName, status) {
+            studentStatus[studentName] = status;
             renderStudentList();
             updateSummary();
         }
@@ -926,7 +936,7 @@
             document.getElementById('totalCoaches').textContent = coachSelected;
         }
 
-        // Load inactive list from Master Sheet
+        // Load inactive list
         async function loadInactiveList() {
             try {
                 const params = new URLSearchParams({ action: 'getInactiveList', sheetId: MASTER_SHEET_ID });
@@ -1111,7 +1121,7 @@
             }
         }
 
-        // Submit Attendance - Saves to Attendance Log Sheet
+        // Submit Attendance
         async function submitAttendance() {
             const date = document.getElementById('attendanceDate').value;
             const batch = document.getElementById('batchSelect').value;
