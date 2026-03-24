@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* All styles remain the same as previous version */
         * {
             margin: 0;
             padding: 0;
@@ -64,7 +65,6 @@
             z-index: 1;
         }
 
-        /* Header */
         .header {
             background: rgba(20, 20, 30, 0.7);
             backdrop-filter: blur(20px);
@@ -167,11 +167,16 @@
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
+        .action-btn.danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
         .action-btn:hover {
             transform: translateY(-2px);
         }
 
-        /* Controls */
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -216,7 +221,6 @@
             border-color: #FFD700;
         }
 
-        /* Main Grid */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -306,12 +310,6 @@
             border-left: 3px solid #FFD700;
         }
 
-        .list-item.inactive {
-            opacity: 0.5;
-            background: rgba(255, 0, 0, 0.05);
-            border-left: 3px solid #ef4444;
-        }
-
         .list-item input[type="checkbox"] {
             width: 20px;
             height: 20px;
@@ -369,15 +367,6 @@
             border: 1px solid rgba(255, 70, 70, 0.2);
         }
 
-        .inactive-badge {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 20px;
-            margin-left: 8px;
-        }
-
         .action-bar {
             padding: 14px 20px;
             background: rgba(0, 0, 0, 0.2);
@@ -404,7 +393,6 @@
             color: #FFD700;
         }
 
-        /* Summary Card */
         .summary-card {
             background: rgba(20, 20, 30, 0.7);
             backdrop-filter: blur(10px);
@@ -435,7 +423,6 @@
             text-transform: uppercase;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -458,7 +445,7 @@
             border-radius: 28px;
             padding: 32px;
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
         }
 
         .modal-content h3 {
@@ -520,9 +507,28 @@
             color: #FFD700;
         }
 
+        .inactive-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,215,0,0.1);
+        }
+
+        .inactive-name {
+            color: white;
+            font-weight: 500;
+        }
+
+        .inactive-batch {
+            color: #94A3B8;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
         .helper-text {
             color: #94A3B8;
-            font-size: 11px;
+            font-size: 12px;
             margin-top: -10px;
             margin-bottom: 12px;
         }
@@ -555,7 +561,6 @@
     <div class="orb orb-2"></div>
 
     <div class="container">
-        <!-- Header with Add Student Button -->
         <div class="header">
             <div class="logo-section">
                 <div class="logo">
@@ -574,10 +579,12 @@
                 <button class="action-btn success" onclick="showAddStudentModal()">
                     <span>➕</span> Add Student
                 </button>
+                <button class="action-btn danger" onclick="showInactiveListModal()">
+                    <span>📋</span> Inactive List
+                </button>
             </div>
         </div>
 
-        <!-- Controls -->
         <div class="controls">
             <div class="control-card">
                 <div class="control-label">
@@ -591,10 +598,8 @@
                     <span>🏃</span>
                     <span>Select Batch</span>
                 </div>
-                <select id="batchSelect" onchange="loadBatchStudents()">
+                <select id="batchSelect" onchange="loadStudents()">
                     <option value="">Choose a batch...</option>
-                    <option value="Morning Batch">🌅 Morning Batch</option>
-                    <option value="Evening Batch">🌆 Evening Batch</option>
                     <option value="Kalyan Nagar">📍 Kalyan Nagar</option>
                     <option value="Xavier's School">🏫 Xavier's School</option>
                     <option value="Monti Angels">😇 Monti Angels</option>
@@ -604,9 +609,7 @@
             </div>
         </div>
 
-        <!-- Main Grid -->
         <div class="main-grid">
-            <!-- Coaches Section -->
             <div class="section">
                 <div class="section-header">
                     <div class="section-title">
@@ -623,7 +626,6 @@
                 </div>
             </div>
 
-            <!-- Students Section -->
             <div class="section">
                 <div class="section-header">
                     <div class="section-title">
@@ -632,7 +634,9 @@
                     </div>
                     <span class="section-badge" id="studentCount">0</span>
                 </div>
-                <div class="list-container" id="studentList"></div>
+                <div class="list-container" id="studentList">
+                    <div style="padding: 40px; text-align: center; color: #666;">✨ Select a batch to view players</div>
+                </div>
                 <div class="action-bar">
                     <button class="small-btn" onclick="selectAllStudents('P')">✅ All Present</button>
                     <button class="small-btn" onclick="selectAllStudents('A')">❌ All Absent</button>
@@ -641,7 +645,6 @@
             </div>
         </div>
 
-        <!-- Summary Card -->
         <div class="summary-card">
             <div class="stat">
                 <div class="stat-value" id="totalSelected">0</div>
@@ -661,7 +664,6 @@
             </div>
         </div>
 
-        <!-- Action Buttons -->
         <div style="display: flex; gap: 16px;">
             <button class="action-btn primary" onclick="submitAttendance()" style="flex: 2;">
                 <span>💾</span> Save Attendance
@@ -683,18 +685,18 @@
     <div id="addStudentModal" class="modal">
         <div class="modal-content">
             <h3>➕ Add New Student</h3>
-            <input type="text" id="newStudentName" placeholder="Student Full Name">
+            <input type="text" id="newStudentName" placeholder="Student Full Name *">
             <select id="newStudentBatch">
-                <option value="Morning Batch">🌅 Morning Batch</option>
-                <option value="Evening Batch">🌆 Evening Batch</option>
-                <option value="Kalyan Nagar">📍 Kalyan Nagar</option>
-                <option value="Xavier's School">🏫 Xavier's School</option>
-                <option value="Monti Angels">😇 Monti Angels</option>
-                <option value="District Field Morning">⚽ District Field Morning</option>
-                <option value="District Field Evening">⭐ District Field Evening</option>
+                <option value="Kalyan Nagar">Kalyan Nagar</option>
+                <option value="Xavier's School">Xavier's School</option>
+                <option value="Monti Angels">Monti Angels</option>
+                <option value="District Field Morning">District Field Morning</option>
+                <option value="District Field Evening">District Field Evening</option>
             </select>
-            <input type="text" id="newStudentWhatsapp" placeholder="WhatsApp Number (optional)">
-            <div class="helper-text">Add now or add later in Fees Management</div>
+            <input type="number" id="newStudentFees" placeholder="Fees Amount *">
+            <input type="text" id="newStudentParent" placeholder="Parent Name (optional)">
+            <input type="text" id="newStudentContact" placeholder="Contact Number (optional)">
+            <div class="helper-text">Student will be added with Status = Active</div>
             <div class="modal-buttons">
                 <button class="action-btn primary" onclick="addNewStudent()">Add Student</button>
                 <button class="action-btn secondary" onclick="closeAddStudentModal()">Cancel</button>
@@ -706,7 +708,7 @@
     <div id="inactiveModal" class="modal">
         <div class="modal-content">
             <h3>⚠️ Mark Student Inactive</h3>
-            <p style="color: #94A3B8; margin-bottom: 20px;">This student will no longer appear in attendance lists.</p>
+            <p style="color: #94A3B8; margin-bottom: 16px;">This student will no longer appear in attendance lists.</p>
             <input type="text" id="inactiveStudentName" readonly style="background: rgba(0,0,0,0.5);">
             <div class="modal-buttons">
                 <button class="action-btn" style="background:#ef4444; color:white;" onclick="confirmInactive()">Mark Inactive</button>
@@ -715,64 +717,39 @@
         </div>
     </div>
 
+    <!-- Inactive List Modal -->
+    <div id="inactiveListModal" class="modal">
+        <div class="modal-content">
+            <h3>📋 Inactive Students</h3>
+            <p style="color: #94A3B8; margin-bottom: 16px;">Click reactivate to bring students back.</p>
+            <div id="inactiveListContainer" style="max-height: 400px; overflow-y: auto;"></div>
+            <div class="modal-buttons">
+                <button class="action-btn secondary" onclick="closeInactiveListModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Configuration
-        const SHEET_ID = '1EhkGO3omreFx_cbIWM9ZMQbTtWkTT2tm4ePgN-Ii8GQ';
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbypXr25QqsLa_IFhWRcGygqglmom8NPbMxk5HBIFSur3rYf0X-ygLo0hpzXhjyp-PJT/exec';
+        const SHEET_ID = '1qHo2fZZOvFHMENqMK1vlWR0uFhFxnXwXDn325dGDzDY';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzFo-31C7uvwLFUQsyWxNVPilNcPenaiMNYbeultexPkR3MyykT64KwqJ_c3pzgshb7/exec';
 
-        // Coaches List
-        const COACHES = ['Lexi', 'Nithin', 'Ajey', 'Rayan', 'Calvin', 'Rajesh'];
-
-        // Student data with status (active/inactive)
-        const STUDENTS_BY_BATCH = {
-            'Morning Batch': ['Player A', 'Player B', 'Player C', 'Player D', 'Player E'],
-            'Evening Batch': ['Player X', 'Player Y', 'Player Z', 'Player W', 'Player V'],
-            'Kalyan Nagar': [
-                'MOHITH.S', 'Rishanth R Shekar', 'Gahan', 'RUTVIK', 'Sohan R Prasad',
-                'Gagan gowda.B.M', 'Mohith T', 'Gokul', 'THEJAS KN', 'CHIRANTH BK',
-                'Shrinik U Y', 'HIMAVANTH CJ', 'Ganav r', 'SHAMAN GOWDA N N',
-                'SHRIMAN GOWDA N N', 'Dhanvith p Gowda', 'Dhanyatha p', 'Swayam',
-                'Samanvith Rao D M', 'Sai pranav', 'Dishanth HL', 'Manvith.S',
-                'RAJATH .S', 'Nishanth S. V', 'Hoysala M Hrushikesh'
-            ],
-            'Xavier\'s School': [
-                'AIMA', 'PREETHAM HM', 'SAMBRAMA.S', 'DHANVISH', 'VISMITHA',
-                'YASHWANTH BJ', 'ULLAS', 'JASHITH C', 'SAMARTH', 'SARVAJITH',
-                'THANUSH', 'PUNITH', 'PAVAN', 'BHUVAN S', 'CHIRANTH', 'AARIZ',
-                'RIVON', 'DEEKSHA', 'PRAJWAL', 'ANHAR', 'UMAIR', 'AVINASH',
-                'LIKITH', 'SOHAN', 'KRUTHIK', 'SAAMAR', 'LIKITHA', 'IBRAHIM',
-                'MALCUM', 'SAMARTH B', 'VINISH', 'SHAUN D', 'GOKUL', 'CHIRANJITH M',
-                'HUSNA', 'ASJAD', 'IMPAN'
-            ],
-            'Monti Angels': [
-                'MD IFAZ', 'AAHIL', 'MD RAAFI', 'MD AAZZ', 'UMAR', 'UNAIZ',
-                'AFFAN', 'RISHAN', 'MD ARHAAN', 'MD YUSUF ARMAN', 'KSHAMAN U.G',
-                'RISHIK PONNAPPA', 'IRSHAD BAIG', 'MD HAMZA', 'SK SAMDHANI',
-                'MD SHAYAN', 'MD UMAR', 'NOUFAL U.S', 'MD RIFAHATH', 'MD ARHAN',
-                'MD ARMAAN NAWAZ', 'MD MUBASHER', 'ABDUL AZEEM', 'SHINAF IBRAHIM',
-                'ANTHONY', 'TANISH SHANBOGH', 'MOHAN GOWDA', 'MOHAMMED SHARIQ',
-                'MD RAHIL', 'SK AZIZ', 'AMAN BAIG', 'HARSHAVARDHANA', 'MD RAYAAN',
-                'AARIZ RAZA', 'MEHHAROOF', 'PAYAM', 'PAIMAN', 'RISHAB', 'TALHA',
-                'RAHIL', 'ISMAIL', 'YADHUVAMSHIK', 'AFNAN', 'SHISHIR'
-            ],
-            'District Field Morning': ['Player A', 'Player B'],
-            'District Field Evening': ['Player X', 'Player Y']
-        };
-
-        // Store inactive students (in a real app, this would come from a sheet)
-        let inactiveStudents = [];
+        // Fallback coaches (will be replaced by sheet data)
+        let COACHES = ['Lexi', 'Nithin', 'Ajey', 'Rayan', 'Calvin', 'Rajesh'];
 
         // State
         let coachStatus = {};
         let studentStatus = {};
         let currentBatch = '';
-        let currentCoachList = [];
+        let allStudents = [];
+        let inactiveStudents = [];
 
         // Initialize
         window.onload = function() {
             initDate();
             loadCoaches();
             loadInactiveList();
+            loadStudents();
         };
 
         function initDate() {
@@ -785,19 +762,26 @@
             document.querySelector('#currentDateDisplay span:last-child').textContent = today.toLocaleDateString('en-US', options);
         }
 
-        // Load inactive students from sheet (placeholder - in production, fetch from sheet)
-        function loadInactiveList() {
-            // This would normally fetch from a "Inactive Students" sheet
-            // For now, we'll maintain in memory
-            // You can add a column in batch sheets with "Status" (Active/Inactive)
+        // Load coaches from sheet
+        async function loadCoaches() {
+            try {
+                const params = new URLSearchParams({ action: 'getCoaches', sheetId: SHEET_ID });
+                const url = `${WEB_APP_URL}?${params.toString()}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    COACHES = data.data.map(c => c.name);
+                }
+                
+                renderCoaches();
+            } catch (error) {
+                console.error('Error loading coaches:', error);
+                renderCoaches();
+            }
         }
 
-        // Get active students only (filter out inactive)
-        function getActiveStudents(batchStudents) {
-            return batchStudents.filter(student => !inactiveStudents.includes(student));
-        }
-
-        function loadCoaches() {
+        function renderCoaches() {
             const coachList = document.getElementById('coachList');
             coachList.innerHTML = '';
             
@@ -806,7 +790,7 @@
                 
                 const div = document.createElement('div');
                 div.className = `list-item ${coachStatus[coach] ? 'selected' : ''}`;
-                const initials = coach.split(' ').map(n => n[0]).join('').substring(0, 2);
+                const initials = coach.substring(0, 2);
                 
                 div.innerHTML = `
                     <input type="checkbox" ${coachStatus[coach] === 'P' ? 'checked' : ''} onchange="toggleCoach('${coach.replace(/'/g, "\\'")}', this.checked ? 'P' : null)">
@@ -822,85 +806,106 @@
             updateSummary();
         }
 
-        function loadBatchStudents() {
+        // Load students from Essential sheet
+        async function loadStudents() {
             const batch = document.getElementById('batchSelect').value;
             currentBatch = batch;
-            const studentList = document.getElementById('studentList');
-            studentList.innerHTML = '';
             
-            if (!batch || !STUDENTS_BY_BATCH[batch]) {
-                studentList.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">✨ Select a batch to view players</div>';
+            if (!batch) {
+                document.getElementById('studentList').innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">✨ Select a batch to view players</div>';
                 studentStatus = {};
                 updateSummary();
                 return;
             }
+
+            try {
+                const params = new URLSearchParams({ action: 'getStudents', batch: batch, sheetId: SHEET_ID });
+                const url = `${WEB_APP_URL}?${params.toString()}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    allStudents = data.data;
+                    
+                    // Initialize status for students
+                    allStudents.forEach(s => {
+                        if (!studentStatus[s.name]) studentStatus[s.name] = null;
+                    });
+                    
+                    renderStudentList();
+                } else {
+                    document.getElementById('studentList').innerHTML = '<div style="padding: 40px; text-align: center; color: #ef4444;">❌ Error loading students</div>';
+                }
+                updateSummary();
+            } catch (error) {
+                console.error('Error loading students:', error);
+                document.getElementById('studentList').innerHTML = '<div style="padding: 40px; text-align: center; color: #ef4444;">❌ Error loading students</div>';
+            }
+        }
+
+        function renderStudentList() {
+            const studentList = document.getElementById('studentList');
+            studentList.innerHTML = '';
             
-            // Get active students only (filter out inactive)
-            let students = STUDENTS_BY_BATCH[batch];
-            const activeStudents = students.filter(s => !inactiveStudents.includes(s));
-            
-            if (activeStudents.length !== students.length) {
-                showToast(`⚠️ ${students.length - activeStudents.length} inactive student(s) hidden`, 'info');
+            if (!allStudents || allStudents.length === 0) {
+                studentList.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">✨ No active students in this batch</div>';
+                return;
             }
             
-            activeStudents.forEach(student => {
-                if (!studentStatus[student]) studentStatus[student] = null;
-                
+            allStudents.forEach(student => {
                 const div = document.createElement('div');
-                div.className = `list-item ${studentStatus[student] ? 'selected' : ''}`;
-                const initials = student.substring(0, 2);
+                div.className = `list-item ${studentStatus[student.name] ? 'selected' : ''}`;
+                const initials = student.name.substring(0, 2);
                 
                 div.innerHTML = `
-                    <input type="checkbox" ${studentStatus[student] === 'P' ? 'checked' : ''} onchange="toggleStudent('${student.replace(/'/g, "\\'")}', this.checked ? 'P' : null)">
+                    <input type="checkbox" ${studentStatus[student.name] === 'P' ? 'checked' : ''} onchange="toggleStudent('${student.name.replace(/'/g, "\\'")}', this.checked ? 'P' : null)">
                     <div class="avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">${initials}</div>
                     <div class="info">
-                        <div class="name">${student}</div>
-                        <div class="role">Player</div>
+                        <div class="name">${student.name}</div>
+                        <div class="role">Player • Fees: ₹${student.fees}</div>
                     </div>
-                    ${studentStatus[student] ? `<span class="status-badge status-${studentStatus[student]}">${studentStatus[student] === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
-                    <button class="small-btn" style="margin-left: auto;" onclick="event.stopPropagation(); showInactiveModal('${student.replace(/'/g, "\\'")}')">📝 Inactive</button>
+                    ${studentStatus[student.name] ? `<span class="status-badge status-${studentStatus[student.name]}">${studentStatus[student.name] === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
+                    <button class="small-btn" style="margin-left: auto; background: rgba(239,68,68,0.15); color:#ef4444;" onclick="event.stopPropagation(); showInactiveModal('${student.name.replace(/'/g, "\\'")}')">📝 Inactive</button>
                 `;
                 studentList.appendChild(div);
             });
-            updateSummary();
         }
 
         function toggleCoach(coach, status) {
             coachStatus[coach] = status;
-            loadCoaches();
+            renderCoaches();
         }
 
         function toggleStudent(student, status) {
             studentStatus[student] = status;
-            loadBatchStudents();
+            renderStudentList();
+            updateSummary();
         }
 
         function selectAllCoaches(status) {
             COACHES.forEach(coach => coachStatus[coach] = status);
-            loadCoaches();
+            renderCoaches();
         }
 
         function selectAllStudents(status) {
-            const batch = document.getElementById('batchSelect').value;
-            if (batch && STUDENTS_BY_BATCH[batch]) {
-                const activeStudents = STUDENTS_BY_BATCH[batch].filter(s => !inactiveStudents.includes(s));
-                activeStudents.forEach(student => studentStatus[student] = status);
-                loadBatchStudents();
-            }
+            allStudents.forEach(student => {
+                studentStatus[student.name] = status;
+            });
+            renderStudentList();
+            updateSummary();
         }
 
         function clearAllCoaches() {
             COACHES.forEach(coach => coachStatus[coach] = null);
-            loadCoaches();
+            renderCoaches();
         }
 
         function clearAllStudents() {
-            const batch = document.getElementById('batchSelect').value;
-            if (batch && STUDENTS_BY_BATCH[batch]) {
-                const activeStudents = STUDENTS_BY_BATCH[batch].filter(s => !inactiveStudents.includes(s));
-                activeStudents.forEach(student => studentStatus[student] = null);
-                loadBatchStudents();
-            }
+            allStudents.forEach(student => {
+                studentStatus[student.name] = null;
+            });
+            renderStudentList();
+            updateSummary();
         }
 
         function resetAll() {
@@ -909,7 +914,7 @@
             document.getElementById('batchSelect').value = '';
             initDate();
             loadCoaches();
-            loadBatchStudents();
+            loadStudents();
             hideMessage();
         }
 
@@ -927,6 +932,23 @@
             document.getElementById('totalCoaches').textContent = coachSelected;
         }
 
+        // Load inactive list from sheet
+        async function loadInactiveList() {
+            try {
+                const params = new URLSearchParams({ action: 'getInactiveList', sheetId: SHEET_ID });
+                const url = `${WEB_APP_URL}?${params.toString()}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    inactiveStudents = data.data;
+                }
+            } catch (error) {
+                console.error('Error loading inactive list:', error);
+                inactiveStudents = [];
+            }
+        }
+
         // Add New Student
         function showAddStudentModal() {
             document.getElementById('addStudentModal').style.display = 'flex';
@@ -935,16 +957,24 @@
         function closeAddStudentModal() {
             document.getElementById('addStudentModal').style.display = 'none';
             document.getElementById('newStudentName').value = '';
-            document.getElementById('newStudentWhatsapp').value = '';
+            document.getElementById('newStudentFees').value = '';
+            document.getElementById('newStudentParent').value = '';
+            document.getElementById('newStudentContact').value = '';
         }
 
         async function addNewStudent() {
             const name = document.getElementById('newStudentName').value.trim();
             const batch = document.getElementById('newStudentBatch').value;
-            const whatsapp = document.getElementById('newStudentWhatsapp').value.trim();
+            const fees = parseFloat(document.getElementById('newStudentFees').value);
+            const parentName = document.getElementById('newStudentParent').value.trim();
+            const contact = document.getElementById('newStudentContact').value.trim();
             
             if (!name) {
                 showToast('Please enter student name', 'error');
+                return;
+            }
+            if (!fees || fees <= 0) {
+                showToast('Please enter valid fees amount', 'error');
                 return;
             }
             
@@ -958,21 +988,22 @@
                     body: JSON.stringify({
                         action: 'addStudent',
                         sheetId: SHEET_ID,
-                        student: { name, batch, whatsapp }
+                        student: {
+                            name: name,
+                            batch: batch,
+                            fees: fees,
+                            parentName: parentName,
+                            contact: contact
+                        }
                     })
                 });
-                
-                // Add to local student list
-                if (!STUDENTS_BY_BATCH[batch]) {
-                    STUDENTS_BY_BATCH[batch] = [];
-                }
-                STUDENTS_BY_BATCH[batch].push(name);
                 
                 showToast(`✅ ${name} added to ${batch}!`, 'success');
                 closeAddStudentModal();
                 
-                if (document.getElementById('batchSelect').value === batch) {
-                    loadBatchStudents();
+                // Refresh student list
+                if (batch === currentBatch) {
+                    loadStudents();
                 }
                 
             } catch (error) {
@@ -994,17 +1025,100 @@
             inactiveStudentName = '';
         }
         
-        function confirmInactive() {
-            if (inactiveStudentName) {
-                inactiveStudents.push(inactiveStudentName);
-                // Remove from status tracking
-                delete studentStatus[inactiveStudentName];
+        async function confirmInactive() {
+            showToast(`Marking ${inactiveStudentName} as inactive...`, 'info');
+            
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'updateStatus',
+                        sheetId: SHEET_ID,
+                        studentName: inactiveStudentName,
+                        batch: currentBatch,
+                        newStatus: 'Inactive'
+                    })
+                });
+                
                 showToast(`📝 ${inactiveStudentName} marked as inactive`, 'success');
                 closeInactiveModal();
-                loadBatchStudents();
+                
+                // Remove from local list
+                delete studentStatus[inactiveStudentName];
+                loadStudents();
+                loadInactiveList();
+                
+            } catch (error) {
+                showToast('❌ Failed to mark inactive', 'error');
+            }
+        }
+        
+        // Show Inactive List
+        async function showInactiveListModal() {
+            await loadInactiveList();
+            
+            const container = document.getElementById('inactiveListContainer');
+            container.innerHTML = '';
+            
+            if (inactiveStudents.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #94A3B8;">No inactive students</div>';
+                document.getElementById('inactiveListModal').style.display = 'flex';
+                return;
+            }
+            
+            inactiveStudents.forEach(student => {
+                const div = document.createElement('div');
+                div.className = 'inactive-item';
+                div.innerHTML = `
+                    <div>
+                        <span class="inactive-name">${student.name}</span>
+                        <span class="inactive-batch">(${student.batch})</span>
+                    </div>
+                    <button class="small-btn" style="background: #10b98120; color:#10b981;" onclick="reactivateStudent('${student.name}', '${student.batch}')">🔄 Reactivate</button>
+                `;
+                container.appendChild(div);
+            });
+            
+            document.getElementById('inactiveListModal').style.display = 'flex';
+        }
+        
+        function closeInactiveListModal() {
+            document.getElementById('inactiveListModal').style.display = 'none';
+        }
+        
+        async function reactivateStudent(name, batch) {
+            showToast(`Reactivating ${name}...`, 'info');
+            
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'updateStatus',
+                        sheetId: SHEET_ID,
+                        studentName: name,
+                        batch: batch,
+                        newStatus: 'Active'
+                    })
+                });
+                
+                showToast(`✅ ${name} reactivated!`, 'success');
+                closeInactiveListModal();
+                
+                if (batch === currentBatch) {
+                    loadStudents();
+                }
+                loadInactiveList();
+                
+            } catch (error) {
+                showToast('❌ Failed to reactivate', 'error');
             }
         }
 
+        // Submit Attendance
         async function submitAttendance() {
             const date = document.getElementById('attendanceDate').value;
             const batch = document.getElementById('batchSelect').value;
@@ -1055,7 +1169,6 @@
             toast.classList.remove('show');
         }
 
-        // Add spin animation style
         const style = document.createElement('style');
         style.textContent = `@keyframes spin { to { transform: rotate(360deg); } }`;
         document.head.appendChild(style);
