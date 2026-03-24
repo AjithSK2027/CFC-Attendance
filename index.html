@@ -1120,41 +1120,63 @@
 
         // Submit Attendance
         async function submitAttendance() {
-            const date = document.getElementById('attendanceDate').value;
-            const batch = document.getElementById('batchSelect').value;
-            
-            if (!date) { showToast('Please select a date', 'error'); return; }
-            if (!batch) { showToast('Please select a batch', 'error'); return; }
-            
-            const records = [];
-            
-            for (const [name, status] of Object.entries(coachStatus)) {
-                if (status) records.push({ type: 'coach', name, status });
-            }
-            
-            for (const [name, status] of Object.entries(studentStatus)) {
-                if (status) records.push({ type: 'student', name, status });
-            }
-            
-            if (records.length === 0) { showToast('No attendance records to save', 'error'); return; }
-            
-            document.getElementById('loading').style.display = 'flex';
-            hideMessage();
-            
-            try {
-                await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sheetId: SHEET_ID, date, batchName: batch, records })
-                });
-                showToast('✨ Attendance saved successfully!', 'success');
-            } catch (error) {
-                showToast('❌ Error saving attendance', 'error');
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
+    const date = document.getElementById('attendanceDate').value;
+    const batch = document.getElementById('batchSelect').value;
+    
+    if (!date) { showToast('Please select a date', 'error'); return; }
+    if (!batch) { showToast('Please select a batch', 'error'); return; }
+    
+    const records = [];
+    
+    // Add coaches
+    for (const [name, status] of Object.entries(coachStatus)) {
+        if (status) records.push({ type: 'coach', name, status });
+    }
+    
+    // Add students
+    for (const [name, status] of Object.entries(studentStatus)) {
+        if (status) records.push({ type: 'student', name, status });
+    }
+    
+    if (records.length === 0) { showToast('No attendance records to save', 'error'); return; }
+    
+    document.getElementById('loading').style.display = 'flex';
+    
+    try {
+        // Create a form-urlencoded payload instead of JSON
+        const payload = new URLSearchParams();
+        payload.append('sheetId', SHEET_ID);
+        payload.append('date', date);
+        payload.append('batchName', batch);
+        payload.append('records', JSON.stringify(records));
+        
+        console.log('Sending attendance:', { date, batch, recordCount: records.length });
+        
+        const response = await fetch(WEB_APP_URL, {
+            method: 'POST',
+            mode: 'cors',  // Change from 'no-cors' to 'cors'
+            headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: payload
+        });
+        
+        const result = await response.json();
+        console.log('Response:', result);
+        
+        if (result.success) {
+            showToast('✨ Attendance saved successfully!', 'success');
+        } else {
+            showToast('❌ Error: ' + result.error, 'error');
         }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('❌ Error saving attendance', 'error');
+    } finally {
+        document.getElementById('loading').style.display = 'none';
+    }
+}
 
         function showToast(message, type = 'success') {
             const toast = document.getElementById('message');
