@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* All styles remain the same as previous version */
         * {
             margin: 0;
             padding: 0;
@@ -730,11 +729,12 @@
     </div>
 
     <script>
-        // Configuration
-        const SHEET_ID = '1qHo2fZZOvFHMENqMK1vlWR0uFhFxnXwXDn325dGDzDY';
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzFo-31C7uvwLFUQsyWxNVPilNcPenaiMNYbeultexPkR3MyykT64KwqJ_c3pzgshb7/exec';
+        // ==================== CONFIGURATION ====================
+        const MASTER_SHEET_ID = '1qHo2fZZOvFHMENqMK1vlWR0uFhFxnXwXDn325dGDzDY';
+        const ATTENDANCE_SHEET_ID = '1EhkGO3omreFx_cbIWM9ZMQbTtWkTT2tm4ePgN-Ii8GQ';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzFo-31C7uvwLFUQsywXNvPi1NcPenaiMN-ZetVraJoar9mLRxE5Kb3aD7qUQ/exec';
 
-        // Fallback coaches (will be replaced by sheet data)
+        // Coaches (will be loaded from sheet)
         let COACHES = ['Lexi', 'Nithin', 'Ajey', 'Rayan', 'Calvin', 'Rajesh'];
 
         // State
@@ -762,10 +762,10 @@
             document.querySelector('#currentDateDisplay span:last-child').textContent = today.toLocaleDateString('en-US', options);
         }
 
-        // Load coaches from sheet
+        // Load coaches from Master Sheet
         async function loadCoaches() {
             try {
-                const params = new URLSearchParams({ action: 'getCoaches', sheetId: SHEET_ID });
+                const params = new URLSearchParams({ action: 'getCoaches', sheetId: MASTER_SHEET_ID });
                 const url = `${WEB_APP_URL}?${params.toString()}`;
                 const response = await fetch(url);
                 const data = await response.json();
@@ -773,7 +773,6 @@
                 if (data.success && data.data && data.data.length > 0) {
                     COACHES = data.data.map(c => c.name);
                 }
-                
                 renderCoaches();
             } catch (error) {
                 console.error('Error loading coaches:', error);
@@ -806,7 +805,7 @@
             updateSummary();
         }
 
-        // Load students from Essential sheet
+        // Load students from Master Sheet
         async function loadStudents() {
             const batch = document.getElementById('batchSelect').value;
             currentBatch = batch;
@@ -819,19 +818,14 @@
             }
 
             try {
-                const params = new URLSearchParams({ action: 'getStudents', batch: batch, sheetId: SHEET_ID });
+                const params = new URLSearchParams({ action: 'getStudents', batch: batch, sheetId: MASTER_SHEET_ID });
                 const url = `${WEB_APP_URL}?${params.toString()}`;
                 const response = await fetch(url);
                 const data = await response.json();
                 
                 if (data.success && data.data) {
                     allStudents = data.data;
-                    
-                    // Initialize status for students
-                    allStudents.forEach(s => {
-                        if (!studentStatus[s.name]) studentStatus[s.name] = null;
-                    });
-                    
+                    allStudents.forEach(s => { if (!studentStatus[s.name]) studentStatus[s.name] = null; });
                     renderStudentList();
                 } else {
                     document.getElementById('studentList').innerHTML = '<div style="padding: 40px; text-align: center; color: #ef4444;">❌ Error loading students</div>';
@@ -932,10 +926,10 @@
             document.getElementById('totalCoaches').textContent = coachSelected;
         }
 
-        // Load inactive list from sheet
+        // Load inactive list from Master Sheet
         async function loadInactiveList() {
             try {
-                const params = new URLSearchParams({ action: 'getInactiveList', sheetId: SHEET_ID });
+                const params = new URLSearchParams({ action: 'getInactiveList', sheetId: MASTER_SHEET_ID });
                 const url = `${WEB_APP_URL}?${params.toString()}`;
                 const response = await fetch(url);
                 const data = await response.json();
@@ -987,7 +981,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         action: 'addStudent',
-                        sheetId: SHEET_ID,
+                        sheetId: MASTER_SHEET_ID,
                         student: {
                             name: name,
                             batch: batch,
@@ -1001,10 +995,10 @@
                 showToast(`✅ ${name} added to ${batch}!`, 'success');
                 closeAddStudentModal();
                 
-                // Refresh student list
                 if (batch === currentBatch) {
                     loadStudents();
                 }
+                loadInactiveList();
                 
             } catch (error) {
                 showToast('❌ Failed to add student', 'error');
@@ -1035,7 +1029,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         action: 'updateStatus',
-                        sheetId: SHEET_ID,
+                        sheetId: MASTER_SHEET_ID,
                         studentName: inactiveStudentName,
                         batch: currentBatch,
                         newStatus: 'Inactive'
@@ -1045,7 +1039,6 @@
                 showToast(`📝 ${inactiveStudentName} marked as inactive`, 'success');
                 closeInactiveModal();
                 
-                // Remove from local list
                 delete studentStatus[inactiveStudentName];
                 loadStudents();
                 loadInactiveList();
@@ -1098,7 +1091,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         action: 'updateStatus',
-                        sheetId: SHEET_ID,
+                        sheetId: MASTER_SHEET_ID,
                         studentName: name,
                         batch: batch,
                         newStatus: 'Active'
@@ -1118,55 +1111,54 @@
             }
         }
 
-        // Submit Attendance
+        // Submit Attendance - Saves to Attendance Log Sheet
         async function submitAttendance() {
-    const date = document.getElementById('attendanceDate').value;
-    const batch = document.getElementById('batchSelect').value;
-    
-    if (!date) { showToast('Please select a date', 'error'); return; }
-    if (!batch) { showToast('Please select a batch', 'error'); return; }
-    
-    const records = [];
-    
-    for (const [name, status] of Object.entries(coachStatus)) {
-        if (status) records.push({ type: 'coach', name, status });
-    }
-    
-    for (const [name, status] of Object.entries(studentStatus)) {
-        if (status) records.push({ type: 'student', name, status });
-    }
-    
-    if (records.length === 0) { showToast('No attendance records to save', 'error'); return; }
-    
-    document.getElementById('loading').style.display = 'flex';
-    
-    try {
-        const payload = {
-            sheetId: SHEET_ID,
-            date: date,
-            batchName: batch,
-            records: records
-        };
-        
-        console.log('Sending attendance:', payload);
-        
-        // Use no-cors mode to bypass CORS
-        await fetch(WEB_APP_URL, {
-            method: 'POST',
-            mode: 'no-cors',  // This is the fix
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        
-        showToast('✨ Attendance saved!', 'success');
-        
-    } catch (error) {
-        console.error('Error:', error);
-        showToast('❌ Error saving attendance', 'error');
-    } finally {
-        document.getElementById('loading').style.display = 'none';
-    }
-}
+            const date = document.getElementById('attendanceDate').value;
+            const batch = document.getElementById('batchSelect').value;
+            
+            if (!date) { showToast('Please select a date', 'error'); return; }
+            if (!batch) { showToast('Please select a batch', 'error'); return; }
+            
+            const records = [];
+            
+            for (const [name, status] of Object.entries(coachStatus)) {
+                if (status) records.push({ type: 'coach', name, status });
+            }
+            
+            for (const [name, status] of Object.entries(studentStatus)) {
+                if (status) records.push({ type: 'student', name, status });
+            }
+            
+            if (records.length === 0) { showToast('No attendance records to save', 'error'); return; }
+            
+            document.getElementById('loading').style.display = 'flex';
+            
+            try {
+                const payload = {
+                    sheetId: ATTENDANCE_SHEET_ID,
+                    date: date,
+                    batchName: batch,
+                    records: records
+                };
+                
+                console.log('Sending attendance:', payload);
+                
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                showToast('✨ Attendance saved!', 'success');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('❌ Error saving attendance', 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
 
         function showToast(message, type = 'success') {
             const toast = document.getElementById('message');
