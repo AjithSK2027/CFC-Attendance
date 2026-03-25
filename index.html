@@ -539,7 +539,9 @@
                <div class="custom-date-picker">
     <input type="text" id="dateDisplay" readonly placeholder="Select Date" 
            style="width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,215,0,0.2); border-radius: 16px; color: white; font-size: 15px; cursor: pointer;">
-    <input type="date" id="attendanceDate" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;">
+    <input type="date" id="attendanceDate" 
+       style="width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,215,0,0.2); border-radius: 16px; color: white; font-size: 15px; cursor: pointer;"
+       onfocus="this.showPicker()">
 </div>
             </div>
             <div class="control-card">
