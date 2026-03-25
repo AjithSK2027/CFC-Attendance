@@ -958,18 +958,18 @@
                 const div = document.createElement('div');
                 div.className = 'list-item';
                 const initials = coach.substring(0, 2);
-                div.innerHTML = `
-                    <div style="display: flex; gap: 8px; margin-right: 12px;">
-                        <button class="present-btn ${coachStatus[coach] === 'P' ? 'active' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach}', 'P')">P</button>
-                        <button class="absent-btn ${coachStatus[coach] === 'A' ? 'active' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach}', 'A')">A</button>
-                    </div>
-                    <div class="avatar">${initials}</div>
-                    <div class="info">
-                        <div class="name">${coach}</div>
-                        <div class="role">Coach</div>
-                    </div>
-                    ${coachStatus[coach] ? `<span class="status-badge status-${coachStatus[coach]}">${coachStatus[coach] === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
-                `;
+               div.innerHTML = `
+    <div class="avatar">${initials}</div>
+    <div class="info">
+        <div class="name">${coach}</div>
+        <div class="role">Coach</div>
+    </div>
+    <div style="display: flex; gap: 8px; margin-left: auto; margin-right: 12px;">
+        <button class="present-btn ${coachStatus[coach] === 'P' ? 'active' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach}', 'P')">P</button>
+        <button class="absent-btn ${coachStatus[coach] === 'A' ? 'active' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach}', 'A')">A</button>
+    </div>
+    ${coachStatus[coach] ? `<span class="status-badge status-${coachStatus[coach]}">${coachStatus[coach] === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
+`;
                 coachList.appendChild(div);
             });
             updateSummary();
@@ -1017,19 +1017,19 @@
                 div.className = 'list-item';
                 const initials = student.name.substring(0, 2);
                 const status = studentStatus[student.name];
-                div.innerHTML = `
-                    <div style="display: flex; gap: 8px; margin-right: 12px;">
-                        <button class="present-btn ${status === 'P' ? 'active' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.name}', 'P')">P</button>
-                        <button class="absent-btn ${status === 'A' ? 'active' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.name}', 'A')">A</button>
-                    </div>
-                    <div class="avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">${initials}</div>
-                    <div class="info">
-                        <div class="name">${student.name}</div>
-                        <div class="role">Player • Fees: ₹${student.fees}</div>
-                    </div>
-                    ${status ? `<span class="status-badge status-${status}">${status === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
-                    <button class="small-btn" style="margin-left: auto; background: rgba(239,68,68,0.15); color:#ef4444;" onclick="event.stopPropagation(); showInactiveModal('${student.name}')">📝 Inactive</button>
-                `;
+               div.innerHTML = `
+    <div class="avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">${initials}</div>
+    <div class="info">
+        <div class="name">${student.name}</div>
+        <div class="role">Player • Fees: ₹${student.fees}</div>
+    </div>
+    <div style="display: flex; gap: 8px; margin-left: auto; margin-right: 12px;">
+        <button class="present-btn ${status === 'P' ? 'active' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.name}', 'P')">P</button>
+        <button class="absent-btn ${status === 'A' ? 'active' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.name}', 'A')">A</button>
+    </div>
+    ${status ? `<span class="status-badge status-${status}">${status === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
+    <button class="small-btn" style="background: rgba(239,68,68,0.15); color:#ef4444;" onclick="event.stopPropagation(); showInactiveModal('${student.name}')">📝 Inactive</button>
+`;
                 studentList.appendChild(div);
             });
         }
