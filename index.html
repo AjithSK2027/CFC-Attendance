@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Coffeeland FC • Attendance System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -179,6 +179,7 @@
         input[type="date"]::-webkit-calendar-picker-indicator {
             cursor: pointer;
             filter: invert(0.6);
+            padding: 5px;
         }
 
         .main-grid {
@@ -500,6 +501,7 @@
             margin-left: 8px;
         }
 
+        /* ========== MOBILE OPTIMIZATIONS ========== */
         @media (max-width: 1024px) {
             .main-grid {
                 grid-template-columns: 1fr;
@@ -510,19 +512,218 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header {
+                padding: 16px;
+                gap: 12px;
+            }
+            
+            .logo {
+                width: 44px;
+                height: 44px;
+            }
+            
+            .title h1 {
+                font-size: 20px;
+            }
+            
+            .title p {
+                font-size: 11px;
+            }
+            
+            .date-badge {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            
+            .action-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
             .controls {
                 grid-template-columns: 1fr;
+                gap: 12px;
             }
-            .header {
-                flex-direction: column;
-                text-align: center;
+            
+            .control-card {
+                padding: 16px;
             }
-            .summary-card {
-                grid-template-columns: 1fr;
+            
+            .control-label {
+                font-size: 12px;
+                margin-bottom: 10px;
             }
+            
+            input[type="date"], select {
+                padding: 16px;
+                font-size: 16px;
+                min-height: 52px;
+            }
+            
+            .main-grid {
+                gap: 16px;
+            }
+            
+            .section-header {
+                padding: 14px 16px;
+            }
+            
+            .section-title span {
+                font-size: 20px;
+            }
+            
+            .section-title h2 {
+                font-size: 16px;
+            }
+            
+            .section-badge {
+                padding: 3px 10px;
+                font-size: 12px;
+            }
+            
+            .list-container {
+                padding: 8px;
+            }
+            
+            .list-item {
+                padding: 12px;
+                margin: 4px 0;
+            }
+            
+            .avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 12px;
+            }
+            
+            .name {
+                font-size: 14px;
+            }
+            
+            .role {
+                font-size: 11px;
+            }
+            
             .present-btn, .absent-btn {
                 padding: 8px 16px;
+                font-size: 13px;
+                min-width: 50px;
+            }
+            
+            .small-btn {
+                padding: 8px 14px;
+                font-size: 11px;
+            }
+            
+            .action-bar {
+                padding: 12px 16px;
+                gap: 8px;
+            }
+            
+            .summary-card {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 16px;
+            }
+            
+            .stat-value {
+                font-size: 22px;
+            }
+            
+            .stat-label {
+                font-size: 10px;
+            }
+            
+            div[style*="display: flex; gap: 16px;"] {
+                flex-direction: column;
+                gap: 12px !important;
+            }
+            
+            .action-btn.primary, .action-btn.secondary {
+                width: 100%;
+                justify-content: center;
+                padding: 14px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 24px;
+                max-width: none;
+            }
+            
+            .modal-content h3 {
+                font-size: 20px;
+            }
+            
+            .modal-content input, .modal-content select {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            .toast {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                padding: 12px 20px;
+                font-size: 13px;
+            }
+            
+            .loading {
+                padding: 30px;
+            }
+            
+            .loading span {
                 font-size: 14px;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            
+            .header {
+                padding: 12px;
+            }
+            
+            .logo-section {
+                gap: 10px;
+            }
+            
+            .logo {
+                width: 38px;
+                height: 38px;
+            }
+            
+            .title h1 {
+                font-size: 18px;
+            }
+            
+            .date-badge {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+            
+            .action-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            
+            .stat-value {
+                font-size: 18px;
+            }
+        }
+
+        /* Fix for iOS date picker */
+        @supports (-webkit-touch-callout: none) {
+            input[type="date"] {
+                font-size: 16px;
+                min-height: 52px;
             }
         }
     </style>
