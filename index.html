@@ -17,51 +17,15 @@
         body {
             font-family: 'Space Grotesk', sans-serif;
             background: #0A0A0F;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(255, 215, 0, 0.03) 0%, transparent 25%),
-                linear-gradient(180deg, #0A0A0F 0%, #0F0F1A 100%);
+            background-image: radial-gradient(circle at 15% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 25%),
+                              radial-gradient(circle at 85% 30%, rgba(255, 215, 0, 0.03) 0%, transparent 25%);
             min-height: 100vh;
             padding: 20px;
-            position: relative;
-        }
-
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: 0;
-            animation: float 20s infinite ease-in-out;
-        }
-
-        .orb-1 {
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 215, 0, 0.15);
-            top: -100px;
-            right: -100px;
-        }
-
-        .orb-2 {
-            width: 400px;
-            height: 400px;
-            background: rgba(200, 170, 0, 0.1);
-            bottom: -200px;
-            left: -200px;
-            animation-delay: -5s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -30px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            position: relative;
-            z-index: 1;
         }
 
         .header {
@@ -92,7 +56,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
             padding: 8px;
         }
 
@@ -198,7 +161,6 @@
             color: #94A3B8;
             font-size: 13px;
             text-transform: uppercase;
-            letter-spacing: 1px;
             margin-bottom: 12px;
         }
 
@@ -211,13 +173,7 @@
             color: white;
             font-family: 'Space Grotesk', sans-serif;
             font-size: 15px;
-            font-weight: 500;
             cursor: pointer;
-        }
-
-        select:focus, input[type="date"]:focus {
-            outline: none;
-            border-color: #FFD700;
         }
 
         .main-grid {
@@ -274,28 +230,12 @@
             padding: 12px;
         }
 
-        .list-container::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .list-container::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        .list-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 215, 0, 0.3);
-            border-radius: 10px;
-        }
-
         .list-item {
             display: flex;
             align-items: center;
             padding: 12px 16px;
             margin: 6px 0;
             border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
             border: 1px solid transparent;
         }
 
@@ -363,19 +303,30 @@
         }
 
         .small-btn {
-            padding: 6px 12px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 215, 0, 0.15);
             border-radius: 30px;
-            border: none;
-            font-family: 'Space Grotesk', sans-serif;
+            color: #94A3B8;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+        }
+
+        .small-btn:hover {
+            border-color: #FFD700;
+            color: #FFD700;
         }
 
         .present-btn {
             background: rgba(16, 185, 129, 0.2);
             color: #10b981;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
         }
 
         .present-btn.active {
@@ -386,6 +337,12 @@
         .absent-btn {
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
         }
 
         .absent-btn.active {
@@ -444,7 +401,7 @@
             border: 1px solid rgba(255, 215, 0, 0.2);
             border-radius: 28px;
             padding: 32px;
-            width: 100%;
+            width: 90%;
             max-width: 500px;
         }
 
@@ -461,7 +418,6 @@
             border: 1px solid rgba(255, 215, 0, 0.2);
             border-radius: 14px;
             color: white;
-            font-family: 'Space Grotesk', sans-serif;
             font-size: 15px;
             margin-bottom: 16px;
         }
@@ -470,7 +426,6 @@
             display: flex;
             gap: 12px;
             justify-content: flex-end;
-            margin-top: 8px;
         }
 
         .toast {
@@ -526,13 +481,6 @@
             margin-left: 8px;
         }
 
-        .helper-text {
-            color: #94A3B8;
-            font-size: 12px;
-            margin-top: -10px;
-            margin-bottom: 12px;
-        }
-
         @media (max-width: 1024px) {
             .main-grid {
                 grid-template-columns: 1fr;
@@ -557,9 +505,6 @@
     </style>
 </head>
 <body>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-
     <div class="container">
         <div class="header">
             <div class="logo-section">
@@ -676,7 +621,7 @@
 
         <div id="loading" class="loading">
             <div style="width: 30px; height: 30px; border: 2px solid rgba(255,215,0,0.3); border-top-color: #FFD700; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block;"></div>
-            <span style="margin-left: 12px;">Saving attendance...</span>
+            <span>Saving attendance...</span>
         </div>
 
         <div id="message" class="toast"></div>
@@ -696,9 +641,7 @@
                 <option value="District Field Evening">District Field Evening</option>
             </select>
             <input type="number" id="newStudentFees" placeholder="Fees Amount *">
-            <input type="text" id="newStudentParent" placeholder="Parent Name (optional)">
-            <input type="text" id="newStudentContact" placeholder="Contact Number (optional)">
-            <div class="helper-text">Student will be added with Status = Active</div>
+            <div class="helper-text" style="color:#94A3B8; font-size:12px; margin-top:-10px;">Student will be added with Status = Active</div>
             <div class="modal-buttons">
                 <button class="action-btn primary" onclick="addNewStudent()">Add Student</button>
                 <button class="action-btn secondary" onclick="closeAddStudentModal()">Cancel</button>
@@ -732,27 +675,21 @@
     </div>
 
     <script>
-        // ==================== CONFIGURATION ====================
-        const MASTER_SHEET_ID = '1qHo2fZZOvFHMENqMK1vlWR0uFhFxnXwXDn325dGDzDY';
-        const ATTENDANCE_SHEET_ID = '1EhkGO3omreFx_cbIWM9ZMQbTtWkTT2tm4ePgN-Ii8GQ';
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxAdRWAFwsNgMdM5MaA-X6A0UjxYZRp1fc02eURFRnysEU6IQJzYLaR_fsfvfqU-R0y/exec';
+        // CONFIGURATION - UPDATE THESE
+        const SHEET_ID = '1qHo2fZZOvFHMENqMK1vlWR0uFhFxnXwXDn325dGDzDY';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxh-iPfWRIfqn-HgQKBd_t-pp7bzD755kUexbwrzZoh4VlDR5CpMmiriMBnJHCnfG4uDw/exec';
 
-        // Coaches
-        let COACHES = ['Lexi', 'Nithin', 'Ajey', 'Rayan', 'Calvin', 'Rajesh'];
-
-        // State
+        let COACHES = [];
         let coachStatus = {};
         let studentStatus = {};
         let currentBatch = '';
         let allStudents = [];
         let inactiveStudents = [];
 
-        // Initialize
         window.onload = function() {
             initDate();
             loadCoaches();
             loadInactiveList();
-            loadStudents();
         };
 
         function initDate() {
@@ -765,39 +702,32 @@
             document.querySelector('#currentDateDisplay span:last-child').textContent = today.toLocaleDateString('en-US', options);
         }
 
-        // Load coaches
         async function loadCoaches() {
             try {
-                const params = new URLSearchParams({ action: 'getCoaches', sheetId: MASTER_SHEET_ID });
-                const url = `${WEB_APP_URL}?${params.toString()}`;
+                const url = `${WEB_APP_URL}?action=getCoaches&sheetId=${SHEET_ID}`;
                 const response = await fetch(url);
                 const data = await response.json();
-                
-                if (data.success && data.data && data.data.length > 0) {
+                if (data.success && data.data) {
                     COACHES = data.data.map(c => c.name);
+                    renderCoaches();
                 }
-                renderCoaches();
             } catch (error) {
                 console.error('Error loading coaches:', error);
-                renderCoaches();
             }
         }
 
         function renderCoaches() {
             const coachList = document.getElementById('coachList');
             coachList.innerHTML = '';
-            
             COACHES.forEach(coach => {
                 if (!coachStatus[coach]) coachStatus[coach] = null;
-                
                 const div = document.createElement('div');
-                div.className = `list-item ${coachStatus[coach] ? 'selected' : ''}`;
+                div.className = 'list-item';
                 const initials = coach.substring(0, 2);
-                
                 div.innerHTML = `
                     <div style="display: flex; gap: 8px; margin-right: 12px;">
-                        <button class="small-btn present-btn ${coachStatus[coach] === 'P' ? 'active' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach.replace(/'/g, "\\'")}', 'P')">P</button>
-                        <button class="small-btn absent-btn ${coachStatus[coach] === 'A' ? 'active' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach.replace(/'/g, "\\'")}', 'A')">A</button>
+                        <button class="present-btn ${coachStatus[coach] === 'P' ? 'active' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach}', 'P')">P</button>
+                        <button class="absent-btn ${coachStatus[coach] === 'A' ? 'active' : ''}" onclick="event.stopPropagation(); setCoachStatus('${coach}', 'A')">A</button>
                     </div>
                     <div class="avatar">${initials}</div>
                     <div class="info">
@@ -816,11 +746,9 @@
             renderCoaches();
         }
 
-        // Load students from Master Sheet
         async function loadStudents() {
             const batch = document.getElementById('batchSelect').value;
             currentBatch = batch;
-            
             if (!batch) {
                 document.getElementById('studentList').innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">✨ Select a batch to view players</div>';
                 studentStatus = {};
@@ -829,44 +757,36 @@
             }
 
             try {
-                const params = new URLSearchParams({ action: 'getStudents', batch: batch, sheetId: MASTER_SHEET_ID });
-                const url = `${WEB_APP_URL}?${params.toString()}`;
+                const url = `${WEB_APP_URL}?action=getStudents&batch=${encodeURIComponent(batch)}&sheetId=${SHEET_ID}`;
                 const response = await fetch(url);
                 const data = await response.json();
-                
                 if (data.success && data.data) {
                     allStudents = data.data;
                     allStudents.forEach(s => { if (!studentStatus[s.name]) studentStatus[s.name] = null; });
                     renderStudentList();
-                } else {
-                    document.getElementById('studentList').innerHTML = '<div style="padding: 40px; text-align: center; color: #ef4444;">❌ Error loading students</div>';
                 }
                 updateSummary();
             } catch (error) {
                 console.error('Error loading students:', error);
-                document.getElementById('studentList').innerHTML = '<div style="padding: 40px; text-align: center; color: #ef4444;">❌ Error loading students</div>';
             }
         }
 
         function renderStudentList() {
             const studentList = document.getElementById('studentList');
             studentList.innerHTML = '';
-            
             if (!allStudents || allStudents.length === 0) {
                 studentList.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">✨ No active students in this batch</div>';
                 return;
             }
-            
             allStudents.forEach(student => {
                 const div = document.createElement('div');
                 div.className = 'list-item';
                 const initials = student.name.substring(0, 2);
                 const status = studentStatus[student.name];
-                
                 div.innerHTML = `
                     <div style="display: flex; gap: 8px; margin-right: 12px;">
-                        <button class="small-btn present-btn ${status === 'P' ? 'active' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.name.replace(/'/g, "\\'")}', 'P')">P</button>
-                        <button class="small-btn absent-btn ${status === 'A' ? 'active' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.name.replace(/'/g, "\\'")}', 'A')">A</button>
+                        <button class="present-btn ${status === 'P' ? 'active' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.name}', 'P')">P</button>
+                        <button class="absent-btn ${status === 'A' ? 'active' : ''}" onclick="event.stopPropagation(); setStudentStatus('${student.name}', 'A')">A</button>
                     </div>
                     <div class="avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">${initials}</div>
                     <div class="info">
@@ -874,7 +794,7 @@
                         <div class="role">Player • Fees: ₹${student.fees}</div>
                     </div>
                     ${status ? `<span class="status-badge status-${status}">${status === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
-                    <button class="small-btn" style="margin-left: auto; background: rgba(239,68,68,0.15); color:#ef4444;" onclick="event.stopPropagation(); showInactiveModal('${student.name.replace(/'/g, "\\'")}')">📝 Inactive</button>
+                    <button class="small-btn" style="margin-left: auto; background: rgba(239,68,68,0.15); color:#ef4444;" onclick="event.stopPropagation(); showInactiveModal('${student.name}')">📝 Inactive</button>
                 `;
                 studentList.appendChild(div);
             });
@@ -892,9 +812,7 @@
         }
 
         function selectAllStudents(status) {
-            allStudents.forEach(student => {
-                studentStatus[student.name] = status;
-            });
+            allStudents.forEach(student => studentStatus[student.name] = status);
             renderStudentList();
             updateSummary();
         }
@@ -905,9 +823,7 @@
         }
 
         function clearAllStudents() {
-            allStudents.forEach(student => {
-                studentStatus[student.name] = null;
-            });
+            allStudents.forEach(student => studentStatus[student.name] = null);
             renderStudentList();
             updateSummary();
         }
@@ -918,8 +834,7 @@
             document.getElementById('batchSelect').value = '';
             initDate();
             loadCoaches();
-            loadStudents();
-            hideMessage();
+            updateSummary();
         }
 
         function updateSummary() {
@@ -927,7 +842,6 @@
             const studentSelected = Object.values(studentStatus).filter(s => s !== null).length;
             const presentCount = [...Object.values(coachStatus), ...Object.values(studentStatus)].filter(s => s === 'P').length;
             const absentCount = [...Object.values(coachStatus), ...Object.values(studentStatus)].filter(s => s === 'A').length;
-            
             document.getElementById('coachCount').textContent = coachSelected;
             document.getElementById('studentCount').textContent = studentSelected;
             document.getElementById('totalSelected').textContent = coachSelected + studentSelected;
@@ -936,24 +850,15 @@
             document.getElementById('totalCoaches').textContent = coachSelected;
         }
 
-        // Load inactive list
         async function loadInactiveList() {
             try {
-                const params = new URLSearchParams({ action: 'getInactiveList', sheetId: MASTER_SHEET_ID });
-                const url = `${WEB_APP_URL}?${params.toString()}`;
+                const url = `${WEB_APP_URL}?action=getInactiveList&sheetId=${SHEET_ID}`;
                 const response = await fetch(url);
                 const data = await response.json();
-                
-                if (data.success && data.data) {
-                    inactiveStudents = data.data;
-                }
-            } catch (error) {
-                console.error('Error loading inactive list:', error);
-                inactiveStudents = [];
-            }
+                if (data.success && data.data) inactiveStudents = data.data;
+            } catch (error) { console.error(error); }
         }
 
-        // Add New Student
         function showAddStudentModal() {
             document.getElementById('addStudentModal').style.display = 'flex';
         }
@@ -962,212 +867,103 @@
             document.getElementById('addStudentModal').style.display = 'none';
             document.getElementById('newStudentName').value = '';
             document.getElementById('newStudentFees').value = '';
-            document.getElementById('newStudentParent').value = '';
-            document.getElementById('newStudentContact').value = '';
         }
 
         async function addNewStudent() {
             const name = document.getElementById('newStudentName').value.trim();
             const batch = document.getElementById('newStudentBatch').value;
             const fees = parseFloat(document.getElementById('newStudentFees').value);
-            const parentName = document.getElementById('newStudentParent').value.trim();
-            const contact = document.getElementById('newStudentContact').value.trim();
-            
-            if (!name) {
-                showToast('Please enter student name', 'error');
-                return;
-            }
-            if (!fees || fees <= 0) {
-                showToast('Please enter valid fees amount', 'error');
-                return;
-            }
-            
+            if (!name || !fees) { showToast('Please fill all fields', 'error'); return; }
             showToast('Adding student...', 'info');
-            
             try {
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'addStudent',
-                        sheetId: MASTER_SHEET_ID,
-                        student: {
-                            name: name,
-                            batch: batch,
-                            fees: fees,
-                            parentName: parentName,
-                            contact: contact
-                        }
-                    })
+                    body: JSON.stringify({ action: 'addStudent', sheetId: SHEET_ID, student: { name, batch, fees } })
                 });
-                
-                showToast(`✅ ${name} added to ${batch}!`, 'success');
+                showToast(`✅ ${name} added!`, 'success');
                 closeAddStudentModal();
-                
-                if (batch === currentBatch) {
-                    loadStudents();
-                }
+                if (batch === currentBatch) loadStudents();
                 loadInactiveList();
-                
-            } catch (error) {
-                showToast('❌ Failed to add student', 'error');
-            }
+            } catch (error) { showToast('❌ Failed to add', 'error'); }
         }
 
-        // Mark Inactive
         let inactiveStudentName = '';
-        
         function showInactiveModal(name) {
             inactiveStudentName = name;
             document.getElementById('inactiveStudentName').value = name;
             document.getElementById('inactiveModal').style.display = 'flex';
         }
-        
-        function closeInactiveModal() {
-            document.getElementById('inactiveModal').style.display = 'none';
-            inactiveStudentName = '';
-        }
-        
+        function closeInactiveModal() { document.getElementById('inactiveModal').style.display = 'none'; }
         async function confirmInactive() {
-            showToast(`Marking ${inactiveStudentName} as inactive...`, 'info');
-            
+            showToast(`Marking ${inactiveStudentName} inactive...`, 'info');
             try {
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'updateStatus',
-                        sheetId: MASTER_SHEET_ID,
-                        studentName: inactiveStudentName,
-                        batch: currentBatch,
-                        newStatus: 'Inactive'
-                    })
+                    body: JSON.stringify({ action: 'updateStatus', sheetId: SHEET_ID, studentName: inactiveStudentName, batch: currentBatch, newStatus: 'Inactive' })
                 });
-                
-                showToast(`📝 ${inactiveStudentName} marked as inactive`, 'success');
+                showToast(`📝 ${inactiveStudentName} marked inactive`, 'success');
                 closeInactiveModal();
-                
                 delete studentStatus[inactiveStudentName];
                 loadStudents();
                 loadInactiveList();
-                
-            } catch (error) {
-                showToast('❌ Failed to mark inactive', 'error');
-            }
+            } catch (error) { showToast('❌ Failed', 'error'); }
         }
-        
-        // Show Inactive List
+
         async function showInactiveListModal() {
             await loadInactiveList();
-            
             const container = document.getElementById('inactiveListContainer');
             container.innerHTML = '';
-            
-            if (inactiveStudents.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #94A3B8;">No inactive students</div>';
-                document.getElementById('inactiveListModal').style.display = 'flex';
-                return;
+            if (inactiveStudents.length === 0) { container.innerHTML = '<div style="text-align: center; padding: 40px; color: #94A3B8;">No inactive students</div>'; }
+            else {
+                inactiveStudents.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = 'inactive-item';
+                    div.innerHTML = `<div><span class="inactive-name">${s.name}</span><span class="inactive-batch">(${s.batch})</span></div>
+                                    <button class="small-btn" style="background:#10b98120; color:#10b981;" onclick="reactivateStudent('${s.name}', '${s.batch}')">🔄 Reactivate</button>`;
+                    container.appendChild(div);
+                });
             }
-            
-            inactiveStudents.forEach(student => {
-                const div = document.createElement('div');
-                div.className = 'inactive-item';
-                div.innerHTML = `
-                    <div>
-                        <span class="inactive-name">${student.name}</span>
-                        <span class="inactive-batch">(${student.batch})</span>
-                    </div>
-                    <button class="small-btn" style="background: #10b98120; color:#10b981;" onclick="reactivateStudent('${student.name}', '${student.batch}')">🔄 Reactivate</button>
-                `;
-                container.appendChild(div);
-            });
-            
             document.getElementById('inactiveListModal').style.display = 'flex';
         }
-        
-        function closeInactiveListModal() {
-            document.getElementById('inactiveListModal').style.display = 'none';
-        }
-        
+        function closeInactiveListModal() { document.getElementById('inactiveListModal').style.display = 'none'; }
         async function reactivateStudent(name, batch) {
-            showToast(`Reactivating ${name}...`, 'info');
-            
             try {
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'updateStatus',
-                        sheetId: MASTER_SHEET_ID,
-                        studentName: name,
-                        batch: batch,
-                        newStatus: 'Active'
-                    })
+                    body: JSON.stringify({ action: 'updateStatus', sheetId: SHEET_ID, studentName: name, batch: batch, newStatus: 'Active' })
                 });
-                
                 showToast(`✅ ${name} reactivated!`, 'success');
                 closeInactiveListModal();
-                
-                if (batch === currentBatch) {
-                    loadStudents();
-                }
+                if (batch === currentBatch) loadStudents();
                 loadInactiveList();
-                
-            } catch (error) {
-                showToast('❌ Failed to reactivate', 'error');
-            }
+            } catch (error) { showToast('❌ Failed', 'error'); }
         }
 
-        // Submit Attendance
         async function submitAttendance() {
             const date = document.getElementById('attendanceDate').value;
             const batch = document.getElementById('batchSelect').value;
-            
-            if (!date) { showToast('Please select a date', 'error'); return; }
-            if (!batch) { showToast('Please select a batch', 'error'); return; }
-            
+            if (!date || !batch) { showToast('Please select date and batch', 'error'); return; }
             const records = [];
-            
-            for (const [name, status] of Object.entries(coachStatus)) {
-                if (status) records.push({ type: 'coach', name, status });
-            }
-            
-            for (const [name, status] of Object.entries(studentStatus)) {
-                if (status) records.push({ type: 'student', name, status });
-            }
-            
-            if (records.length === 0) { showToast('No attendance records to save', 'error'); return; }
-            
+            for (const [name, status] of Object.entries(coachStatus)) if (status) records.push({ type: 'coach', name, status });
+            for (const [name, status] of Object.entries(studentStatus)) if (status) records.push({ type: 'student', name, status });
+            if (records.length === 0) { showToast('No attendance records', 'error'); return; }
             document.getElementById('loading').style.display = 'flex';
-            
             try {
-                const payload = {
-                    sheetId: ATTENDANCE_SHEET_ID,
-                    date: date,
-                    batchName: batch,
-                    records: records
-                };
-                
-                console.log('Sending attendance:', payload);
-                
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ sheetId: SHEET_ID, date, batchName: batch, records })
                 });
-                
                 showToast('✨ Attendance saved!', 'success');
-                
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('❌ Error saving attendance', 'error');
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
+            } catch (error) { showToast('❌ Error saving', 'error'); }
+            finally { document.getElementById('loading').style.display = 'none'; }
         }
 
         function showToast(message, type = 'success') {
@@ -1177,15 +973,6 @@
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
-
-        function hideMessage() {
-            const toast = document.getElementById('message');
-            toast.classList.remove('show');
-        }
-
-        const style = document.createElement('style');
-        style.textContent = `@keyframes spin { to { transform: rotate(360deg); } }`;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
