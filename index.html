@@ -1,413 +1,574 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coffeeland FC · Premium Attendance</title>
+    <title>Coffeeland FC | Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        coffee: {
+                            900: '#150E0A',
+                            800: '#1E140F',
+                            700: '#2C1D16',
+                            accent: '#D4AF37',
+                            accentHover: '#E5C158',
+                            light: '#F5E6D3'
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, sans-serif;
-        }
         body {
-            background: radial-gradient(circle at 10% 20%, #0B0F1C, #03060C);
-            min-height: 100vh;
-            padding: 2rem 1.5rem;
+            background-color: #150E0A;
+            color: #F5E6D3;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.04) 0%, transparent 50%);
+            background-attachment: fixed;
         }
+
         .glass-panel {
-            max-width: 1300px;
-            margin: 0 auto;
-            background: rgba(18, 25, 40, 0.75);
-            backdrop-filter: blur(14px);
-            border-radius: 2rem;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            overflow: hidden;
+            background: linear-gradient(145deg, rgba(30, 20, 15, 0.8) 0%, rgba(44, 29, 22, 0.4) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
-        .premium-header {
-            background: linear-gradient(135deg, #0A0F1E 0%, #121A2A 100%);
-            padding: 1.5rem 2rem;
-            border-bottom: 2px solid #D4AF37;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+
+        .glass-input {
+            background: rgba(21, 14, 10, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
         }
-        .logo-area h1 {
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, #F9E0A0, #D4AF37);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+
+        .glass-input:focus {
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+            outline: none;
         }
-        .badge-club {
-            background: rgba(212, 175, 55, 0.15);
-            border-radius: 60px;
-            padding: 0.4rem 1rem;
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            color: #E9C46A;
-        }
-        .dashboard-content {
-            padding: 2rem;
-        }
-        .config-card, .attendance-card {
-            background: rgba(12, 18, 28, 0.8);
-            border-radius: 1.5rem;
-            padding: 1.2rem 1.8rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #F5E7C8;
-            border-left: 4px solid #D4AF37;
-            padding-left: 1rem;
-            margin-bottom: 1.2rem;
-        }
-        .flex-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: flex-end;
-            margin-bottom: 1.5rem;
-        }
-        .input-group {
-            flex: 1;
-            min-width: 180px;
-        }
-        .input-group label {
-            display: block;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: #B9C7D9;
-            margin-bottom: 0.3rem;
-        }
-        input, select {
-            width: 100%;
-            padding: 0.7rem 1rem;
-            background: #0F1622;
-            border: 1px solid #2A3348;
-            border-radius: 1rem;
-            color: white;
-            font-size: 0.9rem;
-        }
-        button {
-            background: linear-gradient(95deg, #D4AF37, #B88F1A);
+
+        .btn-premium {
+            background: linear-gradient(135deg, #D4AF37 0%, #B89328 100%);
+            color: #150E0A;
             border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 2rem;
-            font-weight: bold;
-            color: #0A0F1E;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-premium:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+            background: linear-gradient(135deg, #E5C158 0%, #C9A439 100%);
+        }
+
+        .btn-premium:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+        
+        .btn-premium:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #8A7532 0%, #6E5A20 100%);
+            color: rgba(21, 14, 10, 0.7);
+        }
+
+        /* Premium Toggle Switch */
+        /* hide the default checkbox */
+        .premium-toggle input {
+            display: none;
+        }
+
+        .toggle-track {
+            width: 48px;
+            height: 24px;
+            background-color: rgba(239, 68, 68, 0.2); /* muted red background */
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            border-radius: 9999px;
+            position: relative;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        button:hover { transform: translateY(-2px); }
-        .btn-secondary {
-            background: rgba(30, 40, 60, 0.9);
-            color: #E9C46A;
-            border: 1px solid #D4AF37;
-        }
-        .roster-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .roster-table th {
-            text-align: left;
-            padding: 0.8rem 0.5rem;
-            color: #B9C1D4;
-            border-bottom: 1px solid #2A3348;
-        }
-        .roster-table td {
-            padding: 0.7rem 0.5rem;
-            border-bottom: 1px solid #1E2638;
-            color: #E4E9F2;
-        }
-        .status-select {
-            background: #0F1622;
-            border: 1px solid #3A4562;
-            border-radius: 2rem;
-            padding: 0.4rem 1rem;
-            color: #FFE6B3;
-        }
-        .empty-message {
-            text-align: center;
-            padding: 2rem;
-            color: #8E9BB0;
-        }
-        .action-bar {
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
             display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1.5rem;
+            align-items: center;
         }
-        .alert {
-            padding: 0.7rem 1rem;
-            border-radius: 1rem;
-            margin: 1rem 0;
-        }
-        .alert-success {
-            background: rgba(46,125,50,0.2);
-            border-left: 4px solid #4CAF50;
-            color: #C8E6C9;
-        }
-        .alert-error {
-            background: rgba(198,40,40,0.2);
-            border-left: 4px solid #F44336;
-            color: #FFCDD2;
-        }
-        .loader {
-            display: inline-block;
+
+        .toggle-thumb {
             width: 18px;
             height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
+            background-color: #EF4444; /* red thumb when off */
+            border-radius: 50%;
+            position: absolute;
+            left: 3px;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Checked State */
+        .premium-toggle input:checked + .toggle-track {
+            background-color: rgba(16, 185, 129, 0.2); /* muted green background */
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .premium-toggle input:checked + .toggle-track .toggle-thumb {
+            background-color: #10B981; /* green thumb when on */
+            transform: translateX(24px);
+        }
+
+        /* Custom Scrollbar for list containers if they get too long */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 20, 15, 0.5);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.5);
+        }
+
+        .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+        
+        .list-item-enter {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        
+        /* Modern Loader */
+        .modern-loader {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(212, 175, 55, 0.1);
             border-radius: 50%;
             border-top-color: #D4AF37;
-            animation: spin 0.6s linear infinite;
+            animation: spin 1s ease-in-out infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        footer {
-            text-align: center;
-            padding: 1rem;
-            font-size: 0.7rem;
-            color: #5F6F8A;
-            border-top: 1px solid rgba(212,175,55,0.2);
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body>
-<div class="glass-panel">
-    <div class="premium-header">
-        <div class="logo-area">
-            <h1>☕ Coffeeland FC</h1>
-            <p>attendance command center</p>
+
+<body class="min-h-screen p-4 md:p-8 lg:p-12 relative overflow-x-hidden selection:bg-coffee-accent selection:text-coffee-900">
+
+    <!-- Decorative Elements -->
+    <div class="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-coffee-accent/50 to-transparent"></div>
+    <div class="fixed top-0 right-[-10%] w-[40%] h-[40%] bg-coffee-accent/5 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-coffee-accent/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+    <div class="max-w-4xl mx-auto space-y-8 relative z-10">
+
+        <!-- Header Section -->
+        <header class="text-center space-y-4 mb-12 animate-fade-in-up stagger-1">
+            <div class="inline-flex items-center justify-center p-3 rounded-2xl glass-panel mb-2 shadow-[0_0_30px_rgba(212,175,55,0.1)]">
+                <span class="text-3xl filter drop-shadow-[0_0_10px_rgba(212,175,55,0.5)]">☕</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-coffee-light to-[#A89060] tracking-tight drop-shadow-sm">
+                Coffeeland FC
+            </h1>
+            <h2 class="text-xl md:text-2xl font-medium text-coffee-accent tracking-wide uppercase letter-spacing-2">Command Center</h2>
+            
+            <div class="flex items-center justify-center space-x-6 text-xs md:text-sm mt-6 font-medium text-coffee-light/60">
+                <span class="flex items-center px-3 py-1 rounded-full border border-coffee-light/10 bg-coffee-light/5 backdrop-blur-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+                    SYSTEM ONLINE
+                </span>
+                <span class="flex items-center px-3 py-1 rounded-full border border-coffee-light/10 bg-coffee-light/5 backdrop-blur-sm">
+                    <svg class="w-4 h-4 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    AUTO-SYNC G-SHEETS
+                </span>
+            </div>
+        </header>
+
+        <!-- Batch Selection Panel -->
+        <div class="glass-panel rounded-2xl p-6 md:p-8 animate-fade-in-up stagger-2 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gradient-to-r from-coffee-accent/0 via-coffee-accent/5 to-coffee-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%]"></div>
+            
+            <div class="flex items-center mb-6 border-b border-coffee-light/10 pb-4">
+                <div class="w-8 h-8 rounded-lg bg-coffee-accent/10 flex items-center justify-center mr-3 border border-coffee-accent/20">
+                    <svg class="w-4 h-4 text-coffee-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-white tracking-wide uppercase">Batch Configuration</h3>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-5 items-end">
+                <div class="flex-1 w-full relative">
+                    <label class="block text-xs font-semibold mb-2 text-coffee-light/70 uppercase tracking-widest pl-1">Target Batch</label>
+                    <div class="relative">
+                        <select id="batchSelect"
+                            class="glass-input w-full rounded-xl py-3.5 px-4 text-white appearance-none cursor-pointer pr-10">
+                            <option value="" class="bg-coffee-800 text-white">-- Authenticating & Loading --</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-coffee-accent">
+                            <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="fetchRoster()" id="loadBtn"
+                    class="btn-premium font-semibold py-3.5 px-8 rounded-xl w-full md:w-auto flex items-center justify-center min-w-[200px] gap-2">
+                    <svg class="w-5 h-5 text-coffee-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <span>Initialize Session</span>
+                </button>
+            </div>
         </div>
-        <div class="badge-club">⚡ PREMIUM TRACKING</div>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="hidden flex-col items-center justify-center py-16 animate-fade-in-up">
+            <div class="modern-loader mb-4"></div>
+            <p class="text-coffee-accent/80 font-medium tracking-widest text-sm uppercase animate-pulse">Syncing Database...</p>
+        </div>
+
+        <!-- Roster Panel (Hidden by default) -->
+        <div id="rosterPanel" class="hidden glass-panel rounded-2xl p-6 md:p-8 space-y-8 animate-fade-in-up">
+
+            <!-- Date Picker -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-coffee-light/10 pb-6 gap-4">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-coffee-accent/20 to-transparent flex items-center justify-center mr-4 border border-coffee-accent/30 shadow-[0_0_15px_rgba(212,175,55,0.1)]">
+                        <svg class="w-5 h-5 text-coffee-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold text-white tracking-tight">Active Roster</h3>
+                        <p class="text-sm text-coffee-light/50 mt-1">Verify attendance for the selected session.</p>
+                    </div>
+                </div>
+                
+                <div class="relative w-full md:w-auto group">
+                    <label class="sr-only">Date</label>
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-coffee-accent/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <input type="date" id="attendanceDate"
+                        class="glass-input text-white rounded-xl py-2.5 pl-10 pr-4 w-full cursor-pointer font-medium tracking-wide">
+                </div>
+            </div>
+
+            <!-- Coaches List -->
+            <div class="animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div class="flex items-center mb-4">
+                    <span class="w-2 h-2 rounded-full bg-coffee-accent mr-3 shadow-[0_0_8px_rgba(212,175,55,0.8)]"></span>
+                    <h4 class="text-coffee-accent font-semibold uppercase tracking-widest text-sm">Instructor Core</h4>
+                </div>
+                <div class="bg-coffee-800/30 rounded-xl p-2 border border-coffee-light/5">
+                    <div id="coachesList" class="space-y-2 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2"></div>
+                </div>
+            </div>
+
+            <!-- Students List -->
+            <div class="animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div class="flex items-center mb-4 mt-6">
+                    <span class="w-2 h-2 rounded-full bg-blue-400 mr-3 shadow-[0_0_8px_rgba(96,165,250,0.8)]"></span>
+                    <h4 class="text-blue-400 font-semibold uppercase tracking-widest text-sm">Athletes</h4>
+                </div>
+                <div class="bg-coffee-800/30 rounded-xl p-2 border border-coffee-light/5">
+                    <div id="studentsList" class="space-y-2 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2"></div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-8 border-t border-coffee-light/10 mt-8">
+                <button onclick="submitAttendance()" id="submitBtn"
+                    class="btn-premium w-full font-bold py-4 rounded-xl text-lg flex items-center justify-center gap-3 shadow-[0_10px_25px_-5px_rgba(212,175,55,0.3)] hover:shadow-[0_15px_30px_-5px_rgba(212,175,55,0.4)]">
+                    <svg class="w-6 h-6 text-coffee-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                    <span>Commit Attendance Log</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMsg"
+            class="hidden animate-fade-in-up glass-panel border-l-4 border-l-green-500 overflow-hidden relative">
+            <div class="absolute inset-0 bg-green-500/10 z-0"></div>
+            <div class="px-6 py-5 relative z-10 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center mr-4 border border-green-500/30">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-green-400 font-bold text-lg">Transmission Successful</h4>
+                        <p class="text-green-200/70 text-sm mt-0.5">Database synchronized with Google Sheets.</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('successMsg').classList.add('hidden')" class="text-green-400/50 hover:text-green-400 transition-colors p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+        </div>
+
     </div>
-    <div class="dashboard-content">
-        <div class="config-card">
-            <div class="section-title">🔌 GOOGLE SHEETS ENGINE</div>
-            <div class="flex-row">
-                <div class="input-group">
-                    <label>📎 APPS SCRIPT WEB APP URL</label>
-                    <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec">
-                </div>
-                <button id="saveUrlBtn">💾 SAVE & CONNECT</button>
-            </div>
-            <div id="urlStatus"></div>
-        </div>
 
-        <div class="attendance-card">
-            <div class="section-title">📋 BATCH SESSION · MARK ATTENDANCE</div>
-            <div class="flex-row">
-                <div class="input-group">
-                    <label>📅 SESSION DATE</label>
-                    <input type="date" id="attendanceDate">
-                </div>
-                <div class="input-group">
-                    <label>⚽ SELECT BATCH</label>
-                    <select id="batchSelect"><option>-- Load batches --</option></select>
-                </div>
-                <button id="refreshBatchesBtn" class="btn-secondary">⟳ REFRESH BATCHES</button>
-            </div>
-            <div id="rosterPanel"><div class="empty-message">✨ Select a batch & refresh</div></div>
-            <div class="action-bar">
-                <button id="markAllPresentBtn" class="btn-secondary">✅ MARK ALL PRESENT</button>
-                <button id="markAllAbsentBtn" class="btn-secondary">❌ MARK ALL ABSENT</button>
-                <button id="submitAttendanceBtn">📤 SAVE TO SHEETS</button>
-            </div>
-            <div id="globalMessage"></div>
-        </div>
-    </div>
-    <footer>☕ Coffeeland FC · Data saved to Google Sheets</footer>
-</div>
+    <script>
+        // ==========================================
+        // 🛑 PASTE YOUR WEB APP URL HERE 🛑
+        // ==========================================
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzz7bzWZ7JdPONe0qHGItjZDE0V7rsPRWxDjlv9yLUo90PTEZOmFtkkCJmsjZozhxHi/exec";
 
-<script>
-    // ---------- CONFIG ----------
-    let APP_SCRIPT_URL = localStorage.getItem('coffeeland_script_url') || '';
-    const urlInput = document.getElementById('scriptUrlInput');
-    const saveUrlBtn = document.getElementById('saveUrlBtn');
-    const urlStatusDiv = document.getElementById('urlStatus');
-    const batchSelect = document.getElementById('batchSelect');
-    const refreshBatchesBtn = document.getElementById('refreshBatchesBtn');
-    const attendanceDateInput = document.getElementById('attendanceDate');
-    const rosterPanel = document.getElementById('rosterPanel');
-    const submitBtn = document.getElementById('submitAttendanceBtn');
-    const markAllPresent = document.getElementById('markAllPresentBtn');
-    const markAllAbsent = document.getElementById('markAllAbsentBtn');
-    const globalMsgDiv = document.getElementById('globalMessage');
+        // Set today's date by default
+        document.getElementById('attendanceDate').valueAsDate = new Date();
 
-    let currentRoster = { students: [], coaches: [] };
-    let currentBatchName = '';
+        // Load Batches on Startup
+        window.onload = async () => {
+            const select = document.getElementById('batchSelect');
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getBatches`, {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+                const data = await response.json();
 
-    function showMessage(msg, isError = false) {
-        globalMsgDiv.innerHTML = `<div class="alert ${isError ? 'alert-error' : 'alert-success'}">${msg}</div>`;
-        setTimeout(() => { if(globalMsgDiv.innerHTML.includes(msg)) globalMsgDiv.innerHTML = ''; }, 4000);
-    }
+                select.innerHTML = '<option value="" class="bg-coffee-800">-- Select a processing batch --</option>';
 
-    function setLoader(btn, loading, originalText) {
-        if(loading) {
-            btn._original = btn.innerHTML;
+                if (data.batches) {
+                    data.batches.forEach(b => {
+                        select.innerHTML += `<option value="${b.id}" class="bg-coffee-800 py-2">${b.name}</option>`;
+                    });
+                }
+            } catch (err) {
+                console.error("Error loading batches:", err);
+                select.innerHTML = '<option value="" class="bg-coffee-800">⚠️ Error loading batches</option>';
+            }
+        };
+
+        // Fetch Roster
+        async function fetchRoster() {
+            const batchName = document.getElementById('batchSelect').value;
+            const btn = document.getElementById('loadBtn');
+            
+            if (!batchName) {
+                // Shake animation for error
+                const selectGroup = document.getElementById('batchSelect').parentElement.parentElement;
+                selectGroup.classList.add('animate-pulse');
+                setTimeout(() => selectGroup.classList.remove('animate-pulse'), 500);
+                return;
+            }
+
+            // UI State updates
+            document.getElementById('rosterPanel').classList.add('hidden');
+            document.getElementById('successMsg').classList.add('hidden');
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+            document.getElementById('loadingIndicator').classList.add('flex');
+            
+            const originalBtnContent = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = `<span class="loader"></span> loading...`;
-        } else {
-            btn.disabled = false;
-            btn.innerHTML = btn._original || originalText;
+            btn.innerHTML = '<div class="w-5 h-5 border-2 border-coffee-900/30 border-t-coffee-900 rounded-full animate-spin"></div>';
+
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}`, {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+                const data = await response.json();
+
+                renderList('coachesList', data.coaches, 'coach');
+                renderList('studentsList', data.students, 'student');
+
+                document.getElementById('loadingIndicator').classList.add('hidden');
+                document.getElementById('loadingIndicator').classList.remove('flex');
+                document.getElementById('rosterPanel').classList.remove('hidden');
+            } catch (err) {
+                console.error("Error fetching roster:", err);
+                document.getElementById('loadingIndicator').classList.add('hidden');
+                document.getElementById('loadingIndicator').classList.remove('flex');
+                alert("Comm-link failed. Unable to fetch roster data from upstream.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnContent;
+            }
         }
-    }
 
-    // ----- API calls using pathInfo -----
-    async function callScriptGet(path) {
-        if(!APP_SCRIPT_URL) throw new Error('No Web App URL configured');
-        const url = APP_SCRIPT_URL + '/' + path;
-        const resp = await fetch(url);
-        if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const json = await resp.json();
-        if(json.error) throw new Error(json.error);
-        return json;
-    }
+        // Render List UI
+        function renderList(containerId, people, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
 
-    async function saveAttendance(records) {
-        if(!APP_SCRIPT_URL) throw new Error('No URL');
-        const payload = { action: 'saveAttendance', data: records };
-        const formBody = new URLSearchParams();
-        formBody.append('payload', JSON.stringify(payload));
-        const resp = await fetch(APP_SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formBody
-        });
-        if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const json = await resp.json();
-        if(json.error) throw new Error(json.error);
-        return json;
-    }
+            if (!people || people.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-6 flex flex-col items-center justify-center text-coffee-light/30 border border-dashed border-coffee-light/10 rounded-xl">
+                        <svg class="w-8 h-8 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                        <p class="text-sm">Database returned empty for this category.</p>
+                    </div>`;
+                return;
+            }
 
-    async function loadBatches() {
-        const data = await callScriptGet('getBatches');
-        return data.batches || [];
-    }
-
-    async function refreshBatchesDropdown() {
-        if(!APP_SCRIPT_URL) { showMessage('Save URL first', true); return; }
-        batchSelect.innerHTML = '<option>Loading batches...</option>';
-        try {
-            const batches = await loadBatches();
-            if(batches.length === 0) { batchSelect.innerHTML = '<option>No batches found</option>'; return; }
-            let html = '<option value="">-- Select Batch --</option>';
-            batches.forEach(b => { html += `<option value="${escapeHtml(b.name)}">${escapeHtml(b.name)}</option>`; });
-            batchSelect.innerHTML = html;
-        } catch(e) { showMessage('Error loading batches: '+e.message, true); batchSelect.innerHTML = '<option>Error</option>'; }
-    }
-
-    async function loadRoster(batchName) {
-        if(!batchName) { rosterPanel.innerHTML = '<div class="empty-message">Select a batch</div>'; return; }
-        rosterPanel.innerHTML = '<div class="empty-message"><span class="loader"></span> Loading roster...</div>';
-        try {
-            const data = await callScriptGet('getRoster/' + encodeURIComponent(batchName));
-            currentRoster = { students: data.students || [], coaches: data.coaches || [] };
-            renderRoster();
-        } catch(e) { rosterPanel.innerHTML = `<div class="alert alert-error">${e.message}</div>`; }
-    }
-
-    function renderRoster() {
-        const students = currentRoster.students;
-        const coaches = currentRoster.coaches;
-        if(students.length===0 && coaches.length===0) {
-            rosterPanel.innerHTML = '<div class="empty-message">No active students or coaches for this batch.</div>';
-            return;
-        }
-        let html = '';
-        if(coaches.length) {
-            html += `<div class="subgroup"><h3 style="color:#E9C46A;">🧑‍🏫 COACHES</h3><table class="roster-table"><thead><tr><th>Name</th><th>Status</th></tr></thead><tbody>`;
-            coaches.forEach(c => {
-                html += `<tr><td>${escapeHtml(c.name)}</td><td><select class="status-select" data-type="coach" data-name="${escapeHtml(c.name)}"><option value="Present">✅ Present</option><option value="Absent">❌ Absent</option></select></td></tr>`;
+            people.forEach((person, index) => {
+                const id = `${type}_${index}`;
+                // Adding staggered entry animation via style injection for visual flair
+                const delay = (index * 0.05).toFixed(2);
+                
+                // Card style: glass effect, hover highlighting
+                container.innerHTML += `
+                    <div class="list-item-enter opacity-0 flex justify-between items-center group
+                                bg-gradient-to-r from-coffee-800/40 to-coffee-800/10 
+                                hover:from-coffee-700/60 hover:to-coffee-700/30
+                                p-3 lg:p-4 rounded-xl border border-coffee-light/5 hover:border-coffee-accent/30 
+                                transition-all duration-300" style="animation-delay: ${delay}s">
+                        
+                        <div class="flex items-center space-x-3 overflow-hidden pr-2">
+                            <div class="w-8 h-8 rounded-full bg-coffee-900/50 flex-shrink-0 flex items-center justify-center border border-coffee-light/10 group-hover:border-coffee-accent/40 transition-colors">
+                                <span class="text-xs font-bold text-coffee-light/70">${person.name.charAt(0).toUpperCase()}</span>
+                            </div>
+                            <span class="font-medium text-[15px] text-coffee-light/90 truncate max-w-[150px] sm:max-w-[200px]" title="${person.name}">
+                                ${person.name}
+                            </span>
+                        </div>
+                        
+                        <!-- Custom Animated Toggle -->
+                        <label class="premium-toggle flex items-center cursor-pointer flex-shrink-0">
+                            <input type="checkbox" name="attendance_${type}" id="${id}" value="${person.name}" checked />
+                            <div class="toggle-track">
+                                <div class="toggle-thumb flex items-center justify-center">
+                                    <svg class="w-3 h-3 text-white opacity-0 transition-opacity duration-300 transform scale-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="check_${id}"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                `;
             });
-            html += `</tbody></table></div>`;
+
+            // Add dynamic listeners to toggle icons inside checkboxes
+            setTimeout(() => {
+                people.forEach((person, index) => {
+                    const id = `${type}_${index}`;
+                    const cb = document.getElementById(id);
+                    const checkIcon = document.getElementById(`check_${id}`);
+                    
+                    if(cb && checkIcon) {
+                        // init state
+                        if(cb.checked) {
+                            checkIcon.classList.remove('opacity-0', 'scale-50');
+                            checkIcon.classList.add('opacity-100', 'scale-100');
+                        }
+                        
+                        cb.addEventListener('change', (e) => {
+                            if(e.target.checked) {
+                                checkIcon.classList.remove('opacity-0', 'scale-50');
+                                checkIcon.classList.add('opacity-100', 'scale-100');
+                            } else {
+                                checkIcon.classList.remove('opacity-100', 'scale-100');
+                                checkIcon.classList.add('opacity-0', 'scale-50');
+                            }
+                        });
+                    }
+                });
+            }, 100);
         }
-        if(students.length) {
-            html += `<div class="subgroup"><h3 style="color:#7FDBB0;">👕 STUDENTS</h3><table class="roster-table"><thead><tr><th>Name</th><th>Status</th></tr></thead><tbody>`;
-            students.forEach(s => {
-                html += `<tr><td>${escapeHtml(s.name)}</td><td><select class="status-select" data-type="student" data-name="${escapeHtml(s.name)}"><option value="Present">✅ Present</option><option value="Absent">❌ Absent</option></select></td></tr>`;
+
+        // Submit Data
+        async function submitAttendance() {
+            const batchName = document.getElementById('batchSelect').value;
+            const date = document.getElementById('attendanceDate').value;
+            const btn = document.getElementById('submitBtn');
+
+            if (!batchName || !date) {
+                alert("System Alert: Missing batch or execution date.");
+                return;
+            }
+
+            const originalBtnContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-5 h-5 border-2 border-coffee-900/30 border-t-coffee-900 rounded-full animate-spin"></div>
+                    <span>Transmitting Data...</span>
+                </div>
+            `;
+
+            const records = [];
+
+            // Gather Coaches
+            document.querySelectorAll('input[name="attendance_coach"]').forEach(input => {
+                records.push({
+                    personType: 'coach',
+                    date: date,
+                    batchName: batchName,
+                    personName: input.value,
+                    status: input.checked ? 'Present' : 'Absent'
+                });
             });
-            html += `</tbody></table></div>`;
+
+            // Gather Students
+            document.querySelectorAll('input[name="attendance_student"]').forEach(input => {
+                records.push({
+                    personType: 'student',
+                    date: date,
+                    batchName: batchName,
+                    personName: input.value,
+                    status: input.checked ? 'Present' : 'Absent'
+                });
+            });
+
+            const payload = {
+                action: "saveAttendance",
+                data: records
+            };
+
+            const formData = new URLSearchParams();
+            formData.append('payload', JSON.stringify(payload));
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                     headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    document.getElementById('rosterPanel').classList.add('hidden');
+                    const successMsg = document.getElementById('successMsg');
+                    successMsg.classList.remove('hidden');
+                    
+                    // Auto-hide success message after 5 seconds and scroll to top
+                    setTimeout(() => {
+                        successMsg.classList.add('hidden');
+                        document.getElementById('batchSelect').value = '';
+                    }, 5000);
+                    
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    alert("Transmission Error: " + (result.error || "Unknown error encountered"));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Critical Failure: Comm-link broken. Data not saved.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnContent;
+            }
         }
-        rosterPanel.innerHTML = html;
-    }
-
-    function collectRecords() {
-        const selects = document.querySelectorAll('.status-select');
-        if(selects.length===0) { showMessage('No roster items', true); return []; }
-        const date = attendanceDateInput.value;
-        if(!date) { showMessage('Select date', true); return []; }
-        if(!currentBatchName) { showMessage('No batch selected', true); return []; }
-        const records = [];
-        selects.forEach(sel => {
-            const type = sel.getAttribute('data-type');
-            const name = sel.getAttribute('data-name');
-            const status = sel.value === 'Present' ? 'Present' : 'Absent';
-            records.push({ personType: type, personName: name, date: date, batchName: currentBatchName, status: status });
-        });
-        return records;
-    }
-
-    function markAll(status) {
-        const selects = document.querySelectorAll('.status-select');
-        if(selects.length===0) { showMessage('No roster', true); return; }
-        selects.forEach(s => s.value = status);
-        showMessage(`All marked ${status}`, false);
-    }
-
-    async function submitAttendance() {
-        const records = collectRecords();
-        if(records.length===0) return;
-        if(!confirm(`Save ${records.length} records for ${currentBatchName} on ${attendanceDateInput.value}?`)) return;
-        setLoader(submitBtn, true, '📤 SAVE TO SHEETS');
-        try {
-            const res = await saveAttendance(records);
-            if(res.status === 'success') showMessage(`✅ Saved ${res.savedCount} records`, false);
-            else throw new Error('Unknown response');
-        } catch(e) { showMessage(`❌ ${e.message}`, true); }
-        finally { setLoader(submitBtn, false, '📤 SAVE TO SHEETS'); }
-    }
-
-    function onBatchChange() {
-        currentBatchName = batchSelect.value;
-        if(currentBatchName) loadRoster(currentBatchName);
-        else rosterPanel.innerHTML = '<div class="empty-message">Select a batch</div>';
-    }
-
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
-    function setDefaultDate() { attendanceDateInput.value = new Date().toISOString().slice(0,10); }
-
-    // Event listeners
-    saveUrlBtn.addEventListener('click', () => {
-        let newUrl = urlInput.value.trim();
-        if(!newUrl) { urlStatusDiv.innerHTML = '<div class="alert alert-error">Enter URL</div>'; return; }
-        if(!newUrl.includes('/exec')) { urlStatusDiv.innerHTML = '<div class="alert alert-error">Must end with /exec</div>'; return; }
-        APP_SCRIPT_URL = newUrl;
-        localStorage.setItem('coffeeland_script_url', APP_SCRIPT_URL);
-        urlStatusDiv.innerHTML = '<div class="alert alert-success">✅ URL saved</div>';
-        refreshBatchesDropdown();
-    });
-    refreshBatchesBtn.addEventListener('click', () => { if(APP_SCRIPT_URL) refreshBatchesDropdown(); else showMessage('Save URL first', true); });
-    batchSelect.addEventListener('change', onBatchChange);
-    submitBtn.addEventListener('click', submitAttendance);
-    markAllPresent.addEventListener('click', () => markAll('Present'));
-    markAllAbsent.addEventListener('click', () => markAll('Absent'));
-
-    // Init
-    setDefaultDate();
-    if(APP_SCRIPT_URL) {
-        urlInput.value = APP_SCRIPT_URL;
-        urlStatusDiv.innerHTML = '<div class="alert alert-success">✅ Loaded from storage</div>';
-        refreshBatchesDropdown();
-    } else {
-        urlStatusDiv.innerHTML = '<div class="alert alert-error">Paste your Apps Script URL and save</div>';
-        batchSelect.innerHTML = '<option>Configure URL first</option>';
-    }
-</script>
+    </script>
 </body>
+
 </html>
