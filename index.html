@@ -3,49 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Coffeeland FC | Attendance</title>
+    <title>Coffeeland FC | Attendance System</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0A0A0F; padding: 16px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .header { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 24px; padding: 20px; margin-bottom: 16px; border: 1px solid rgba(255,215,0,0.2); text-align: center; }
-        .header h1 { font-size: 24px; background: linear-gradient(135deg, #FFD700, #FFA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .header p { color: #94A3B8; font-size: 13px; margin-top: 4px; }
-        .card { background: #1a1a2e; border-radius: 20px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(255,215,0,0.1); }
-        .card-title { font-size: 16px; font-weight: 600; color: #FFD700; margin-bottom: 12px; }
-        select, input[type="date"] { width: 100%; padding: 12px; background: #0A0A0F; border: 1px solid rgba(255,215,0,0.2); border-radius: 12px; color: white; font-size: 15px; }
-        .person-card { background: #0A0A0F; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-        .person-name { color: white; font-weight: 600; font-size: 14px; }
-        .person-detail { color: #94A3B8; font-size: 11px; margin-top: 2px; }
-        .btn-group { display: flex; gap: 6px; }
-        .btn-p { background: rgba(16,185,129,0.2); color: #10b981; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 600; cursor: pointer; }
-        .btn-p.active { background: #10b981; color: white; }
-        .btn-a { background: rgba(239,68,68,0.2); color: #ef4444; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 600; cursor: pointer; }
-        .btn-a.active { background: #ef4444; color: white; }
-        .action-bar { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
-        .small-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,215,0,0.2); padding: 6px 12px; border-radius: 30px; color: #94A3B8; font-size: 11px; cursor: pointer; }
-        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-        .stat-card { background: #1a1a2e; border-radius: 14px; padding: 10px; text-align: center; }
-        .stat-value { font-size: 24px; font-weight: 700; color: #FFD700; }
-        .stat-label { font-size: 9px; color: #94A3B8; margin-top: 3px; }
-        .btn-primary { background: linear-gradient(135deg, #FFD700, #FFA500); color: #0A0A0F; border: none; padding: 14px; border-radius: 40px; font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; }
-        .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,215,0,0.3); color: white; padding: 14px; border-radius: 40px; font-weight: 600; cursor: pointer; width: 100%; }
-        .button-row { display: flex; gap: 12px; margin-bottom: 16px; }
-        .loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .loading-content { background: #1a1a2e; padding: 25px; border-radius: 20px; text-align: center; border: 1px solid #FFD700; }
-        .toast { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #1a1a2e; border: 1px solid #FFD700; border-radius: 12px; padding: 12px; text-align: center; color: white; transform: translateY(100px); transition: transform 0.3s; z-index: 1100; }
-        .toast.show { transform: translateY(0); }
-        .empty-state { text-align: center; padding: 30px; color: #666; font-size: 13px; }
-        @media (max-width: 600px) { .stats { grid-template-columns: repeat(2, 1fr); } .button-row { flex-direction: column; } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0A0A0F;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: #1a1a2e;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            color: #94A3B8;
+            font-size: 13px;
+        }
+
+        /* Cards */
+        .card {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFD700;
+            margin-bottom: 12px;
+        }
+
+        /* Form Elements */
+        label {
+            display: block;
+            color: #94A3B8;
+            font-size: 11px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        select, input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            background: #0A0A0F;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        /* Person Cards */
+        .person-card {
+            background: #0A0A0F;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .person-info {
+            flex: 1;
+        }
+
+        .person-name {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .person-detail {
+            color: #94A3B8;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-p {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-p.active {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-a {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-a.active {
+            background: #ef4444;
+            color: white;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .status-present {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-absent {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        /* Action Bar */
+        .action-bar {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .small-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 6px 12px;
+            border-radius: 30px;
+            color: #94A3B8;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: #1a1a2e;
+            border-radius: 14px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: #94A3B8;
+            margin-top: 3px;
+            text-transform: uppercase;
+        }
+
+        /* Main Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #0A0A0F;
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: white;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-content {
+            background: #1a1a2e;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid #FFD700;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: #1a1a2e;
+            border: 1px solid #FFD700;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            color: white;
+            transform: translateY(100px);
+            transition: transform 0.3s;
+            z-index: 1100;
+            font-size: 14px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .button-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
             <h1>⚽ Coffeeland FC</h1>
             <p>Attendance Management System</p>
         </div>
 
+        <!-- Date & Batch -->
         <div class="card">
             <div class="card-title">📅 SELECT DATE & BATCH</div>
             <input type="date" id="attendanceDate" style="margin-bottom: 12px;">
@@ -60,13 +332,27 @@
             </select>
         </div>
 
+        <!-- Stats -->
         <div class="stats">
-            <div class="stat-card"><div class="stat-value" id="totalSelected">0</div><div class="stat-label">Selected</div></div>
-            <div class="stat-card"><div class="stat-value" id="totalPresent">0</div><div class="stat-label">Present</div></div>
-            <div class="stat-card"><div class="stat-value" id="totalAbsent">0</div><div class="stat-label">Absent</div></div>
-            <div class="stat-card"><div class="stat-value" id="coachCount">0</div><div class="stat-label">Coaches</div></div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalSelected">0</div>
+                <div class="stat-label">Selected</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalPresent">0</div>
+                <div class="stat-label">Present</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalAbsent">0</div>
+                <div class="stat-label">Absent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="coachCount">0</div>
+                <div class="stat-label">Coaches</div>
+            </div>
         </div>
 
+        <!-- Coaches Section -->
         <div class="card">
             <div class="card-title">👨‍🏫 COACHES</div>
             <div id="coachesList">Loading coaches...</div>
@@ -77,6 +363,7 @@
             </div>
         </div>
 
+        <!-- Players Section -->
         <div class="card">
             <div class="card-title">📋 PLAYERS</div>
             <div id="playersList">Select a batch to view players</div>
@@ -87,124 +374,308 @@
             </div>
         </div>
 
+        <!-- Action Buttons -->
         <div class="button-row">
             <button class="btn-primary" onclick="saveAttendance()">💾 SAVE ATTENDANCE</button>
             <button class="btn-secondary" onclick="resetAll()">🔄 RESET</button>
         </div>
     </div>
 
+    <!-- Loading Modal -->
     <div id="loading" class="loading">
-        <div class="loading-content"><div style="width:35px;height:35px;border:3px solid #FFD70030;border-top-color:#FFD700;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 12px;"></div><p>Saving attendance...</p></div>
+        <div class="loading-content">
+            <div style="width: 35px; height: 35px; border: 3px solid #FFD70030; border-top-color: #FFD700; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>
+            <p>Saving attendance...</p>
+        </div>
     </div>
+
+    <!-- Toast -->
     <div id="toast" class="toast"></div>
 
-    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
-
     <script>
-        // !!! REPLACE THIS WITH YOUR WEB APP URL !!!
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyg7fvUUmoDKXyVTPMXZxOUaqYYhKZQhV3V1kZwJVvdWNQg6x-i8Xmc_SN1WKic1rEDbA/exec';
+        // ==================== CONFIGURATION ====================
+        // !!! IMPORTANT: Replace this with your actual Web App URL !!!
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyzy3KxJ7H59HLNH142t50W2Pz_q-r6vHGInVRa_bHHD5vAaQIjIW-z5ukDIxi0y-ScoQ/exechttps://script.google.com/macros/s/AKfycbyzy3KxJ7H59HLNH142t50W2Pz_q-r6vHGInVRa_bHHD5vAaQIjIW-z5ukDIxi0y-ScoQ/exec';
         const SHEET_ID = '1qHo2fZZOvFHMENqMK1vlWR0uFhFxnXwXDn325dGDzDY';
 
-        let coaches = [], coachStatus = {}, players = [], playerStatus = {}, currentBatch = '';
+        // ==================== STATE ====================
+        let coaches = [];
+        let coachStatus = {};
+        let players = [];
+        let playerStatus = {};
+        let currentBatch = '';
 
+        // ==================== INITIALIZE ====================
         window.onload = function() {
-            document.getElementById('attendanceDate').value = new Date().toISOString().split('T')[0];
+            // Set today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('attendanceDate').value = today;
+            
+            // Load coaches
             loadCoaches();
-            document.getElementById('batchSelect').onchange = function() {
+            
+            // Batch change listener
+            document.getElementById('batchSelect').addEventListener('change', function() {
                 currentBatch = this.value;
-                currentBatch ? loadPlayers() : (document.getElementById('playersList').innerHTML = '<div class="empty-state">Select a batch to view players</div>', playerStatus = {}, updateStats());
-            };
+                if (currentBatch) {
+                    loadPlayers();
+                } else {
+                    document.getElementById('playersList').innerHTML = '<div class="empty-state">Select a batch to view players</div>';
+                    playerStatus = {};
+                    updateStats();
+                }
+            });
         };
 
+        // ==================== API CALL ====================
         async function callAPI(action, data = {}) {
             data.action = action;
             data.sheetId = SHEET_ID;
-            const response = await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-            return response.json();
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            return await response.json();
         }
 
+        // ==================== LOAD COACHES ====================
         async function loadCoaches() {
             try {
                 const result = await callAPI('getCoaches');
-                if (result.success && result.data) { coaches = result.data.map(c => c.name); renderCoaches(); }
-                else document.getElementById('coachesList').innerHTML = '<div class="empty-state">No coaches found</div>';
-            } catch(e) { document.getElementById('coachesList').innerHTML = '<div class="empty-state">Error loading coaches</div>'; }
+                if (result.success && result.data) {
+                    coaches = result.data.map(c => c.name);
+                    renderCoaches();
+                } else {
+                    document.getElementById('coachesList').innerHTML = '<div class="empty-state">No coaches found</div>';
+                }
+            } catch (error) {
+                console.error('Load coaches error:', error);
+                document.getElementById('coachesList').innerHTML = '<div class="empty-state">Error loading coaches: ' + error.message + '</div>';
+                showToast('Failed to load coaches', 'error');
+            }
         }
 
         function renderCoaches() {
             const container = document.getElementById('coachesList');
-            if (!coaches.length) { container.innerHTML = '<div class="empty-state">No coaches found</div>'; return; }
+            if (coaches.length === 0) {
+                container.innerHTML = '<div class="empty-state">No coaches found</div>';
+                return;
+            }
+            
             container.innerHTML = '';
             coaches.forEach(coach => {
                 const status = coachStatus[coach];
-                container.innerHTML += `<div class="person-card"><div><div class="person-name">${escapeHtml(coach)}</div><div class="person-detail">Coach</div></div><div class="btn-group"><button class="btn-p ${status === 'P' ? 'active' : ''}" onclick="setCoachStatus('${escapeHtml(coach)}','P')">P</button><button class="btn-a ${status === 'A' ? 'active' : ''}" onclick="setCoachStatus('${escapeHtml(coach)}','A')">A</button></div>${status ? `<span class="status-badge ${status === 'P' ? 'status-present' : 'status-absent'}">${status === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}</div>`;
+                const div = document.createElement('div');
+                div.className = 'person-card';
+                div.innerHTML = `
+                    <div class="person-info">
+                        <div class="person-name">${escapeHtml(coach)}</div>
+                        <div class="person-detail">Coach</div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-p ${status === 'P' ? 'active' : ''}" onclick="setCoachStatus('${escapeHtml(coach)}', 'P')">P</button>
+                        <button class="btn-a ${status === 'A' ? 'active' : ''}" onclick="setCoachStatus('${escapeHtml(coach)}', 'A')">A</button>
+                    </div>
+                    ${status ? `<span class="status-badge ${status === 'P' ? 'status-present' : 'status-absent'}">${status === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
+                `;
+                container.appendChild(div);
             });
             updateStats();
         }
 
-        function setCoachStatus(coach, status) { coachStatus[coach] = status; renderCoaches(); }
-        function allCoachesPresent() { coaches.forEach(c => coachStatus[c] = 'P'); renderCoaches(); }
-        function allCoachesAbsent() { coaches.forEach(c => coachStatus[c] = 'A'); renderCoaches(); }
-        function clearAllCoaches() { coaches.forEach(c => coachStatus[c] = null); renderCoaches(); }
+        function setCoachStatus(coach, status) {
+            coachStatus[coach] = status;
+            renderCoaches();
+        }
 
+        function allCoachesPresent() {
+            coaches.forEach(c => coachStatus[c] = 'P');
+            renderCoaches();
+        }
+
+        function allCoachesAbsent() {
+            coaches.forEach(c => coachStatus[c] = 'A');
+            renderCoaches();
+        }
+
+        function clearAllCoaches() {
+            coaches.forEach(c => coachStatus[c] = null);
+            renderCoaches();
+        }
+
+        // ==================== LOAD PLAYERS ====================
         async function loadPlayers() {
             if (!currentBatch) return;
+            
             try {
                 const result = await callAPI('getStudents', { batch: currentBatch });
-                if (result.success && result.data) { players = result.data; players.forEach(p => { if (playerStatus[p.name] === undefined) playerStatus[p.name] = null; }); renderPlayers(); }
-                else { players = []; document.getElementById('playersList').innerHTML = '<div class="empty-state">No players in this batch</div>'; }
+                if (result.success && result.data) {
+                    players = result.data;
+                    players.forEach(p => {
+                        if (playerStatus[p.name] === undefined) {
+                            playerStatus[p.name] = null;
+                        }
+                    });
+                    renderPlayers();
+                } else {
+                    players = [];
+                    document.getElementById('playersList').innerHTML = '<div class="empty-state">No players in this batch</div>';
+                }
                 updateStats();
-            } catch(e) { document.getElementById('playersList').innerHTML = '<div class="empty-state">Error loading players</div>'; }
+            } catch (error) {
+                console.error('Load players error:', error);
+                document.getElementById('playersList').innerHTML = '<div class="empty-state">Error loading players: ' + error.message + '</div>';
+                showToast('Failed to load players', 'error');
+            }
         }
 
         function renderPlayers() {
             const container = document.getElementById('playersList');
-            if (!players.length) { container.innerHTML = '<div class="empty-state">No players in this batch</div>'; return; }
+            if (players.length === 0) {
+                container.innerHTML = '<div class="empty-state">No players in this batch</div>';
+                return;
+            }
+            
             container.innerHTML = '';
             players.forEach(player => {
                 const status = playerStatus[player.name];
-                container.innerHTML += `<div class="person-card"><div><div class="person-name">${escapeHtml(player.name)}</div><div class="person-detail">Fees: ₹${player.fees}</div></div><div class="btn-group"><button class="btn-p ${status === 'P' ? 'active' : ''}" onclick="setPlayerStatus('${escapeHtml(player.name)}','P')">P</button><button class="btn-a ${status === 'A' ? 'active' : ''}" onclick="setPlayerStatus('${escapeHtml(player.name)}','A')">A</button></div>${status ? `<span class="status-badge ${status === 'P' ? 'status-present' : 'status-absent'}">${status === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}</div>`;
+                const div = document.createElement('div');
+                div.className = 'person-card';
+                div.innerHTML = `
+                    <div class="person-info">
+                        <div class="person-name">${escapeHtml(player.name)}</div>
+                        <div class="person-detail">Fees: ₹${player.fees}</div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-p ${status === 'P' ? 'active' : ''}" onclick="setPlayerStatus('${escapeHtml(player.name)}', 'P')">P</button>
+                        <button class="btn-a ${status === 'A' ? 'active' : ''}" onclick="setPlayerStatus('${escapeHtml(player.name)}', 'A')">A</button>
+                    </div>
+                    ${status ? `<span class="status-badge ${status === 'P' ? 'status-present' : 'status-absent'}">${status === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
+                `;
+                container.appendChild(div);
             });
             updateStats();
         }
 
-        function setPlayerStatus(name, status) { playerStatus[name] = status; renderPlayers(); }
-        function allPlayersPresent() { players.forEach(p => playerStatus[p.name] = 'P'); renderPlayers(); }
-        function allPlayersAbsent() { players.forEach(p => playerStatus[p.name] = 'A'); renderPlayers(); }
-        function clearAllPlayers() { players.forEach(p => playerStatus[p.name] = null); renderPlayers(); }
+        function setPlayerStatus(name, status) {
+            playerStatus[name] = status;
+            renderPlayers();
+        }
 
+        function allPlayersPresent() {
+            players.forEach(p => playerStatus[p.name] = 'P');
+            renderPlayers();
+        }
+
+        function allPlayersAbsent() {
+            players.forEach(p => playerStatus[p.name] = 'A');
+            renderPlayers();
+        }
+
+        function clearAllPlayers() {
+            players.forEach(p => playerStatus[p.name] = null);
+            renderPlayers();
+        }
+
+        // ==================== STATS ====================
         function updateStats() {
             const coachSelected = Object.values(coachStatus).filter(s => s !== null).length;
             const playerSelected = Object.values(playerStatus).filter(s => s !== null).length;
             const presentCount = [...Object.values(coachStatus), ...Object.values(playerStatus)].filter(s => s === 'P').length;
             const absentCount = [...Object.values(coachStatus), ...Object.values(playerStatus)].filter(s => s === 'A').length;
+            
             document.getElementById('totalSelected').textContent = coachSelected + playerSelected;
             document.getElementById('totalPresent').textContent = presentCount;
             document.getElementById('totalAbsent').textContent = absentCount;
             document.getElementById('coachCount').textContent = coachSelected;
         }
 
+        // ==================== SAVE ATTENDANCE ====================
         async function saveAttendance() {
             const date = document.getElementById('attendanceDate').value;
             const batch = document.getElementById('batchSelect').value;
-            if (!date) { showToast('Select date', 'error'); return; }
-            if (!batch) { showToast('Select batch', 'error'); return; }
+            
+            if (!date) {
+                showToast('Please select a date', 'error');
+                return;
+            }
+            if (!batch) {
+                showToast('Please select a batch', 'error');
+                return;
+            }
+            
             const records = [];
-            for (const [name, status] of Object.entries(coachStatus)) if (status) records.push({ type: 'coach', name, status });
-            for (const [name, status] of Object.entries(playerStatus)) if (status) records.push({ type: 'student', name, status });
-            if (!records.length) { showToast('No attendance marked', 'error'); return; }
+            for (const [name, status] of Object.entries(coachStatus)) {
+                if (status) records.push({ type: 'coach', name, status });
+            }
+            for (const [name, status] of Object.entries(playerStatus)) {
+                if (status) records.push({ type: 'student', name, status });
+            }
+            
+            if (records.length === 0) {
+                showToast('No attendance marked', 'error');
+                return;
+            }
+            
             document.getElementById('loading').style.display = 'flex';
+            
             try {
                 const result = await callAPI('saveAttendance', { date, batch, records });
-                if (result.success) { showToast(`✅ Saved! ${result.count} records`, 'success'); coachStatus = {}; playerStatus = {}; renderCoaches(); renderPlayers(); updateStats(); }
-                else showToast('❌ Error: ' + result.error, 'error');
-            } catch(e) { showToast('❌ Network error', 'error'); }
-            finally { document.getElementById('loading').style.display = 'none'; }
+                
+                if (result.success) {
+                    showToast(`✅ Attendance saved! ${result.count} records`, 'success');
+                    // Clear after successful save
+                    coachStatus = {};
+                    playerStatus = {};
+                    renderCoaches();
+                    renderPlayers();
+                    updateStats();
+                } else {
+                    showToast('❌ Error: ' + (result.error || 'Unknown'), 'error');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                showToast('❌ Network error: ' + error.message, 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
         }
 
-        function resetAll() { coachStatus = {}; playerStatus = {}; document.getElementById('batchSelect').value = ''; document.getElementById('playersList').innerHTML = '<div class="empty-state">Select a batch to view players</div>'; currentBatch = ''; renderCoaches(); updateStats(); showToast('Reset', 'success'); }
-        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
-        function showToast(msg, type) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.style.borderColor = type === 'success' ? '#10b981' : '#ef4444'; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
+        // ==================== RESET ====================
+        function resetAll() {
+            coachStatus = {};
+            playerStatus = {};
+            document.getElementById('batchSelect').value = '';
+            document.getElementById('playersList').innerHTML = '<div class="empty-state">Select a batch to view players</div>';
+            currentBatch = '';
+            renderCoaches();
+            updateStats();
+            showToast('All reset', 'success');
+        }
+
+        // ==================== HELPER FUNCTIONS ====================
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.borderColor = type === 'success' ? '#10b981' : '#ef4444';
+            toast.classList.add('show');
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 3000);
+        }
     </script>
 </body>
 </html>
