@@ -2,644 +2,412 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Coffeeland FC | Attendance System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffeeland FC · Premium Attendance</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
         }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #0A0A0F;
-            padding: 16px;
+            background: radial-gradient(circle at 10% 20%, #0B0F1C, #03060C);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
         }
-
-        .container {
-            max-width: 800px;
+        .glass-panel {
+            max-width: 1300px;
             margin: 0 auto;
+            background: rgba(18, 25, 40, 0.75);
+            backdrop-filter: blur(14px);
+            border-radius: 2rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            overflow: hidden;
         }
-
-        /* Header */
-        .header {
-            background: #1a1a2e;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 16px;
-            text-align: center;
-            border: 1px solid rgba(255, 215, 0, 0.2);
-        }
-
-        .header h1 {
-            font-size: 24px;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 4px;
-        }
-
-        .header p {
-            color: #94A3B8;
-            font-size: 13px;
-        }
-
-        /* Cards */
-        .card {
-            background: #1a1a2e;
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-        }
-
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #FFD700;
-            margin-bottom: 12px;
-        }
-
-        /* Form Elements */
-        label {
-            display: block;
-            color: #94A3B8;
-            font-size: 11px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-        }
-
-        select, input[type="date"] {
-            width: 100%;
-            padding: 12px;
-            background: #0A0A0F;
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        /* Person Cards */
-        .person-card {
-            background: #0A0A0F;
-            border-radius: 12px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
+        .premium-header {
+            background: linear-gradient(135deg, #0A0F1E 0%, #121A2A 100%);
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid #D4AF37;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
         }
-
-        .person-info {
-            flex: 1;
+        .logo-area h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #F9E0A0, #D4AF37);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-
-        .person-name {
-            color: white;
+        .badge-club {
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 60px;
+            padding: 0.4rem 1rem;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: #E9C46A;
+        }
+        .dashboard-content {
+            padding: 2rem;
+        }
+        .config-card, .attendance-card {
+            background: rgba(12, 18, 28, 0.8);
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .section-title {
+            font-size: 1.2rem;
             font-weight: 600;
-            font-size: 14px;
+            color: #F5E7C8;
+            border-left: 4px solid #D4AF37;
+            padding-left: 1rem;
+            margin-bottom: 1.2rem;
         }
-
-        .person-detail {
-            color: #94A3B8;
-            font-size: 11px;
-            margin-top: 2px;
-        }
-
-        /* Buttons */
-        .btn-group {
+        .flex-row {
             display: flex;
-            gap: 6px;
-        }
-
-        .btn-p {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .btn-p.active {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-a {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .btn-a.active {
-            background: #ef4444;
-            color: white;
-        }
-
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-        }
-
-        .status-present {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-        }
-
-        .status-absent {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-
-        /* Action Bar */
-        .action-bar {
-            margin-top: 12px;
-            display: flex;
-            gap: 8px;
             flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 1.5rem;
         }
-
-        .small-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            padding: 6px 12px;
-            border-radius: 30px;
-            color: #94A3B8;
-            font-size: 11px;
-            cursor: pointer;
+        .input-group {
+            flex: 1;
+            min-width: 180px;
         }
-
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .stat-card {
-            background: #1a1a2e;
-            border-radius: 14px;
-            padding: 10px;
-            text-align: center;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: #FFD700;
-        }
-
-        .stat-label {
-            font-size: 9px;
-            color: #94A3B8;
-            margin-top: 3px;
+        .input-group label {
+            display: block;
+            font-size: 0.7rem;
             text-transform: uppercase;
+            color: #B9C7D9;
+            margin-bottom: 0.3rem;
         }
-
-        /* Main Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: #0A0A0F;
+        input, select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            background: #0F1622;
+            border: 1px solid #2A3348;
+            border-radius: 1rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+        button {
+            background: linear-gradient(95deg, #D4AF37, #B88F1A);
             border: none;
-            padding: 14px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 15px;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            color: #0A0F1E;
             cursor: pointer;
-            width: 100%;
+            transition: 0.2s;
         }
-
+        button:hover { transform: translateY(-2px); }
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            color: white;
-            padding: 14px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            width: 100%;
+            background: rgba(30, 40, 60, 0.9);
+            color: #E9C46A;
+            border: 1px solid #D4AF37;
         }
-
-        .button-row {
+        .roster-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .roster-table th {
+            text-align: left;
+            padding: 0.8rem 0.5rem;
+            color: #B9C1D4;
+            border-bottom: 1px solid #2A3348;
+        }
+        .roster-table td {
+            padding: 0.7rem 0.5rem;
+            border-bottom: 1px solid #1E2638;
+            color: #E4E9F2;
+        }
+        .status-select {
+            background: #0F1622;
+            border: 1px solid #3A4562;
+            border-radius: 2rem;
+            padding: 0.4rem 1rem;
+            color: #FFE6B3;
+        }
+        .empty-message {
+            text-align: center;
+            padding: 2rem;
+            color: #8E9BB0;
+        }
+        .action-bar {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
-
-        /* Loading */
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
+        .alert {
+            padding: 0.7rem 1rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
         }
-
-        .loading-content {
-            background: #1a1a2e;
-            padding: 25px;
-            border-radius: 20px;
+        .alert-success {
+            background: rgba(46,125,50,0.2);
+            border-left: 4px solid #4CAF50;
+            color: #C8E6C9;
+        }
+        .alert-error {
+            background: rgba(198,40,40,0.2);
+            border-left: 4px solid #F44336;
+            color: #FFCDD2;
+        }
+        .loader {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #D4AF37;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        footer {
             text-align: center;
-            border: 1px solid #FFD700;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: #1a1a2e;
-            border: 1px solid #FFD700;
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            color: white;
-            transform: translateY(100px);
-            transition: transform 0.3s;
-            z-index: 1100;
-            font-size: 14px;
-        }
-
-        .toast.show {
-            transform: translateY(0);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 30px;
-            color: #666;
-            font-size: 13px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 600px) {
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .button-row {
-                flex-direction: column;
-                gap: 8px;
-            }
+            padding: 1rem;
+            font-size: 0.7rem;
+            color: #5F6F8A;
+            border-top: 1px solid rgba(212,175,55,0.2);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>⚽ Coffeeland FC</h1>
-            <p>Attendance Management System</p>
+<div class="glass-panel">
+    <div class="premium-header">
+        <div class="logo-area">
+            <h1>☕ Coffeeland FC</h1>
+            <p>attendance command center</p>
+        </div>
+        <div class="badge-club">⚡ PREMIUM TRACKING</div>
+    </div>
+    <div class="dashboard-content">
+        <div class="config-card">
+            <div class="section-title">🔌 GOOGLE SHEETS ENGINE</div>
+            <div class="flex-row">
+                <div class="input-group">
+                    <label>📎 APPS SCRIPT WEB APP URL</label>
+                    <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec">
+                </div>
+                <button id="saveUrlBtn">💾 SAVE & CONNECT</button>
+            </div>
+            <div id="urlStatus"></div>
         </div>
 
-        <div class="card">
-            <div class="card-title">📅 SELECT DATE & BATCH</div>
-            <input type="date" id="attendanceDate" style="margin-bottom: 12px;">
-            <select id="batchSelect">
-                <option value="">-- Choose Batch --</option>
-                <option value="Kalyan Nagar Morning">🌅 Kalyan Nagar Morning</option>
-                <option value="Kalyan Nagar Evening">🌙 Kalyan Nagar Evening</option>
-                <option value="Xavier's School">🏫 Xavier's School</option>
-                <option value="Monti Angels">😇 Monti Angels</option>
-                <option value="District Field Morning">⚽ District Field Morning</option>
-                <option value="District Field Evening">⭐ District Field Evening</option>
-            </select>
-        </div>
-
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value" id="totalSelected">0</div>
-                <div class="stat-label">Selected</div>
+        <div class="attendance-card">
+            <div class="section-title">📋 BATCH SESSION · MARK ATTENDANCE</div>
+            <div class="flex-row">
+                <div class="input-group">
+                    <label>📅 SESSION DATE</label>
+                    <input type="date" id="attendanceDate">
+                </div>
+                <div class="input-group">
+                    <label>⚽ SELECT BATCH</label>
+                    <select id="batchSelect"><option>-- Load batches --</option></select>
+                </div>
+                <button id="refreshBatchesBtn" class="btn-secondary">⟳ REFRESH BATCHES</button>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalPresent">0</div>
-                <div class="stat-label">Present</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalAbsent">0</div>
-                <div class="stat-label">Absent</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="coachCount">0</div>
-                <div class="stat-label">Coaches</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">👨‍🏫 COACHES</div>
-            <div id="coachesList">Loading coaches...</div>
+            <div id="rosterPanel"><div class="empty-message">✨ Select a batch & refresh</div></div>
             <div class="action-bar">
-                <button class="small-btn" onclick="allCoachesPresent()">✅ All Present</button>
-                <button class="small-btn" onclick="allCoachesAbsent()">❌ All Absent</button>
-                <button class="small-btn" onclick="clearAllCoaches()">🔄 Clear</button>
+                <button id="markAllPresentBtn" class="btn-secondary">✅ MARK ALL PRESENT</button>
+                <button id="markAllAbsentBtn" class="btn-secondary">❌ MARK ALL ABSENT</button>
+                <button id="submitAttendanceBtn">📤 SAVE TO SHEETS</button>
             </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">📋 PLAYERS</div>
-            <div id="playersList">Select a batch to view players</div>
-            <div class="action-bar">
-                <button class="small-btn" onclick="allPlayersPresent()">✅ All Present</button>
-                <button class="small-btn" onclick="allPlayersAbsent()">❌ All Absent</button>
-                <button class="small-btn" onclick="clearAllPlayers()">🔄 Clear</button>
-            </div>
-        </div>
-
-        <div class="button-row">
-            <button class="btn-primary" onclick="saveAttendance()">💾 SAVE ATTENDANCE</button>
-            <button class="btn-secondary" onclick="resetAll()">🔄 RESET</button>
+            <div id="globalMessage"></div>
         </div>
     </div>
+    <footer>☕ Coffeeland FC · Data saved to Google Sheets</footer>
+</div>
 
-    <div id="loading" class="loading">
-        <div class="loading-content">
-            <div style="width: 35px; height: 35px; border: 3px solid #FFD70030; border-top-color: #FFD700; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>
-            <p>Saving attendance...</p>
-        </div>
-    </div>
+<script>
+    // ---------- CONFIG ----------
+    let APP_SCRIPT_URL = localStorage.getItem('coffeeland_script_url') || '';
+    const urlInput = document.getElementById('scriptUrlInput');
+    const saveUrlBtn = document.getElementById('saveUrlBtn');
+    const urlStatusDiv = document.getElementById('urlStatus');
+    const batchSelect = document.getElementById('batchSelect');
+    const refreshBatchesBtn = document.getElementById('refreshBatchesBtn');
+    const attendanceDateInput = document.getElementById('attendanceDate');
+    const rosterPanel = document.getElementById('rosterPanel');
+    const submitBtn = document.getElementById('submitAttendanceBtn');
+    const markAllPresent = document.getElementById('markAllPresentBtn');
+    const markAllAbsent = document.getElementById('markAllAbsentBtn');
+    const globalMsgDiv = document.getElementById('globalMessage');
 
-    <div id="toast" class="toast"></div>
+    let currentRoster = { students: [], coaches: [] };
+    let currentBatchName = '';
 
-    <script>
-        // ==================== CONFIGURATION ====================
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzrU7QbOkGckFBbxrwpv2RsXle8ESPsF2OZ0orA9EcIZdQUEXXewo3PxrQKrfEyz2lOTg/exec';
-        const SHEET_ID = '1qHo2fZZOvFHMENqMK1vlWR0uFhFxnXwXDn325dGDzDY';
+    function showMessage(msg, isError = false) {
+        globalMsgDiv.innerHTML = `<div class="alert ${isError ? 'alert-error' : 'alert-success'}">${msg}</div>`;
+        setTimeout(() => { if(globalMsgDiv.innerHTML.includes(msg)) globalMsgDiv.innerHTML = ''; }, 4000);
+    }
 
-        // ==================== STATE ====================
-        let coaches = [];
-        let coachStatus = {};
-        let players = [];
-        let playerStatus = {};
-        let currentBatch = '';
+    function setLoader(btn, loading, originalText) {
+        if(loading) {
+            btn._original = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<span class="loader"></span> loading...`;
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = btn._original || originalText;
+        }
+    }
 
-        // ==================== INITIALIZE ====================
-        window.onload = function() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('attendanceDate').value = today;
-            loadCoaches();
-            
-            document.getElementById('batchSelect').addEventListener('change', function() {
-                currentBatch = this.value;
-                if (currentBatch) {
-                    loadPlayers();
-                } else {
-                    document.getElementById('playersList').innerHTML = '<div class="empty-state">Select a batch to view players</div>';
-                    playerStatus = {};
-                    updateStats();
-                }
+    // ----- API calls using pathInfo -----
+    async function callScriptGet(path) {
+        if(!APP_SCRIPT_URL) throw new Error('No Web App URL configured');
+        const url = APP_SCRIPT_URL + '/' + path;
+        const resp = await fetch(url);
+        if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const json = await resp.json();
+        if(json.error) throw new Error(json.error);
+        return json;
+    }
+
+    async function saveAttendance(records) {
+        if(!APP_SCRIPT_URL) throw new Error('No URL');
+        const payload = { action: 'saveAttendance', data: records };
+        const formBody = new URLSearchParams();
+        formBody.append('payload', JSON.stringify(payload));
+        const resp = await fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formBody
+        });
+        if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const json = await resp.json();
+        if(json.error) throw new Error(json.error);
+        return json;
+    }
+
+    async function loadBatches() {
+        const data = await callScriptGet('getBatches');
+        return data.batches || [];
+    }
+
+    async function refreshBatchesDropdown() {
+        if(!APP_SCRIPT_URL) { showMessage('Save URL first', true); return; }
+        batchSelect.innerHTML = '<option>Loading batches...</option>';
+        try {
+            const batches = await loadBatches();
+            if(batches.length === 0) { batchSelect.innerHTML = '<option>No batches found</option>'; return; }
+            let html = '<option value="">-- Select Batch --</option>';
+            batches.forEach(b => { html += `<option value="${escapeHtml(b.name)}">${escapeHtml(b.name)}</option>`; });
+            batchSelect.innerHTML = html;
+        } catch(e) { showMessage('Error loading batches: '+e.message, true); batchSelect.innerHTML = '<option>Error</option>'; }
+    }
+
+    async function loadRoster(batchName) {
+        if(!batchName) { rosterPanel.innerHTML = '<div class="empty-message">Select a batch</div>'; return; }
+        rosterPanel.innerHTML = '<div class="empty-message"><span class="loader"></span> Loading roster...</div>';
+        try {
+            const data = await callScriptGet('getRoster/' + encodeURIComponent(batchName));
+            currentRoster = { students: data.students || [], coaches: data.coaches || [] };
+            renderRoster();
+        } catch(e) { rosterPanel.innerHTML = `<div class="alert alert-error">${e.message}</div>`; }
+    }
+
+    function renderRoster() {
+        const students = currentRoster.students;
+        const coaches = currentRoster.coaches;
+        if(students.length===0 && coaches.length===0) {
+            rosterPanel.innerHTML = '<div class="empty-message">No active students or coaches for this batch.</div>';
+            return;
+        }
+        let html = '';
+        if(coaches.length) {
+            html += `<div class="subgroup"><h3 style="color:#E9C46A;">🧑‍🏫 COACHES</h3><table class="roster-table"><thead><tr><th>Name</th><th>Status</th></tr></thead><tbody>`;
+            coaches.forEach(c => {
+                html += `<tr><td>${escapeHtml(c.name)}</td><td><select class="status-select" data-type="coach" data-name="${escapeHtml(c.name)}"><option value="Present">✅ Present</option><option value="Absent">❌ Absent</option></select></td></tr>`;
             });
-        };
-
-        // ==================== API CALL (Updated for CORS) ====================
-        async function callAPI(action, data = {}) {
-            data.action = action;
-            data.sheetId = SHEET_ID;
-            
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Critical fix for Google Apps Script CORS
-                headers: {
-                    'Content-Type': 'text/plain' // Changed from application/json to avoid pre-flight issues
-                },
-                body: JSON.stringify(data)
+            html += `</tbody></table></div>`;
+        }
+        if(students.length) {
+            html += `<div class="subgroup"><h3 style="color:#7FDBB0;">👕 STUDENTS</h3><table class="roster-table"><thead><tr><th>Name</th><th>Status</th></tr></thead><tbody>`;
+            students.forEach(s => {
+                html += `<tr><td>${escapeHtml(s.name)}</td><td><select class="status-select" data-type="student" data-name="${escapeHtml(s.name)}"><option value="Present">✅ Present</option><option value="Absent">❌ Absent</option></select></td></tr>`;
             });
-
-            // Note: with no-cors, you cannot read the response body directly.
-            // For fetching data (GET actions), we use a separate logic or accept opaque responses.
-            // Below is a specialized fetcher for data-retrieval actions.
-            if (action.startsWith('get')) {
-               const getUrl = `${WEB_APP_URL}?action=${action}&batch=${encodeURIComponent(data.batch || '')}`;
-               const getRes = await fetch(getUrl);
-               return await getRes.json();
-            }
-            
-            return { success: true }; // Assume success for POST actions in no-cors mode
+            html += `</tbody></table></div>`;
         }
+        rosterPanel.innerHTML = html;
+    }
 
-        // ==================== LOAD COACHES ====================
-        async function loadCoaches() {
-            try {
-                const result = await callAPI('getCoaches');
-                if (result.success && result.data) {
-                    coaches = result.data.map(c => c.name);
-                    renderCoaches();
-                } else {
-                    document.getElementById('coachesList').innerHTML = '<div class="empty-state">No coaches found</div>';
-                }
-            } catch (error) {
-                console.error('Load coaches error:', error);
-                document.getElementById('coachesList').innerHTML = '<div class="empty-state">Error loading coaches. Check script deployment.</div>';
-            }
-        }
+    function collectRecords() {
+        const selects = document.querySelectorAll('.status-select');
+        if(selects.length===0) { showMessage('No roster items', true); return []; }
+        const date = attendanceDateInput.value;
+        if(!date) { showMessage('Select date', true); return []; }
+        if(!currentBatchName) { showMessage('No batch selected', true); return []; }
+        const records = [];
+        selects.forEach(sel => {
+            const type = sel.getAttribute('data-type');
+            const name = sel.getAttribute('data-name');
+            const status = sel.value === 'Present' ? 'Present' : 'Absent';
+            records.push({ personType: type, personName: name, date: date, batchName: currentBatchName, status: status });
+        });
+        return records;
+    }
 
-        function renderCoaches() {
-            const container = document.getElementById('coachesList');
-            container.innerHTML = '';
-            coaches.forEach(coach => {
-                const status = coachStatus[coach];
-                const div = document.createElement('div');
-                div.className = 'person-card';
-                div.innerHTML = `
-                    <div class="person-info">
-                        <div class="person-name">${escapeHtml(coach)}</div>
-                        <div class="person-detail">Coach</div>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn-p ${status === 'P' ? 'active' : ''}" onclick="setCoachStatus('${escapeHtml(coach)}', 'P')">P</button>
-                        <button class="btn-a ${status === 'A' ? 'active' : ''}" onclick="setCoachStatus('${escapeHtml(coach)}', 'A')">A</button>
-                    </div>
-                    ${status ? `<span class="status-badge ${status === 'P' ? 'status-present' : 'status-absent'}">${status === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
-                `;
-                container.appendChild(div);
-            });
-            updateStats();
-        }
+    function markAll(status) {
+        const selects = document.querySelectorAll('.status-select');
+        if(selects.length===0) { showMessage('No roster', true); return; }
+        selects.forEach(s => s.value = status);
+        showMessage(`All marked ${status}`, false);
+    }
 
-        function setCoachStatus(coach, status) {
-            coachStatus[coach] = status;
-            renderCoaches();
-        }
+    async function submitAttendance() {
+        const records = collectRecords();
+        if(records.length===0) return;
+        if(!confirm(`Save ${records.length} records for ${currentBatchName} on ${attendanceDateInput.value}?`)) return;
+        setLoader(submitBtn, true, '📤 SAVE TO SHEETS');
+        try {
+            const res = await saveAttendance(records);
+            if(res.status === 'success') showMessage(`✅ Saved ${res.savedCount} records`, false);
+            else throw new Error('Unknown response');
+        } catch(e) { showMessage(`❌ ${e.message}`, true); }
+        finally { setLoader(submitBtn, false, '📤 SAVE TO SHEETS'); }
+    }
 
-        function allCoachesPresent() {
-            coaches.forEach(c => coachStatus[c] = 'P');
-            renderCoaches();
-        }
+    function onBatchChange() {
+        currentBatchName = batchSelect.value;
+        if(currentBatchName) loadRoster(currentBatchName);
+        else rosterPanel.innerHTML = '<div class="empty-message">Select a batch</div>';
+    }
 
-        function allCoachesAbsent() {
-            coaches.forEach(c => coachStatus[c] = 'A');
-            renderCoaches();
-        }
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-        function clearAllCoaches() {
-            coaches.forEach(c => coachStatus[c] = null);
-            renderCoaches();
-        }
+    function setDefaultDate() { attendanceDateInput.value = new Date().toISOString().slice(0,10); }
 
-        // ==================== LOAD PLAYERS ====================
-        async function loadPlayers() {
-            if (!currentBatch) return;
-            try {
-                const result = await callAPI('getStudents', { batch: currentBatch });
-                if (result.success && result.data) {
-                    players = result.data;
-                    players.forEach(p => {
-                        if (playerStatus[p.name] === undefined) playerStatus[p.name] = null;
-                    });
-                    renderPlayers();
-                } else {
-                    players = [];
-                    document.getElementById('playersList').innerHTML = '<div class="empty-state">No players in this batch</div>';
-                }
-                updateStats();
-            } catch (error) {
-                console.error('Load players error:', error);
-                document.getElementById('playersList').innerHTML = '<div class="empty-state">Error loading players.</div>';
-            }
-        }
+    // Event listeners
+    saveUrlBtn.addEventListener('click', () => {
+        let newUrl = urlInput.value.trim();
+        if(!newUrl) { urlStatusDiv.innerHTML = '<div class="alert alert-error">Enter URL</div>'; return; }
+        if(!newUrl.includes('/exec')) { urlStatusDiv.innerHTML = '<div class="alert alert-error">Must end with /exec</div>'; return; }
+        APP_SCRIPT_URL = newUrl;
+        localStorage.setItem('coffeeland_script_url', APP_SCRIPT_URL);
+        urlStatusDiv.innerHTML = '<div class="alert alert-success">✅ URL saved</div>';
+        refreshBatchesDropdown();
+    });
+    refreshBatchesBtn.addEventListener('click', () => { if(APP_SCRIPT_URL) refreshBatchesDropdown(); else showMessage('Save URL first', true); });
+    batchSelect.addEventListener('change', onBatchChange);
+    submitBtn.addEventListener('click', submitAttendance);
+    markAllPresent.addEventListener('click', () => markAll('Present'));
+    markAllAbsent.addEventListener('click', () => markAll('Absent'));
 
-        function renderPlayers() {
-            const container = document.getElementById('playersList');
-            container.innerHTML = '';
-            players.forEach(player => {
-                const status = playerStatus[player.name];
-                const div = document.createElement('div');
-                div.className = 'person-card';
-                div.innerHTML = `
-                    <div class="person-info">
-                        <div class="person-name">${escapeHtml(player.name)}</div>
-                        <div class="person-detail">Fees: ₹${player.fees}</div>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn-p ${status === 'P' ? 'active' : ''}" onclick="setPlayerStatus('${escapeHtml(player.name)}', 'P')">P</button>
-                        <button class="btn-a ${status === 'A' ? 'active' : ''}" onclick="setPlayerStatus('${escapeHtml(player.name)}', 'A')">A</button>
-                    </div>
-                    ${status ? `<span class="status-badge ${status === 'P' ? 'status-present' : 'status-absent'}">${status === 'P' ? 'PRESENT' : 'ABSENT'}</span>` : ''}
-                `;
-                container.appendChild(div);
-            });
-            updateStats();
-        }
-
-        function setPlayerStatus(name, status) {
-            playerStatus[name] = status;
-            renderPlayers();
-        }
-
-        function allPlayersPresent() {
-            players.forEach(p => playerStatus[p.name] = 'P');
-            renderPlayers();
-        }
-
-        function allPlayersAbsent() {
-            players.forEach(p => playerStatus[p.name] = 'A');
-            renderPlayers();
-        }
-
-        function clearAllPlayers() {
-            players.forEach(p => playerStatus[p.name] = null);
-            renderPlayers();
-        }
-
-        // ==================== STATS ====================
-        function updateStats() {
-            const coachSelected = Object.values(coachStatus).filter(s => s !== null).length;
-            const playerSelected = Object.values(playerStatus).filter(s => s !== null).length;
-            const presentCount = [...Object.values(coachStatus), ...Object.values(playerStatus)].filter(s => s === 'P').length;
-            const absentCount = [...Object.values(coachStatus), ...Object.values(playerStatus)].filter(s => s === 'A').length;
-            
-            document.getElementById('totalSelected').textContent = coachSelected + playerSelected;
-            document.getElementById('totalPresent').textContent = presentCount;
-            document.getElementById('totalAbsent').textContent = absentCount;
-            document.getElementById('coachCount').textContent = coachSelected;
-        }
-
-        // ==================== SAVE ATTENDANCE ====================
-        async function saveAttendance() {
-            const date = document.getElementById('attendanceDate').value;
-            const batch = document.getElementById('batchSelect').value;
-            
-            if (!date || !batch) {
-                showToast('Select date and batch first', 'error');
-                return;
-            }
-            
-            const records = [];
-            for (const [name, status] of Object.entries(coachStatus)) {
-                if (status) records.push({ type: 'coach', name, status });
-            }
-            for (const [name, status] of Object.entries(playerStatus)) {
-                if (status) records.push({ type: 'student', name, status });
-            }
-            
-            if (records.length === 0) {
-                showToast('No attendance marked', 'error');
-                return;
-            }
-            
-            document.getElementById('loading').style.display = 'flex';
-            
-            try {
-                await callAPI('saveAttendance', { date, batch, records });
-                showToast('✅ Attendance submitted!', 'success');
-                // Optional: Clear after save
-                coachStatus = {};
-                playerStatus = {};
-                renderCoaches();
-                renderPlayers();
-                updateStats();
-            } catch (error) {
-                showToast('❌ Submission failed', 'error');
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
-
-        function resetAll() {
-            coachStatus = {};
-            playerStatus = {};
-            document.getElementById('batchSelect').value = '';
-            document.getElementById('playersList').innerHTML = '<div class="empty-state">Select a batch to view players</div>';
-            renderCoaches();
-            updateStats();
-            showToast('Reset complete', 'success');
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, m => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[m]));
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.borderColor = type === 'success' ? '#10b981' : '#ef4444';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-    </script>
+    // Init
+    setDefaultDate();
+    if(APP_SCRIPT_URL) {
+        urlInput.value = APP_SCRIPT_URL;
+        urlStatusDiv.innerHTML = '<div class="alert alert-success">✅ Loaded from storage</div>';
+        refreshBatchesDropdown();
+    } else {
+        urlStatusDiv.innerHTML = '<div class="alert alert-error">Paste your Apps Script URL and save</div>';
+        batchSelect.innerHTML = '<option>Configure URL first</option>';
+    }
+</script>
 </body>
 </html>
