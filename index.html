@@ -152,16 +152,16 @@
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxNIWDyIX6Lr2Bm8z1PpGqtInz2240zaCAZlTqz6omhwFSF5yWx3Sl1HvYYOoOnzMCk/exec";
         document.getElementById('attendanceDate').valueAsDate = new Date();
 
-        window.onload = async () => {
-            const select = document.getElementById('batchSelect');
-            try {
-                const response = await fetch(`${WEB_APP_URL}?action=getBatches`, { method: 'GET', redirect: 'follow' });
-                const data = await response.json();
-                select.innerHTML = '<option value="">Select Target Batch</option>';
-                data.batches?.forEach(b => select.innerHTML += `<option value="${b.id}">${b.name}</option>`);
-            } catch (err) { select.innerHTML = '<option value="">Network Error</option>'; }
-        };
-
+       window.onload = async () => {
+    const select = document.getElementById('batchSelect');
+    try {
+        const response = await fetch(`${WEB_APP_URL}?action=getBatches`, { method: 'GET', redirect: 'follow' });
+        const data = await response.json();
+        select.innerHTML = '<option value="">Select Target Batch</option>';
+        // FIXED: Using b.name as the value because the script filters by name
+        data.batches?.forEach(b => select.innerHTML += `<option value="${b.name}">${b.name}</option>`);
+    } catch (err) { select.innerHTML = '<option value="">Network Error</option>'; }
+};
         async function fetchRoster() {
             const batchName = document.getElementById('batchSelect').value;
             if (!batchName) return;
