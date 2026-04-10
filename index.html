@@ -204,34 +204,56 @@
             });
         }
 
-        async function fetchHistory(batchName) {
-            const pList = document.getElementById('lastPresentList');
-            const aList = document.getElementById('lastAbsentList');
-            const dateLabel = document.getElementById('lastSessionDate');
-            try {
-                const response = await fetch(`${WEB_APP_URL}?action=getHistory&batchName=${encodeURIComponent(batchName)}`, { method: 'GET', redirect: 'follow' });
-                const data = await response.json();
-                if (data.history && data.history.length > 0) {
-                    const last = data.history[0];
-                    dateLabel.innerText = last.date;
-                    pList.innerHTML = last.presentNames.length ? last.presentNames.map(n => `<div>• ${n}</div>`).join('') : '--';
-                    aList.innerHTML = last.absentNames.length ? last.absentNames.map(n => `<div class="text-rose/80">• ${n}</div>`).join('') : '--';
-                    document.getElementById('lastSessionContainer').classList.remove('hidden');
-                }
-            } catch (e) { console.error("History offline"); }
-        }
+       async function fetchHistory(batchName) {
+    const pList = document.getElementById('lastPresentList');
+    const aList = document.getElementById('lastAbsentList');
+    const dateLabel = document.getElementById('lastSessionDate');
+    const container = document.getElementById('lastSessionContainer');
 
-        function toggleAll(name, state) {
-            document.querySelectorAll(`input[name="${name}"]`).forEach(cb => cb.checked = state);
-            updateStats();
+    try {
+        const response = await fetch(`${WEB_APP_URL}?action=getHistory&batchName=${encodeURIComponent(batchName)}`, { method: 'GET', redirect: 'follow' });
+        const data = await response.json();
+        
+        if (data.history && data.history.length > 0) {
+            const last = data.history[0];
+            dateLabel.innerText = last.date;
+            
+            // Present List Styling
+            pList.innerHTML = last.presentNames.length 
+                ? last.presentNames.map(n => `<div class="flex items-center gap-2"><span class="w-1 h-1 bg-mint rounded-full"></span>${n}</div>`).join('') 
+                : '<div class="opacity-30 italic text-[9px]">No records</div>';
+            
+            // Absent List Styling
+            aList.innerHTML = last.absentNames.length 
+                ? last.absentNames.map(n => `<div class="flex items-center gap-2 text-rose/80"><span class="w-1 h-1 bg-rose rounded-full"></span>${n}</div>`).join('') 
+                : '<div class="opacity-30 italic text-[9px]">Full house</div>';
+            
+            container.classList.remove('hidden');
+        } else {
+            container.classList.add('hidden');
         }
+    } catch (e) { 
+        console.error("History offline"); 
+        container.classList.add('hidden');
+    }
+}
 
-        function updateStats() {
-            document.getElementById('statPresent').innerText = document.querySelectorAll('input[name="attendance_student"]:checked').length;
-            document.getElementById('statTotal').innerText = document.querySelectorAll('input[name="attendance_student"]').length;
-            document.getElementById('coachPresent').innerText = document.querySelectorAll('input[name="attendance_coach"]:checked').length;
-            document.getElementById('coachTotal').innerText = document.querySelectorAll('input[name="attendance_coach"]').length;
-        }
+function toggleAll(name, state) {
+    document.querySelectorAll(`input[name="${name}"]`).forEach(cb => cb.checked = state);
+    updateStats();
+}
+
+function updateStats() {
+    const studentChecked = document.querySelectorAll('input[name="attendance_student"]:checked').length;
+    const studentTotal = document.querySelectorAll('input[name="attendance_student"]').length;
+    const coachChecked = document.querySelectorAll('input[name="attendance_coach"]:checked').length;
+    const coachTotal = document.querySelectorAll('input[name="attendance_coach"]').length;
+
+    document.getElementById('statPresent').innerText = studentChecked;
+    document.getElementById('statTotal').innerText = studentTotal;
+    document.getElementById('coachPresent').innerText = coachChecked;
+    document.getElementById('coachTotal').innerText = coachTotal;
+}
 
         async function submitAttendance() {
             const btn = document.getElementById('submitBtn');
