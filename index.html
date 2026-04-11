@@ -23,44 +23,55 @@
                 }
             }
         }
-    </script>
-    <style>
+ <style>
+    :root {
+        --bg-body: #F9FAFB;
+        --bg-header: rgba(249, 250, 251, 0.8); /* Slightly more opaque for readability */
+        --bg-card: #FFFFFF;
+        --text-main: #111827;
+        --text-gray: #6B7280;
+        --border: rgba(0, 0, 0, 0.08);
+        --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    }
+    @media (prefers-color-scheme: dark) {
         :root {
-            --bg-body: #F9FAFB;
-            --bg-header: rgba(249, 250, 251, 0.7);
-            --bg-card: #FFFFFF;
-            --text-main: #111827;
-            --text-gray: #6B7280;
-            --border: rgba(0, 0, 0, 0.08);
-            --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+            --bg-body: #050505;
+            --bg-header: rgba(5, 5, 5, 0.6);
+            --bg-card: linear-gradient(165deg, #1A1412 0%, #0F0A08 100%);
+            --text-main: #E5E7EB;
+            --text-gray: #9CA3AF;
+            --border: rgba(255, 255, 255, 0.05);
+            --card-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
         }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-body: #050505;
-                --bg-header: rgba(5, 5, 5, 0.5);
-                --bg-card: linear-gradient(165deg, #1A1412 0%, #0F0A08 100%);
-                --text-main: #E5E7EB;
-                --text-gray: #9CA3AF;
-                --border: rgba(255, 255, 255, 0.05);
-                --card-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
-            }
-        }
-        body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; transition: all 0.3s ease; }
-        header { background-color: var(--bg-header); }
-        .card-gradient { background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
-        .input-dark { background-color: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); border-radius: 12px; }
-        .hidden-view { display: none !important; }
-        
-        .switch input { display: none; }
-        .slider { width: 44px; height: 22px; background-color: rgba(244, 63, 94, 0.15); border-radius: 20px; position: relative; transition: .3s; }
-        .slider:before { content: ""; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: #F43F5E; border-radius: 50%; transition: .3s; }
-        input:checked + .slider { background-color: rgba(16, 185, 129, 0.2); }
-        input:checked + .slider:before { transform: translateX(22px); background-color: #10B981; }
+    }
 
-        #batchGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .tile-aspect { aspect-ratio: 1 / 1; }
-        .cmd-btn { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 6px 12px; border-radius: 8px; transition: all 0.2s; }
-    </style>
+    body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; transition: all 0.3s ease; }
+    
+    /* THE FIX: Pushes header below the iPhone Notch/Clock */
+    header { 
+        background-color: var(--bg-header); 
+        padding-top: calc(env(safe-area-inset-top) + 1rem) !important;
+        padding-bottom: 1rem;
+    }
+
+    /* Pushes the Lobby down so it doesn't start underneath the sticky header */
+    #lobbyView { margin-top: 1.5rem; }
+    #commandView { margin-top: 1.5rem; }
+
+    .card-gradient { background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+    .input-dark { background-color: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); border-radius: 12px; }
+    .hidden-view { display: none !important; }
+    
+    .switch input { display: none; }
+    .slider { width: 44px; height: 22px; background-color: rgba(244, 63, 94, 0.15); border-radius: 20px; position: relative; transition: .3s; }
+    .slider:before { content: ""; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: #F43F5E; border-radius: 50%; transition: .3s; }
+    input:checked + .slider { background-color: rgba(16, 185, 129, 0.2); }
+    input:checked + .slider:before { transform: translateX(22px); background-color: #10B981; }
+
+    #batchGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .tile-aspect { aspect-ratio: 1 / 1; }
+    .cmd-btn { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 6px 12px; border-radius: 8px; transition: all 0.2s; }
+</style>
 </head>
 <body class="min-h-screen pb-40">
 
