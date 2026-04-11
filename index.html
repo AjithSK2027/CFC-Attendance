@@ -5,12 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>CFC | Attendance Pro</title>
     <link rel="apple-touch-icon" href="https://i.ibb.co/3nTMhbz/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png">
-
-<link rel="icon" type="image/png" href="https://i.ibb.co/3nTMhbz/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="CFC Fees">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/3nTMhbz/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png">
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -23,59 +19,58 @@
                 }
             }
         }
- <style>
-    :root {
-        --bg-body: #F9FAFB;
-        --bg-header: rgba(249, 250, 251, 0.8); /* Slightly more opaque for readability */
-        --bg-card: #FFFFFF;
-        --text-main: #111827;
-        --text-gray: #6B7280;
-        --border: rgba(0, 0, 0, 0.08);
-        --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-    }
-    @media (prefers-color-scheme: dark) {
+    </script>
+    <style>
         :root {
-            --bg-body: #050505;
-            --bg-header: rgba(5, 5, 5, 0.6);
-            --bg-card: linear-gradient(165deg, #1A1412 0%, #0F0A08 100%);
-            --text-main: #E5E7EB;
-            --text-gray: #9CA3AF;
-            --border: rgba(255, 255, 255, 0.05);
-            --card-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+            --bg-body: #F9FAFB;
+            --bg-header: rgba(249, 250, 251, 0.85);
+            --bg-card: #FFFFFF;
+            --text-main: #111827;
+            --text-gray: #6B7280;
+            --border: rgba(0, 0, 0, 0.08);
+            --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
         }
-    }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-body: #050505;
+                --bg-header: rgba(5, 5, 5, 0.6);
+                --bg-card: linear-gradient(165deg, #1A1412 0%, #0F0A08 100%);
+                --text-main: #E5E7EB;
+                --text-gray: #9CA3AF;
+                --border: rgba(255, 255, 255, 0.05);
+                --card-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+            }
+        }
+        body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; transition: all 0.3s ease; }
+        
+        /* HEADER FIX FOR NOTCH */
+        header { 
+            background-color: var(--bg-header); 
+            padding-top: calc(env(safe-area-inset-top) + 1.2rem) !important;
+            padding-bottom: 1rem;
+        }
 
-    body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; transition: all 0.3s ease; }
-    
-    /* THE FIX: Pushes header below the iPhone Notch/Clock */
-    header { 
-        background-color: var(--bg-header); 
-        padding-top: calc(env(safe-area-inset-top) + 1rem) !important;
-        padding-bottom: 1rem;
-    }
+        .card-gradient { background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+        .input-dark { background-color: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); border-radius: 12px; }
+        .hidden-view { display: none !important; }
+        
+        .switch input { display: none; }
+        .slider { width: 44px; height: 22px; background-color: rgba(244, 63, 94, 0.15); border-radius: 20px; position: relative; transition: .3s; }
+        .slider:before { content: ""; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: #F43F5E; border-radius: 50%; transition: .3s; }
+        input:checked + .slider { background-color: rgba(16, 185, 129, 0.2); }
+        input:checked + .slider:before { transform: translateX(22px); background-color: #10B981; }
 
-    /* Pushes the Lobby down so it doesn't start underneath the sticky header */
-    #lobbyView { margin-top: 1.5rem; }
-    #commandView { margin-top: 1.5rem; }
-
-    .card-gradient { background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
-    .input-dark { background-color: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); border-radius: 12px; }
-    .hidden-view { display: none !important; }
-    
-    .switch input { display: none; }
-    .slider { width: 44px; height: 22px; background-color: rgba(244, 63, 94, 0.15); border-radius: 20px; position: relative; transition: .3s; }
-    .slider:before { content: ""; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: #F43F5E; border-radius: 50%; transition: .3s; }
-    input:checked + .slider { background-color: rgba(16, 185, 129, 0.2); }
-    input:checked + .slider:before { transform: translateX(22px); background-color: #10B981; }
-
-    #batchGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    .tile-aspect { aspect-ratio: 1 / 1; }
-    .cmd-btn { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 6px 12px; border-radius: 8px; transition: all 0.2s; }
-</style>
+        #batchGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .tile-aspect { aspect-ratio: 1 / 1; }
+        .cmd-btn { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 6px 12px; border-radius: 8px; transition: all 0.2s; }
+        
+        /* ADJUST VIEW TOP MARGINS */
+        #lobbyView, #commandView { margin-top: 1.5rem; }
+    </style>
 </head>
 <body class="min-h-screen pb-40">
 
-    <header class="pt-8 px-6 flex justify-between items-center sticky top-0 backdrop-blur-md z-40 pb-2">
+    <header class="px-6 flex justify-between items-center sticky top-0 backdrop-blur-md z-40">
         <div onclick="goHome()" class="cursor-pointer">
             <h1 class="text-xl font-900 text-current uppercase leading-none">CFC <span class="text-mint">Live</span></h1>
             <p class="text-gray-500 text-[10px] font-bold tracking-widest uppercase mt-1">Attendance Hub</p>
@@ -83,7 +78,7 @@
         <img src="https://i.ibb.co/3nTMhbz/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png" class="h-10 w-10">
     </header>
 
-    <div id="lobbyView" class="px-6 mt-10 transition-all duration-300">
+    <div id="lobbyView" class="px-6 transition-all duration-300">
         <h2 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 text-center">Select Session Batch</h2>
         <div class="mb-8">
             <select id="homeBatchSelect" onchange="selectBatch(this.value)" class="input-dark p-4 text-xs font-bold outline-none w-full shadow-lg">
@@ -93,7 +88,7 @@
         <div id="batchGrid"></div>
     </div>
 
-    <div id="commandView" class="hidden-view px-6 mt-8 space-y-6">
+    <div id="commandView" class="hidden-view px-6 space-y-6">
         <div class="grid grid-cols-2 gap-3">
             <div class="card-gradient rounded-[2rem] p-5 border-l-4 border-l-mint">
                 <p class="text-[9px] font-black text-gray-500 uppercase mb-1">Athletes</p>
@@ -114,7 +109,7 @@
             <div class="flex justify-between items-center bg-blue-500/10 p-2 px-3 rounded-2xl border border-blue-500/10">
                 <h3 class="text-[10px] font-900 text-blue-500 uppercase tracking-widest">Instructors</h3>
                 <div class="flex gap-2">
-                    <button onclick="toggleAll('attendance_coach', true)" class="cmd-btn bg-blue-500 text-white">All</button>
+                    <button onclick="toggleAll('attendance_coach', true)" class="cmd-btn bg-blue-500 text-white shadow-lg shadow-blue-500/20">All</button>
                     <button onclick="toggleAll('attendance_coach', false)" class="cmd-btn bg-rose/10 text-rose">Clear</button>
                 </div>
             </div>
@@ -125,7 +120,7 @@
             <div class="flex justify-between items-center bg-mint/10 p-2 px-3 rounded-2xl border border-mint/10">
                 <h3 class="text-[10px] font-900 text-mint uppercase tracking-widest">Athletes</h3>
                 <div class="flex gap-2">
-                    <button onclick="toggleAll('attendance_student', true)" class="cmd-btn bg-mint text-white">Present</button>
+                    <button onclick="toggleAll('attendance_student', true)" class="cmd-btn bg-mint text-white shadow-lg shadow-mint/20">Present</button>
                     <button onclick="toggleAll('attendance_student', false)" class="cmd-btn bg-rose/10 text-rose">Absent</button>
                 </div>
             </div>
@@ -177,7 +172,7 @@
                         <div onclick="selectBatch('${b.name}')" class="card-gradient p-5 rounded-[2.5rem] flex flex-col justify-between tile-aspect active:scale-95 transition-all">
                             <div class="bg-mint/10 w-10 h-10 rounded-2xl flex items-center justify-center text-mint text-lg">⚽</div>
                             <div>
-                                <h3 class="text-[13px] font-800 leading-tight mb-1">${b.name}</h3>
+                                <h3 class="text-[13px] font-800 leading-tight mb-1 text-current">${b.name}</h3>
                                 <p class="text-[8px] text-mint font-black uppercase tracking-widest">Mark Hub</p>
                             </div>
                         </div>`;
@@ -220,7 +215,7 @@
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-full bg-black/5 dark:bg-bean flex items-center justify-center font-black text-gray-500 text-sm">${person.name.charAt(0)}</div>
                             <div>
-                                <p class="font-bold text-sm leading-tight">${person.name}</p>
+                                <p class="font-bold text-sm leading-tight text-current">${person.name}</p>
                                 <p class="text-[8px] font-black uppercase tracking-widest opacity-40">${person.status || 'Active'}</p>
                             </div>
                         </div>
