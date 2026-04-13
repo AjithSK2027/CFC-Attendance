@@ -3,282 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CFC | Attendance Pro</title>
-    <link rel="apple-touch-icon" href="https://i.ibb.co/3nTMhbz/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/3nTMhbz/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>CFC | Attendance Pro v5.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'media',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: { pitch: '#050505', espresso: '#0F0A08', bean: '#1A1412', mint: '#10B981', rose: '#F43F5E', gold: '#EAB308' }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-body: #F9FAFB;
-            --bg-header: rgba(249, 250, 251, 0.85);
-            --bg-card: #FFFFFF;
-            --text-main: #111827;
-            --text-gray: #6B7280;
-            --border: rgba(0, 0, 0, 0.08);
-            --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-        }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-body: #050505;
-                --bg-header: rgba(5, 5, 5, 0.6);
-                --bg-card: linear-gradient(165deg, #1A1412 0%, #0F0A08 100%);
-                --text-main: #E5E7EB;
-                --text-gray: #9CA3AF;
-                --border: rgba(255, 255, 255, 0.05);
-                --card-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
-            }
-        }
-        body { background-color: var(--bg-body); color: var(--text-main); -webkit-font-smoothing: antialiased; transition: all 0.3s ease; }
-        
-        /* HEADER FIX FOR NOTCH */
-        header { 
-            background-color: var(--bg-header); 
-            padding-top: calc(env(safe-area-inset-top) + 1.2rem) !important;
-            padding-bottom: 1rem;
-        }
-
-        .card-gradient { background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
-        .input-dark { background-color: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); border-radius: 12px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F9FAFB; color: #111827; }
+        @media (prefers-color-scheme: dark) { body { background-color: #050505; color: #E5E7EB; } }
         .hidden-view { display: none !important; }
-        
         .switch input { display: none; }
         .slider { width: 44px; height: 22px; background-color: rgba(244, 63, 94, 0.15); border-radius: 20px; position: relative; transition: .3s; }
         .slider:before { content: ""; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: #F43F5E; border-radius: 50%; transition: .3s; }
         input:checked + .slider { background-color: rgba(16, 185, 129, 0.2); }
         input:checked + .slider:before { transform: translateX(22px); background-color: #10B981; }
-
-        #batchGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .tile-aspect { aspect-ratio: 1 / 1; }
-        .cmd-btn { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 6px 12px; border-radius: 8px; transition: all 0.2s; }
-        
-        /* ADJUST VIEW TOP MARGINS */
-        #lobbyView, #commandView { margin-top: 1.5rem; }
     </style>
 </head>
-<body class="min-h-screen pb-40">
+<body class="min-h-screen pb-20">
 
-    <header class="px-6 flex justify-between items-center sticky top-0 backdrop-blur-md z-40">
-        <div onclick="goHome()" class="cursor-pointer">
-            <h1 class="text-xl font-900 text-current uppercase leading-none">CFC <span class="text-mint">Live</span></h1>
-            <p class="text-gray-500 text-[10px] font-bold tracking-widest uppercase mt-1">Attendance Hub</p>
-        </div>
-        <img src="https://i.ibb.co/3nTMhbz/1000287652-0b4cd8d123cf04f03fc322309c337390-11-18-2025-1-04-51-PM.png" class="h-10 w-10">
+    <header class="p-6 flex justify-between items-center sticky top-0 bg-inherit z-50 border-b border-black/5">
+        <h1 onclick="goHome()" class="text-xl font-extrabold uppercase cursor-pointer">CFC <span class="text-emerald-500">ATTENDANCE MANAGER</span></h1>
+        <button onclick="showEditView()" class="bg-blue-500/10 text-blue-500 text-[10px] font-bold px-4 py-2 rounded-xl uppercase">📝 Edit Logs</button>
     </header>
 
-    <div id="lobbyView" class="px-6 transition-all duration-300">
-        <h2 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 text-center">Select Session Batch</h2>
-        <div class="mb-8">
-            <select id="homeBatchSelect" onchange="selectBatch(this.value)" class="input-dark p-4 text-xs font-bold outline-none w-full shadow-lg">
+    <div id="lobbyView" class="px-6 space-y-6 mt-6">
+        <div class="space-y-4">
+            <select id="homeBatchSelect" onchange="selectBatch(this.value)" class="bg-white dark:bg-zinc-900 border border-black/10 p-4 text-xs font-bold w-full rounded-xl">
                 <option value="">Quick Select Batch...</option>
             </select>
+            <button onclick="markGlobalHoliday()" class="w-full bg-rose-500/10 text-rose-500 border border-rose-500/20 font-black py-4 rounded-2xl text-[10px] uppercase">🌴 Global Holiday (Today)</button>
         </div>
-        <div id="batchGrid"></div>
+        <div id="batchGrid" class="grid grid-cols-2 gap-4"></div>
     </div>
 
-    <div id="commandView" class="hidden-view px-6 space-y-6">
-        <div class="grid grid-cols-2 gap-3">
-            <div class="card-gradient rounded-[2rem] p-5 border-l-4 border-l-mint">
-                <p class="text-[9px] font-black text-gray-500 uppercase mb-1">Athletes</p>
-                <p class="text-2xl font-900"><span id="statPresent">0</span><span class="text-xs text-gray-400 font-bold ml-1">/ <span id="statTotal">0</span></span></p>
-            </div>
-            <div class="card-gradient rounded-[2rem] p-5 border-l-4 border-l-blue-500">
-                <p class="text-[9px] font-black text-gray-500 uppercase mb-1">Coaches</p>
-                <p class="text-2xl font-900"><span id="coachPresent">0</span><span class="text-xs text-gray-400 font-bold ml-1">/ <span id="coachTotal">0</span></span></p>
-            </div>
-        </div>
-
+    <div id="commandView" class="hidden-view px-6 space-y-8 mt-6">
         <div class="flex gap-3">
-            <select id="batchSelect" onchange="fetchRoster()" class="input-dark p-4 text-xs font-bold outline-none flex-1"></select>
-            <input type="date" id="attendanceDate" class="input-dark p-4 text-xs font-bold outline-none w-1/3">
+            <select id="batchSelect" onchange="fetchRoster()" class="bg-white dark:bg-zinc-900 border border-black/10 p-4 text-xs font-bold rounded-xl flex-1"></select>
+            <input type="date" id="attendanceDate" onchange="fetchRoster()" class="bg-white dark:bg-zinc-900 border border-black/10 p-4 text-xs font-bold rounded-xl w-1/3">
         </div>
 
         <section class="space-y-3">
-            <div class="flex justify-between items-center bg-blue-500/10 p-2 px-3 rounded-2xl border border-blue-500/10">
-                <h3 class="text-[10px] font-900 text-blue-500 uppercase tracking-widest">Instructors</h3>
-                <div class="flex gap-2">
-                    <button onclick="toggleAll('attendance_coach', true)" class="cmd-btn bg-blue-500 text-white shadow-lg shadow-blue-500/20">All</button>
-                    <button onclick="toggleAll('attendance_coach', false)" class="cmd-btn bg-rose/10 text-rose">Clear</button>
+            <div class="flex justify-between items-center bg-blue-500/5 p-3 rounded-xl">
+                <h3 class="text-[10px] font-bold uppercase text-blue-500">Coaches</h3>
+                <div class="flex gap-4">
+                    <button onclick="toggleAll('attendance_coach', true)" class="text-[9px] font-bold">ALL</button>
+                    <button onclick="toggleAll('attendance_coach', false)" class="text-[9px] font-bold text-gray-400">CLEAR</button>
                 </div>
             </div>
             <div id="coachesList" class="space-y-2"></div>
         </section>
 
         <section class="space-y-3">
-            <div class="flex justify-between items-center bg-mint/10 p-2 px-3 rounded-2xl border border-mint/10">
-                <h3 class="text-[10px] font-900 text-mint uppercase tracking-widest">Athletes</h3>
-                <div class="flex gap-2">
-                    <button onclick="toggleAll('attendance_student', true)" class="cmd-btn bg-mint text-white shadow-lg shadow-mint/20">Present</button>
-                    <button onclick="toggleAll('attendance_student', false)" class="cmd-btn bg-rose/10 text-rose">Absent</button>
+            <div class="flex justify-between items-center bg-emerald-500/5 p-3 rounded-xl">
+                <h3 class="text-[10px] font-bold uppercase text-emerald-500">Athletes</h3>
+                <div class="flex gap-4">
+                    <button onclick="toggleAll('attendance_student', true)" class="text-[9px] font-bold">ALL</button>
+                    <button onclick="toggleAll('attendance_student', false)" class="text-[9px] font-bold text-gray-400">CLEAR</button>
                 </div>
             </div>
             <div id="studentsList" class="space-y-2"></div>
         </section>
 
-        <section id="lastSessionContainer" class="hidden-view space-y-4 pt-6 border-t border-black/10 dark:border-white/10">
-            <div class="flex items-center justify-between">
-                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Previous Session Log</h3>
-                <span id="lastSessionDate" class="text-[10px] font-bold text-mint bg-mint/10 px-2 py-1 rounded-md">-- ---</span>
+        <button onclick="submitAttendance()" id="submitBtn" class="w-full bg-emerald-500 text-white font-extrabold py-5 rounded-2xl uppercase text-sm shadow-xl">Commit Records</button>
+    </div>
+
+    <div id="editView" class="hidden-view px-6 space-y-4 mt-6">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xs font-black uppercase text-gray-500">Log Editor</h2>
+            <button onclick="goHome()" class="text-xs font-bold text-emerald-500">Close</button>
+        </div>
+
+        <div class="flex gap-3">
+            <input type="date" id="editDate" onchange="loadDailyLogs()" class="bg-white dark:bg-zinc-900 border border-black/10 p-4 text-xs font-bold rounded-xl flex-1">
+            <select id="editBatchSelect" onchange="loadDailyLogs()" class="bg-white dark:bg-zinc-900 border border-black/10 p-4 text-xs font-bold rounded-xl w-1/2">
+                <option value="">All Batches</option>
+            </select>
+        </div>
+
+        <section class="space-y-3">
+            <div class="flex justify-between items-center bg-emerald-500/5 p-3 rounded-xl">
+                <h3 class="text-[10px] font-bold uppercase text-emerald-500">Athletes</h3>
+                <span id="studentLogCount" class="text-[10px] font-bold text-gray-400">0</span>
             </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div class="card-gradient rounded-xl p-3 min-h-[80px]">
-                    <span class="text-[8px] font-black uppercase text-mint opacity-60 mb-2 block">Present</span>
-                    <div id="lastPresentList" class="text-[10px] space-y-1 text-gray-400"></div>
-                </div>
-                <div class="card-gradient rounded-xl p-3 min-h-[80px]">
-                    <span class="text-[8px] font-black uppercase text-rose opacity-60 mb-2 block">Absent</span>
-                    <div id="lastAbsentList" class="text-[10px] space-y-1 text-gray-400"></div>
-                </div>
+            <div id="studentLogContainer" class="space-y-2"></div>
+        </section>
+
+        <section class="space-y-3">
+            <div class="flex justify-between items-center bg-blue-500/5 p-3 rounded-xl">
+                <h3 class="text-[10px] font-bold uppercase text-blue-500">Coaches</h3>
+                <span id="coachLogCount" class="text-[10px] font-bold text-gray-400">0</span>
             </div>
+            <div id="coachLogContainer" class="space-y-2 pb-20"></div>
         </section>
     </div>
 
-    <div id="actionContainer" class="hidden-view fixed bottom-0 left-0 right-0 p-6 bg-white/80 dark:bg-pitch/80 backdrop-blur-lg border-t border-black/10 dark:border-white/10 z-50">
-        <button onclick="submitAttendance()" id="submitBtn" class="w-full bg-mint text-white dark:text-pitch font-900 py-5 rounded-2xl shadow-xl shadow-mint/20 active:scale-95 transition-all uppercase tracking-widest text-sm">
-            Commit Records
-        </button>
-    </div>
-
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxCsCMatsn3hFeX7FKo0EkeXe9vO95p5ZqTuUfCgAul6vbXLxc1HDYp7D54rsOCxSDf7g/exec";
-        document.getElementById('attendanceDate').valueAsDate = new Date();
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxgMe6bq7AgcCmEI5-x0C1LkbI4NFNJo32OKioqgcwBHujTt3KsC2aMeUZy_CrkPEjE-A/exec";
 
-        window.onload = async () => {
-            const select = document.getElementById('batchSelect');
-            const homeSelect = document.getElementById('homeBatchSelect');
-            const grid = document.getElementById('batchGrid');
+        document.getElementById('attendanceDate').valueAsDate = new Date();
+        window.onload = loadBatches;
+
+        async function loadBatches() {
             try {
-                const response = await fetch(`${WEB_APP_URL}?action=getBatches`, { method: 'GET', redirect: 'follow' });
-                const data = await response.json();
-                select.innerHTML = '<option value="">Switch Batch</option>';
+                const res = await fetch(`${WEB_APP_URL}?action=getBatches`);
+                const data = await res.json();
+
+                const grid = document.getElementById('batchGrid');
+                const homeSelect = document.getElementById('homeBatchSelect');
+                const batchSelect = document.getElementById('batchSelect');
+                const editBatchSelect = document.getElementById('editBatchSelect');
+
+                grid.innerHTML = '';
                 homeSelect.innerHTML = '<option value="">Quick Select Batch...</option>';
-                data.batches?.forEach(b => {
-                    const opt = `<option value="${b.name}">${b.name}</option>`;
-                    select.innerHTML += opt;
-                    homeSelect.innerHTML += opt;
+                batchSelect.innerHTML = '<option value="">Select Batch...</option>';
+                editBatchSelect.innerHTML = '<option value="">All Batches</option>';
+
+                (data.batches || []).forEach(b => {
+                    const name = String(b.name || '').trim();
+
+                    homeSelect.innerHTML += `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`;
+                    batchSelect.innerHTML += `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`;
+                    editBatchSelect.innerHTML += `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`;
+
                     grid.innerHTML += `
-                        <div onclick="selectBatch('${b.name}')" class="card-gradient p-5 rounded-[2.5rem] flex flex-col justify-between tile-aspect active:scale-95 transition-all">
-                            <div class="bg-mint/10 w-10 h-10 rounded-2xl flex items-center justify-center text-mint text-lg">⚽</div>
+                        <div onclick='selectBatch(${JSON.stringify(name)})' class="bg-white dark:bg-zinc-900 border border-black/5 p-6 rounded-[2.5rem] flex flex-col justify-between aspect-square active:scale-95 transition-all">
+                            <div class="text-xl">⚽</div>
                             <div>
-                                <h3 class="text-[13px] font-800 leading-tight mb-1 text-current">${b.name}</h3>
-                                <p class="text-[8px] text-mint font-black uppercase tracking-widest">Mark Hub</p>
+                                <h3 class="text-sm font-extrabold uppercase leading-tight">${escapeHtml(name)}</h3>
+                                <p class="text-[10px] text-emerald-500 font-bold mt-1">${Number(b.count || 0)} Active</p>
                             </div>
                         </div>`;
                 });
-            } catch (err) { alert("Network Error"); }
-        };
+            } catch (err) {
+                alert("Unable to load batches.");
+            }
+        }
 
-        function selectBatch(name) { if(!name) return; document.getElementById('batchSelect').value = name; fetchRoster(); }
+        function selectBatch(batchName) {
+            if (!batchName) return;
+            document.getElementById('batchSelect').value = batchName;
+            fetchRoster();
+        }
 
         function goHome() {
             document.getElementById('lobbyView').classList.remove('hidden-view');
             document.getElementById('commandView').classList.add('hidden-view');
-            document.getElementById('actionContainer').classList.add('hidden-view');
+            document.getElementById('editView').classList.add('hidden-view');
+        }
+
+        function showEditView() {
+            document.getElementById('lobbyView').classList.add('hidden-view');
+            document.getElementById('commandView').classList.add('hidden-view');
+            document.getElementById('editView').classList.remove('hidden-view');
+
+            document.getElementById('editDate').valueAsDate = new Date();
+
+            const activeBatch = document.getElementById('batchSelect').value;
+            if (activeBatch) {
+                document.getElementById('editBatchSelect').value = activeBatch;
+            }
+
+            loadDailyLogs();
         }
 
         async function fetchRoster() {
             const batchName = document.getElementById('batchSelect').value;
+            const date = document.getElementById('attendanceDate').value;
+
             if (!batchName) return;
+
             document.getElementById('lobbyView').classList.add('hidden-view');
+            document.getElementById('editView').classList.add('hidden-view');
             document.getElementById('commandView').classList.remove('hidden-view');
-            document.getElementById('actionContainer').classList.remove('hidden-view');
-            document.getElementById('studentsList').innerHTML = '<p class="py-10 text-center animate-pulse font-bold text-xs uppercase text-mint">Refreshing Roster...</p>';
+            document.getElementById('studentsList').innerHTML = '<p class="text-center py-10 animate-pulse text-xs font-bold text-emerald-500">Loading Roster...</p>';
+            document.getElementById('coachesList').innerHTML = '<p class="text-center py-10 animate-pulse text-xs font-bold text-blue-500">Loading Coaches...</p>';
+
             try {
-                const response = await fetch(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}`, { method: 'GET', redirect: 'follow' });
-                const data = await response.json();
-                renderList('coachesList', data.coaches, 'coach');
-                renderList('studentsList', data.students, 'student');
-                fetchHistory(batchName);
-                updateStats();
-            } catch (err) { alert("Fetch failed"); } 
+                const res = await fetch(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
+                const data = await res.json();
+
+                renderList('coachesList', data.coaches || [], 'coach');
+                renderList('studentsList', data.students || [], 'student');
+
+                const btn = document.getElementById('submitBtn');
+                btn.innerText = data.isLogged ? "Update Records" : "Commit Records";
+                btn.className = data.isLogged
+                    ? "w-full bg-blue-600 text-white font-extrabold py-5 rounded-2xl uppercase text-sm"
+                    : "w-full bg-emerald-500 text-white font-extrabold py-5 rounded-2xl uppercase text-sm shadow-xl";
+                btn.disabled = false;
+            } catch (err) {
+                alert("Unable to load roster.");
+            }
         }
 
-        function renderList(containerId, people, type) {
+        function renderList(id, people, type) {
+            document.getElementById(id).innerHTML = people.map(p => `
+                <div class="bg-white dark:bg-zinc-900 border border-black/5 rounded-xl p-4 flex justify-between items-center">
+                    <p class="font-bold text-sm">${escapeHtml(p.name)}</p>
+                    <label class="switch">
+                        <input
+                            type="checkbox"
+                            name="attendance_${type}"
+                            value="${escapeAttr(p.name)}"
+                            data-row-id="${p.rowId || ''}"
+                            ${p.status === 'Present' ? 'checked' : ''}>
+                        <div class="slider"></div>
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        async function loadDailyLogs() {
+            const date = document.getElementById('editDate').value;
+            const batch = document.getElementById('editBatchSelect').value;
+
+            const studentContainer = document.getElementById('studentLogContainer');
+            const coachContainer = document.getElementById('coachLogContainer');
+
+            studentContainer.innerHTML = '<p class="text-center py-10 animate-pulse text-xs text-emerald-500 uppercase font-bold">Loading athlete logs...</p>';
+            coachContainer.innerHTML = '<p class="text-center py-10 animate-pulse text-xs text-blue-500 uppercase font-bold">Loading coach logs...</p>';
+
+            try {
+                const res = await fetch(`${WEB_APP_URL}?action=getDailyLogs&date=${encodeURIComponent(date)}&batchName=${encodeURIComponent(batch)}`);
+                const data = await res.json();
+
+                const studentLogs = (data.logs || [])
+                    .filter(l => l.type === 'student')
+                    .sort((a, b) => String(a.batch).localeCompare(String(b.batch)) || String(a.name).localeCompare(String(b.name)));
+
+                const coachLogs = (data.logs || [])
+                    .filter(l => l.type === 'coach')
+                    .sort((a, b) => String(a.batch).localeCompare(String(b.batch)) || String(a.name).localeCompare(String(b.name)));
+
+                document.getElementById('studentLogCount').innerText = studentLogs.length;
+                document.getElementById('coachLogCount').innerText = coachLogs.length;
+
+                renderDailyLogCards('studentLogContainer', studentLogs, 'No athlete records found for this selection.');
+                renderDailyLogCards('coachLogContainer', coachLogs, 'No coach records found for this selection.');
+            } catch (err) {
+                studentContainer.innerHTML = '<p class="text-center py-10 text-rose-500 text-xs font-bold">Unable to load athlete logs.</p>';
+                coachContainer.innerHTML = '<p class="text-center py-10 text-rose-500 text-xs font-bold">Unable to load coach logs.</p>';
+                document.getElementById('studentLogCount').innerText = '0';
+                document.getElementById('coachLogCount').innerText = '0';
+            }
+        }
+
+        function renderDailyLogCards(containerId, logs, emptyMessage) {
             const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            people?.forEach((person, index) => {
-                const id = `${type}_${index}`;
-                container.innerHTML += `
-                    <div class="card-gradient rounded-2xl p-4 flex justify-between items-center transition-all">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-black/5 dark:bg-bean flex items-center justify-center font-black text-gray-500 text-sm">${person.name.charAt(0)}</div>
-                            <div>
-                                <p class="font-bold text-sm leading-tight text-current">${person.name}</p>
-                                <p class="text-[8px] font-black uppercase tracking-widest opacity-40">${person.status || 'Active'}</p>
-                            </div>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" name="attendance_${type}" id="${id}" value="${person.name}" checked onchange="updateStats()">
-                            <div class="slider"></div>
-                        </label>
-                    </div>`;
-            });
+
+            if (!logs.length) {
+                container.innerHTML = `<p class="text-center py-10 text-gray-500 text-xs">${escapeHtml(emptyMessage)}</p>`;
+                return;
+            }
+
+            container.innerHTML = logs.map(l => `
+                <div class="bg-white dark:bg-zinc-900 border border-black/5 p-4 rounded-xl flex justify-between items-center">
+                    <div class="text-[10px] uppercase font-bold opacity-50">
+                        ${escapeHtml(l.batch)}<br>
+                        <span class="text-xs text-current font-bold">${escapeHtml(l.name)}</span>
+                    </div>
+                    <button
+                        onclick='fastToggle(${Number(l.rowId)}, ${JSON.stringify(l.type)}, ${JSON.stringify(l.batch)}, ${JSON.stringify(l.name)}, ${JSON.stringify(l.status)})'
+                        class="px-4 py-2 rounded-lg text-[10px] font-black uppercase ${l.status === 'Present' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'}">
+                        ${escapeHtml(l.status)}
+                    </button>
+                </div>
+            `).join('');
         }
 
-        async function fetchHistory(batchName) {
-            const pList = document.getElementById('lastPresentList');
-            const aList = document.getElementById('lastAbsentList');
-            const dateLabel = document.getElementById('lastSessionDate');
-            const container = document.getElementById('lastSessionContainer');
+        async function fastToggle(rowId, type, batch, name, status) {
+            const payload = {
+                action: 'saveAttendance',
+                data: [{
+                    rowId,
+                    personType: type,
+                    date: document.getElementById('editDate').value,
+                    batchName: batch,
+                    personName: name,
+                    status: status === 'Present' ? 'Absent' : 'Present'
+                }]
+            };
+
+            const formData = new URLSearchParams();
+            formData.append('payload', JSON.stringify(payload));
+
             try {
-                const response = await fetch(`${WEB_APP_URL}?action=getHistory&batchName=${encodeURIComponent(batchName)}`, { method: 'GET', redirect: 'follow' });
-                const data = await response.json();
-                if (data.history && data.history.length > 0) {
-                    const last = data.history[0];
-                    dateLabel.innerText = last.date;
-                    pList.innerHTML = last.presentNames.length ? last.presentNames.map(n => `<div class="flex items-center gap-2"><span class="w-1 h-1 bg-mint rounded-full"></span>${n}</div>`).join('') : '<span class="opacity-20 italic text-[8px]">None</span>';
-                    aList.innerHTML = last.absentNames.length ? last.absentNames.map(n => `<div class="flex items-center gap-2 text-rose/60"><span class="w-1 h-1 bg-rose rounded-full"></span>${n}</div>`).join('') : '<span class="opacity-20 italic text-[8px]">None</span>';
-                    container.classList.remove('hidden-view');
-                } else { container.classList.add('hidden-view'); }
-            } catch (e) { container.classList.add('hidden-view'); }
+                const res = await fetch(WEB_APP_URL, { method: 'POST', body: formData, redirect: 'follow' });
+                const out = await res.json();
+                if (out.status === 'success') {
+                    loadDailyLogs();
+                } else {
+                    alert("Unable to update log.");
+                }
+            } catch (err) {
+                alert("Unable to update log.");
+            }
         }
 
         function toggleAll(name, state) {
-            document.querySelectorAll(`input[name="${name}"]`).forEach(cb => cb.checked = state);
-            updateStats();
-        }
-
-        function updateStats() {
-            document.getElementById('statPresent').innerText = document.querySelectorAll('input[name="attendance_student"]:checked').length;
-            document.getElementById('statTotal').innerText = document.querySelectorAll('input[name="attendance_student"]').length;
-            document.getElementById('coachPresent').innerText = document.querySelectorAll('input[name="attendance_coach"]:checked').length;
-            document.getElementById('coachTotal').innerText = document.querySelectorAll('input[name="attendance_coach"]').length;
+            document.querySelectorAll(`input[name="${name}"]`).forEach(c => c.checked = state);
         }
 
         async function submitAttendance() {
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerText = "UPLOADING...";
+            btn.disabled = true;
+            btn.innerText = "Syncing...";
+
             const records = [];
+
             ['coach', 'student'].forEach(type => {
-                document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
+                document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(i => {
                     records.push({
+                        rowId: i.dataset.rowId ? Number(i.dataset.rowId) : null,
                         personType: type,
                         date: document.getElementById('attendanceDate').value,
                         batchName: document.getElementById('batchSelect').value,
-                        personName: input.value,
-                        status: input.checked ? 'Present' : 'Absent'
+                        personName: i.value,
+                        status: i.checked ? 'Present' : 'Absent'
                     });
                 });
             });
+
             const formData = new URLSearchParams();
-            formData.append('payload', JSON.stringify({ action: "saveAttendance", data: records }));
+            formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+
             try {
-                const response = await fetch(WEB_APP_URL, { method: 'POST', redirect: 'follow', body: formData });
-                const res = await response.json();
-                if(res.status === 'success') { alert("Synced Successfully."); location.reload(); }
-            } catch (err) { alert("Sync failed."); btn.disabled = false; btn.innerText = "COMMIT RECORDS"; }
+                const res = await fetch(WEB_APP_URL, { method: 'POST', body: formData, redirect: 'follow' });
+                const out = await res.json();
+
+                if (out.status === 'success') {
+                    alert("Attendance Synced!");
+                    goHome();
+                } else {
+                    alert("Sync failed.");
+                    btn.disabled = false;
+                    btn.innerText = "Commit Records";
+                }
+            } catch (err) {
+                alert("Sync failed.");
+                btn.disabled = false;
+                btn.innerText = "Commit Records";
+            }
+        }
+
+        async function markGlobalHoliday() {
+            if (!confirm("Holiday for all batches today?")) return;
+
+            const today = new Date();
+            const date = [
+                today.getFullYear(),
+                String(today.getMonth() + 1).padStart(2, '0'),
+                String(today.getDate()).padStart(2, '0')
+            ].join('-');
+
+            try {
+                const res = await fetch(`${WEB_APP_URL}?action=getBatches`);
+                const data = await res.json();
+
+                const records = (data.batches || []).map(b => ({
+                    personType: 'student',
+                    date,
+                    batchName: b.name,
+                    personName: "--- HOLIDAY ---",
+                    status: "Holiday"
+                }));
+
+                const formData = new URLSearchParams();
+                formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+
+                await fetch(WEB_APP_URL, { method: 'POST', body: formData, redirect: 'follow' });
+
+                alert("Global Holiday Set!");
+                location.reload();
+            } catch (err) {
+                alert("Unable to set holiday.");
+            }
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function escapeAttr(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
         }
     </script>
 </body>
