@@ -49,7 +49,6 @@
             color: var(--text);
         }
 
-        /* --- ADAPTIVE LOADING SCREEN CSS --- */
         .main-fader {
             width: 100%; height: 100vh; position: fixed; top: 0; left: 0;
             background-color: var(--loader-bg); z-index: 10000; display: flex;
@@ -59,7 +58,6 @@
         .main-fader.hidden { opacity: 0; visibility: hidden; }
         .loader svg { height: 120px; display: block; margin: 0 auto; }
         .loader svg path { animation: pulse-svg 1.2s infinite ease-in-out; transform-origin: center; fill: #10b981; }
-        
         .loader-brand-text { color: var(--loader-text); }
 
         .path-0 { animation-delay: 0s; }
@@ -72,7 +70,6 @@
         .path-7 { animation-delay: 0.7s; }
         .path-8 { animation-delay: 0.8s; }
         @keyframes pulse-svg { 0%, 100% { opacity: 0.1; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1); } }
-        /* --- END LOADING SCREEN CSS --- */
 
         .hidden-view { display: none !important; }
         .glass {
@@ -113,6 +110,7 @@
         </div>
       </div>
     </div>
+
     <header class="sticky top-0 z-40 border-b border-black/5 backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg) 82%, transparent);">
         <div class="px-6 py-5 flex items-center justify-between">
             <button onclick="goHome()" class="text-left">
@@ -138,29 +136,29 @@
         </section>
 
         <section id="commandView" class="hidden-view space-y-6">
-    <div class="grid grid-cols-2 gap-3">
-        <div class="glass rounded-3xl p-5 border-l-4 border-l-emerald-500">
-            <div class="text-[10px] font-black uppercase tracking-[0.2em] muted mb-2">Athletes</div>
-            <div class="text-3xl font-extrabold">
-                <span id="statPresent">0</span>
-                <span class="text-sm muted font-bold"> / <span id="statTotal">0</span></span>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="glass rounded-3xl p-5 border-l-4 border-l-emerald-500">
+                    <div class="text-[10px] font-black uppercase tracking-[0.2em] muted mb-2">Athletes</div>
+                    <div class="text-3xl font-extrabold">
+                        <span id="statPresent">0</span>
+                        <span class="text-sm muted font-bold"> / <span id="statTotal">0</span></span>
+                    </div>
+                </div>
+                <div class="glass rounded-3xl p-5 border-l-4 border-l-blue-500">
+                    <div class="text-[10px] font-black uppercase tracking-[0.2em] muted mb-2">Coaches</div>
+                    <div class="text-3xl font-extrabold">
+                        <span id="coachPresent">0</span>
+                        <span class="text-sm muted font-bold"> / <span id="coachTotal">0</span></span>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="glass rounded-3xl p-5 border-l-4 border-l-blue-500">
-            <div class="text-[10px] font-black uppercase tracking-[0.2em] muted mb-2">Coaches</div>
-            <div class="text-3xl font-extrabold">
-                <span id="coachPresent">0</span>
-                <span class="text-sm muted font-bold"> / <span id="coachTotal">0</span></span>
-            </div>
-        </div>
-    </div>
 
-    <div class="glass rounded-3xl p-3">
-        <button onclick="markBatchHoliday()" class="w-full rounded-2xl py-4 text-[10px] uppercase font-black border border-rose-500/20 text-rose-500 flex items-center justify-center gap-2" style="background: var(--rose-soft);">
-            <span>🌴 Mark Batch as Holiday</span>
-            <span id="holidayBtnDate" class="opacity-60 text-[9px] font-bold"></span>
-        </button>
-    </div>
+            <div class="glass rounded-3xl p-3">
+                <button onclick="markBatchHoliday()" class="w-full rounded-2xl py-4 text-[10px] uppercase font-black border border-rose-500/20 text-rose-500 flex items-center justify-center gap-2" style="background: var(--rose-soft);">
+                    <span>🌴 Mark Batch as Holiday</span>
+                    <span id="holidayBtnDate" class="opacity-60 text-[9px] font-bold"></span>
+                </button>
+            </div>
 
             <div class="flex gap-3">
                 <select id="batchSelect" onchange="fetchRoster()" class="field p-4 text-xs font-bold rounded-2xl flex-1 outline-none">
@@ -170,7 +168,7 @@
             </div>
 
             <input type="text" id="rosterSearch" oninput="applyRosterSearch()" placeholder="Search athlete / coach..." class="field search-input w-full p-4 text-xs font-bold rounded-2xl outline-none">
-
+            
             <section id="lastSessionContainer" class="hidden-view space-y-4">
                 <div class="flex items-center justify-between">
                     <div class="text-[10px] font-black uppercase tracking-[0.22em] muted">Previous Session</div>
@@ -238,7 +236,6 @@
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxgMe6bq7AgcCmEI5-x0C1LkbI4NFNJo32OKioqgcwBHujTt3KsC2aMeUZy_CrkPEjE-A/exec";
 
-        // --- NEW LOADER LOGIC ---
         function hideLoader() {
             const fader = document.querySelector('.main-fader');
             if (fader) fader.classList.add('hidden');
@@ -274,7 +271,6 @@
                     editBatchSelect.innerHTML += `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`;
                     grid.innerHTML += `<button onclick='selectBatch(${JSON.stringify(name)})' class="glass p-6 rounded-[2rem] flex flex-col justify-between aspect-square text-left active:scale-95 transition-all"><div class="w-11 h-11 rounded-2xl flex items-center justify-center text-lg" style="background: var(--emerald-soft);">⚽</div><div><h3 class="text-sm font-extrabold uppercase leading-tight">${escapeHtml(name)}</h3><p class="text-[10px] text-emerald-500 font-bold mt-2">${Number(b.count || 0)} Active</p></div></button>`;
                 });
-                // HIDE LOADER ON SUCCESS
                 setTimeout(hideLoader, 800);
             } catch (err) {
                 alert("Unable to load batches.");
@@ -309,6 +305,10 @@
             const batchName = document.getElementById('batchSelect').value;
             const date = document.getElementById('attendanceDate').value;
             if (!batchName) return;
+
+            // Update holiday button date label
+            const displayDate = new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+            document.getElementById('holidayBtnDate').innerText = `(${displayDate})`;
 
             document.getElementById('lobbyView').classList.add('hidden-view');
             document.getElementById('editView').classList.add('hidden-view');
@@ -452,46 +452,35 @@
             } catch (err) { alert("Unable to set holiday."); }
         }
 
+        async function markBatchHoliday() {
+            const batchName = document.getElementById('batchSelect').value;
+            const date = document.getElementById('attendanceDate').value;
+            if (!batchName) return;
+            if (!confirm(`Mark ${batchName} as Holiday for ${date}?`)) return;
+
+            const btn = event.currentTarget;
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerText = "Syncing Holiday...";
+
+            const records = [{ personType: 'student', date: date, batchName: batchName, personName: "--- HOLIDAY ---", status: "Holiday" }];
+            const formData = new URLSearchParams();
+            formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+
+            try {
+                const out = await fetchJson(WEB_APP_URL, { method: 'POST', body: formData, redirect: 'follow' });
+                if (out.status === 'success') {
+                    alert("Holiday logged successfully.");
+                    fetchRoster();
+                }
+            } catch (err) { alert("Error logging holiday."); } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        }
+
         function escapeHtml(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
         function escapeAttr(v) { return escapeHtml(v); }
-        }
-
-        async function markBatchHoliday() {
-    const batchName = document.getElementById('batchSelect').value;
-    const date = document.getElementById('attendanceDate').value;
-    
-    if (!batchName) return;
-    if (!confirm(`Mark ${batchName} as Holiday for ${date}?`)) return;
-
-    const btn = event.currentTarget;
-    const originalContent = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerText = "Syncing Holiday...";
-
-    const records = [{
-        personType: 'student',
-        date: date,
-        batchName: batchName,
-        personName: "--- HOLIDAY ---",
-        status: "Holiday"
-    }];
-
-    const formData = new URLSearchParams();
-    formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
-
-    try {
-        const out = await fetchJson(WEB_APP_URL, { method: 'POST', body: formData, redirect: 'follow' });
-        if (out.status === 'success') {
-            alert("Holiday logged successfully.");
-            fetchRoster(); // Refresh the list to show the holiday status
-        }
-    } catch (err) {
-        alert("Error logging holiday.");
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalContent;
-    }
-}
     </script>
 </body>
 </html>
