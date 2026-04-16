@@ -138,22 +138,29 @@
         </section>
 
         <section id="commandView" class="hidden-view space-y-6">
-            <div class="grid grid-cols-2 gap-3">
-                <div class="glass rounded-3xl p-5 border-l-4 border-l-emerald-500">
-                    <div class="text-[10px] font-black uppercase tracking-[0.2em] muted mb-2">Athletes</div>
-                    <div class="text-3xl font-extrabold">
-                        <span id="statPresent">0</span>
-                        <span class="text-sm muted font-bold"> / <span id="statTotal">0</span></span>
-                    </div>
-                </div>
-                <div class="glass rounded-3xl p-5 border-l-4 border-l-blue-500">
-                    <div class="text-[10px] font-black uppercase tracking-[0.2em] muted mb-2">Coaches</div>
-                    <div class="text-3xl font-extrabold">
-                        <span id="coachPresent">0</span>
-                        <span class="text-sm muted font-bold"> / <span id="coachTotal">0</span></span>
-                    </div>
-                </div>
+    <div class="grid grid-cols-2 gap-3">
+        <div class="glass rounded-3xl p-5 border-l-4 border-l-emerald-500">
+            <div class="text-[10px] font-black uppercase tracking-[0.2em] muted mb-2">Athletes</div>
+            <div class="text-3xl font-extrabold">
+                <span id="statPresent">0</span>
+                <span class="text-sm muted font-bold"> / <span id="statTotal">0</span></span>
             </div>
+        </div>
+        <div class="glass rounded-3xl p-5 border-l-4 border-l-blue-500">
+            <div class="text-[10px] font-black uppercase tracking-[0.2em] muted mb-2">Coaches</div>
+            <div class="text-3xl font-extrabold">
+                <span id="coachPresent">0</span>
+                <span class="text-sm muted font-bold"> / <span id="coachTotal">0</span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass rounded-3xl p-3">
+        <button onclick="markBatchHoliday()" class="w-full rounded-2xl py-4 text-[10px] uppercase font-black border border-rose-500/20 text-rose-500 flex items-center justify-center gap-2" style="background: var(--rose-soft);">
+            <span>🌴 Mark Batch as Holiday</span>
+            <span id="holidayBtnDate" class="opacity-60 text-[9px] font-bold"></span>
+        </button>
+    </div>
 
             <div class="flex gap-3">
                 <select id="batchSelect" onchange="fetchRoster()" class="field p-4 text-xs font-bold rounded-2xl flex-1 outline-none">
@@ -447,6 +454,44 @@
 
         function escapeHtml(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
         function escapeAttr(v) { return escapeHtml(v); }
+        }
+
+        async function markBatchHoliday() {
+    const batchName = document.getElementById('batchSelect').value;
+    const date = document.getElementById('attendanceDate').value;
+    
+    if (!batchName) return;
+    if (!confirm(`Mark ${batchName} as Holiday for ${date}?`)) return;
+
+    const btn = event.currentTarget;
+    const originalContent = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerText = "Syncing Holiday...";
+
+    const records = [{
+        personType: 'student',
+        date: date,
+        batchName: batchName,
+        personName: "--- HOLIDAY ---",
+        status: "Holiday"
+    }];
+
+    const formData = new URLSearchParams();
+    formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+
+    try {
+        const out = await fetchJson(WEB_APP_URL, { method: 'POST', body: formData, redirect: 'follow' });
+        if (out.status === 'success') {
+            alert("Holiday logged successfully.");
+            fetchRoster(); // Refresh the list to show the holiday status
+        }
+    } catch (err) {
+        alert("Error logging holiday.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalContent;
+    }
+}
     </script>
 </body>
 </html>
