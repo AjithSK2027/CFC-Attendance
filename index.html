@@ -108,7 +108,7 @@
     </main>
 
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzpbmZlSzdOjvd3vS1PkFX4CaDn3UyfW5wqmKGa7mwMLEA5B7gJfHRTF7fptDvkZsny/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZuOj8cBq3eHnqROHuDS_MqE48uuacH8YnC6NBs4cwCtmZyLmgUFu95DAF-RP5lPbs/exec";
 
 function hideLoader() { document.querySelector('.main-fader').classList.add('hidden'); }
 function goHome() { document.getElementById('lobbyView').classList.remove('hidden-view'); document.getElementById('commandView').classList.add('hidden-view'); document.getElementById('editView').classList.add('hidden-view'); }
@@ -153,24 +153,88 @@ async function fetchRoster() {
     document.getElementById('commandView').classList.remove('hidden-view');
     document.getElementById('holidayBtnDate').innerText = `(${new Date(date).toLocaleDateString('en-GB', {day:'numeric', month:'short'})})`;
 
+    // Clear and Show Section Headers immediately
+    document.getElementById('coachesList').innerHTML = `
+        <div class="flex items-center gap-2 mb-3 mt-2 px-2">
+            <div class="w-1 h-4 bg-blue-500 rounded-full"></div>
+            <span class="text-[10px] font-black uppercase tracking-widest text-blue-500">Coaches</span>
+        </div>
+        <p class="py-4 text-center text-[10px] font-bold opacity-50 uppercase">Loading...</p>`;
+    
+    document.getElementById('studentsList').innerHTML = `
+        <div class="flex items-center gap-2 mb-3 mt-6 px-2">
+            <div class="w-1 h-4 bg-emerald-500 rounded-full"></div>
+            <span class="text-[10px] font-black uppercase tracking-widest text-emerald-500">Athletes</span>
+        </div>
+        <p class="py-4 text-center text-[10px] font-bold opacity-50 uppercase">Loading...</p>`;
+
     try {
         const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
-        renderList('coachesList', data.coaches, 'coach');
-        renderList('studentsList', data.students, 'student');
+        
+        // Render Coaches
+        renderList('coachesList', data.coaches, 'coach', 'Coaches', 'blue');
+        // Render Athletes
+        renderList('studentsList', data.students, 'student', 'Athletes', 'emerald');
+        
         updateStats();
     } catch (err) { alert("Failed to load roster."); }
 }
 
-function renderList(containerId, people, type) {
+function renderList(containerId, people, type, label, color) {
     const container = document.getElementById(containerId);
-    container.innerHTML = people.map((p, i) => `
-        <div class="attendance-card panel rounded-2xl p-4 flex justify-between items-center" data-name="${escapeAttr(p.name.toLowerCase())}">
-            <span class="font-bold text-sm">${escapeHtml(p.name)}</span>
+    
+    // Header for the section with All/Clear toggles and Total Count
+    const header = `
+        <div class="flex items-center justify-between mb-3 ${type === 'student' ? 'mt-8' : 'mt-2'} px-2">
+            <div class="flex items-center gap-2">
+                <div class="w-1 h-4 bg-${color}-500 rounded-full"></div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-${color}-500">${label}</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSection('${type}', true)" class="text-[9px] font-black uppercase text-${color}-500 opacity-80 active:scale-90 transition-all">All</button>
+                <div class="w-[1px] h-2 bg-black/10 dark:bg-white/10"></div>
+                <button onclick="toggleSection('${type}', false)" class="text-[9px] font-black uppercase muted active:scale-90 transition-all">Clear</button>
+                <span class="ml-2 text-[9px] font-bold opacity-30">${people.length} Total</span>
+            </div>
+        </div>`;
+
+    // Map through people and generate cards
+    const listHtml = people.map((p, i) => `
+        <div class="attendance-card panel rounded-2xl p-4 mb-2 flex justify-between items-center border-l-4 border-l-${color}-500/30" 
+             data-name="${escapeAttr(p.name.toLowerCase())}">
+            <div class="min-w-0 flex-1">
+                <p class="font-bold text-sm text-current truncate">${escapeHtml(p.name)}</p>
+                <p class="text-[8px] font-black uppercase opacity-40 tracking-tighter">
+                    ${type === 'student' ? (p.studentId || 'NO ID') : 'STAFF'}
+                </p>
+            </div>
             <label class="switch">
-                <input type="checkbox" name="attendance_${type}" value="${escapeAttr(p.name)}" ${p.status === 'Present' ? 'checked' : ''} onchange="updateStats()">
+                <input type="checkbox" 
+                       name="attendance_${type}" 
+                       value="${escapeAttr(p.name)}" 
+                       data-sid="${p.studentId || ''}" 
+                       ${p.status === 'Present' ? 'checked' : ''} 
+                       onchange="updateStats()">
                 <div class="slider"></div>
             </label>
         </div>`).join('');
+
+    container.innerHTML = header + listHtml;
+}
+
+/** * Restored Toggle logic for All/Clear buttons 
+ * This ensures bulk marking works only on visible (searched) items
+ */
+function toggleSection(type, state) {
+    const checkboxes = document.querySelectorAll(`input[name="attendance_${type}"]`);
+    checkboxes.forEach(cb => {
+        const card = cb.closest('.attendance-card');
+        // Only toggle if the card isn't hidden by a search filter
+        if (card && card.style.display !== 'none') {
+            cb.checked = state;
+        }
+    });
+    updateStats();
 }
 
 function updateStats() {
@@ -207,22 +271,72 @@ async function markBatchHoliday() {
 
 async function submitAttendance() {
     const btn = document.getElementById('submitBtn');
-    btn.disabled = true; btn.innerText = "SYNCING...";
+    const batchName = document.getElementById('batchSelect').value;
+    const date = document.getElementById('attendanceDate').value;
+
+    // 1. Validation
+    if (!batchName) {
+        alert("⚠️ Please select a batch first.");
+        return;
+    }
+
+    // 2. UI Feedback (Prevent double-clicking)
+    btn.disabled = true;
+    btn.innerText = "SYNCING TO CLOUD...";
+
     const records = [];
+
+    // 3. Collection Loop
     ['coach', 'student'].forEach(type => {
-        document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
-            records.push({ personType: type, date: document.getElementById('attendanceDate').value, batchName: document.getElementById('batchSelect').value, personName: input.value, status: input.checked ? 'Present' : 'Absent' });
+        const inputs = document.querySelectorAll(`input[name="attendance_${type}"]`);
+        
+        inputs.forEach(input => {
+            // We only collect records for cards that are visible 
+            // (prevents saving items filtered out by search if needed, 
+            // though usually, you want to save the whole batch)
+            records.push({
+                personType: type,
+                studentId: input.dataset.sid || '', // captures the ID from renderList
+                date: date,
+                batchName: batchName,
+                personName: input.value,
+                status: input.checked ? 'Present' : 'Absent'
+            });
         });
     });
 
+    // 4. Send to Google Apps Script
     try {
         const formData = new URLSearchParams();
-        formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
-        await fetchJson(WEB_APP_URL, { method: 'POST', body: formData });
-        alert("✅ Attendance Synced"); location.reload();
-    } catch (err) { alert("❌ Failed"); btn.disabled = false; btn.innerText = "Commit Records"; }
-}
+        formData.append('payload', JSON.stringify({
+            action: 'saveAttendance',
+            data: records
+        }));
 
+        const response = await fetch(WEB_APP_URL, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            alert("✅ Attendance Synced Successfully!");
+            // Optional: Refresh to clear state or go home
+            location.reload(); 
+        } else {
+            throw new Error(result.message || "Unknown error occurred");
+        }
+
+    } catch (err) {
+        console.error("Submission Error:", err);
+        alert("❌ Failed to sync: " + err.message);
+        
+        // Reset button so user can try again
+        btn.disabled = false;
+        btn.innerText = "Commit Records";
+    }
+}
 function escapeHtml(v) { return String(v || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
 function escapeAttr(v) { return escapeHtml(v); }
 </script>
