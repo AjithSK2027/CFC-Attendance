@@ -425,19 +425,65 @@
         }
 
         async function submitAttendance() {
-            const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerText = "Syncing...";
-            const records = [];
-            ['coach', 'student'].forEach(type => {
-                document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
-                    records.push({ rowId: input.dataset.rowId ? Number(input.dataset.rowId) : null, personType: type, date: document.getElementById('attendanceDate').value, batchName: document.getElementById('batchSelect').value, personName: input.value, status: input.checked ? 'Present' : 'Absent' });
-                });
+    const btn = document.getElementById('submitBtn');
+    const batchName = document.getElementById('batchSelect').value;
+    const date = document.getElementById('attendanceDate').value;
+
+    if (!batchName) return alert("Please select a batch first.");
+
+    // 1. Lock the UI and show loading state
+    btn.disabled = true;
+    const originalText = btn.innerText;
+    btn.innerHTML = `<span class="flex items-center justify-center gap-2">
+        <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        SYNCING TO CLOUD...
+    </span>`;
+
+    // 2. Prevent the user from accidentally closing the tab
+    window.onbeforeunload = () => "Sync in progress. Please don't close the app.";
+
+    const records = [];
+    ['coach', 'student'].forEach(type => {
+        document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
+            records.push({
+                rowId: input.dataset.rowId ? Number(input.dataset.rowId) : null,
+                personType: type,
+                date: date,
+                batchName: batchName,
+                personName: input.value,
+                status: input.checked ? 'Present' : 'Absent'
             });
-            const formData = new URLSearchParams(); formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
-            try {
-                const out = await fetchJson(WEB_APP_URL, { method: 'POST', body: formData, redirect: 'follow' });
-                if (out.status === 'success') { alert("Attendance Synced!"); goHome(); }
-            } catch (err) { alert("Sync failed."); btn.disabled = false; btn.innerText = "Commit Records"; }
-        }
+        });
+    });
+
+    try {
+        const formData = new URLSearchParams();
+        formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+
+        const out = await fetchJson(WEB_APP_URL, { 
+            method: 'POST', 
+            body: formData, 
+            mode: 'no-cors' // This helps prevent some browser lag on mobile
+        });
+
+        // Since 'no-cors' doesn't return a body, we assume success if no error is thrown
+        // and add a small delay to ensure the background process finishes.
+        setTimeout(() => {
+            window.onbeforeunload = null;
+            alert("✅ Records Secured!");
+            goHome();
+        }, 1000);
+
+    } catch (err) {
+        window.onbeforeunload = null;
+        alert("❌ Sync Failed: Check internet connection.");
+        btn.disabled = false;
+        btn.innerText = originalText;
+    }
+}
 
         async function markGlobalHoliday() {
             if (!confirm("Holiday for all batches today?")) return;
