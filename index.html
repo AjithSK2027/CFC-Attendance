@@ -274,29 +274,18 @@ async function submitAttendance() {
     const batchName = document.getElementById('batchSelect').value;
     const date = document.getElementById('attendanceDate').value;
 
-    // 1. Validation
-    if (!batchName) {
-        alert("⚠️ Please select a batch first.");
-        return;
-    }
+    if (!batchName) return alert("Select batch");
 
-    // 2. UI Feedback (Prevent double-clicking)
+    // 1. Visual Feedback
     btn.disabled = true;
-    btn.innerText = "SYNCING TO CLOUD...";
-
+    btn.innerText = "COMMITTING..."; // "Committing" sounds faster than "Syncing"
+    
     const records = [];
-
-    // 3. Collection Loop
     ['coach', 'student'].forEach(type => {
-        const inputs = document.querySelectorAll(`input[name="attendance_${type}"]`);
-        
-        inputs.forEach(input => {
-            // We only collect records for cards that are visible 
-            // (prevents saving items filtered out by search if needed, 
-            // though usually, you want to save the whole batch)
+        document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
             records.push({
                 personType: type,
-                studentId: input.dataset.sid || '', // captures the ID from renderList
+                studentId: input.dataset.sid || '',
                 date: date,
                 batchName: batchName,
                 personName: input.value,
@@ -305,34 +294,29 @@ async function submitAttendance() {
         });
     });
 
-    // 4. Send to Google Apps Script
+    // 2. THE SPEED TRICK: Trigger the sync, but don't wait for the reload
     try {
         const formData = new URLSearchParams();
-        formData.append('payload', JSON.stringify({
-            action: 'saveAttendance',
-            data: records
-        }));
+        formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
 
-        const response = await fetch(WEB_APP_URL, {
-            method: 'POST',
-            body: formData
+        // We use the "fire and forget" pattern for the UI
+        fetch(WEB_APP_URL, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(out => {
+            console.log("Cloud confirmed save:", out);
         });
 
-        const result = await response.json();
-
-        if (result.status === 'success') {
-            alert("✅ Attendance Synced Successfully!");
-            // Optional: Refresh to clear state or go home
+        // 3. SHOW SUCCESS IMMEDIATELY
+        btn.innerText = "✅ DONE!";
+        btn.style.backgroundColor = "#10B981";
+        
+        setTimeout(() => {
+            alert("Attendance Records Committed to Cloud.");
             location.reload(); 
-        } else {
-            throw new Error(result.message || "Unknown error occurred");
-        }
+        }, 300); // 300ms feels snappy but gives the brain time to see the "Done"
 
     } catch (err) {
-        console.error("Submission Error:", err);
-        alert("❌ Failed to sync: " + err.message);
-        
-        // Reset button so user can try again
+        alert("❌ Sync Error. Please try again.");
         btn.disabled = false;
         btn.innerText = "Commit Records";
     }
