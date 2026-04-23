@@ -8,85 +8,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f6f7fb;
-            --surface: rgba(255,255,255,0.88);
-            --surface-strong: #ffffff;
-            --text: #111827;
-            --muted: #6b7280;
-            --border: rgba(17,24,39,0.08);
+            --bg: #f6f7fb; --surface: rgba(255,255,255,0.88); --surface-strong: #ffffff;
+            --text: #111827; --muted: #6b7280; --border: rgba(17,24,39,0.08);
             --shadow: 0 12px 30px -16px rgba(17,24,39,0.28);
-            --emerald-soft: rgba(16,185,129,0.10);
-            --blue-soft: rgba(59,130,246,0.10);
-            --rose-soft: rgba(244,63,94,0.10);
-            --loader-bg: #f6f7fb;
-            --loader-text: #111827;
+            --emerald-soft: rgba(16,185,129,0.10); --blue-soft: rgba(59,130,246,0.10);
+            --rose-soft: rgba(244,63,94,0.10); --loader-bg: #f6f7fb; --loader-text: #111827;
         }
-
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg: #050505;
-                --surface: rgba(24,24,27,0.86);
-                --surface-strong: #111111;
-                --text: #e5e7eb;
-                --muted: #9ca3af;
-                --border: rgba(255,255,255,0.08);
+                --bg: #050505; --surface: rgba(24,24,27,0.86); --surface-strong: #111111;
+                --text: #e5e7eb; --muted: #9ca3af; --border: rgba(255,255,255,0.08);
                 --shadow: 0 18px 40px -18px rgba(0,0,0,0.65);
-                --emerald-soft: rgba(16,185,129,0.14);
-                --blue-soft: rgba(59,130,246,0.14);
-                --rose-soft: rgba(244,63,94,0.14);
-                --loader-bg: #050505;
-                --loader-text: #ffffff;
+                --emerald-soft: rgba(16,185,129,0.14); --blue-soft: rgba(59,130,246,0.14);
+                --rose-soft: rgba(244,63,94,0.14); --loader-bg: #050505; --loader-text: #ffffff;
             }
         }
-
         * { box-sizing: border-box; }
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background:
-                radial-gradient(circle at top left, rgba(16,185,129,0.08), transparent 28%),
-                radial-gradient(circle at top right, rgba(59,130,246,0.08), transparent 26%),
-                var(--bg);
-            color: var(--text);
-        }
-
-        .main-fader {
-            width: 100%; height: 100vh; position: fixed; top: 0; left: 0;
-            background-color: var(--loader-bg); z-index: 10000; display: flex;
-            align-items: center; justify-content: center;
-            transition: opacity 0.6s ease, visibility 0.6s;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); }
+        .main-fader { width: 100%; height: 100vh; position: fixed; top: 0; left: 0; background-color: var(--loader-bg); z-index: 10000; display: flex; align-items: center; justify-content: center; transition: opacity 0.6s ease; }
         .main-fader.hidden { opacity: 0; visibility: hidden; }
         .loader svg { height: 120px; display: block; margin: 0 auto; }
         .loader svg path { animation: pulse-svg 1.2s infinite ease-in-out; transform-origin: center; fill: #10b981; }
-        .loader-brand-text { color: var(--loader-text); }
-
-        .path-0 { animation-delay: 0s; }
-        .path-1 { animation-delay: 0.1s; }
-        .path-2 { animation-delay: 0.2s; }
-        .path-3 { animation-delay: 0.3s; }
-        .path-4 { animation-delay: 0.4s; }
-        .path-5 { animation-delay: 0.5s; }
-        .path-6 { animation-delay: 0.6s; }
-        .path-7 { animation-delay: 0.7s; }
-        .path-8 { animation-delay: 0.8s; }
         @keyframes pulse-svg { 0%, 100% { opacity: 0.1; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1); } }
-
         .hidden-view { display: none !important; }
-        .glass {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(14px);
-        }
+        .glass { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); backdrop-filter: blur(14px); }
         .panel { background: var(--surface-strong); border: 1px solid var(--border); box-shadow: var(--shadow); }
         .field { background: var(--surface-strong); border: 1px solid var(--border); color: var(--text); }
-        .muted { color: var(--muted); }
         .switch input { display: none; }
         .slider { width: 46px; height: 24px; background-color: rgba(244, 63, 94, 0.16); border-radius: 999px; position: relative; transition: .24s; }
         .slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #f43f5e; border-radius: 50%; transition: .24s; }
         input:checked + .slider { background-color: rgba(16, 185, 129, 0.20); }
         input:checked + .slider:before { transform: translateX(22px); background-color: #10b981; }
-        .search-input::placeholder { color: var(--muted); }
     </style>
 </head>
 <body class="min-h-screen pb-24">
@@ -94,28 +46,16 @@
     <div class="main-fader">
       <div class="loader text-center">
         <svg viewBox="0 0 164.83 151.5" xmlns="http://www.w3.org/2000/svg">
-            <path class="path-0" d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
-            <path class="path-1" d="M97.55,38.68A43.76,43.76,0,0,1,98,33.44c.41-2.36-.5-3.57-2.57-4.64C91.1,26.59,87,24,82.66,21.82a6.18,6.18,0,0,0-4-.71C73.45,22.55,68.32,24.25,63.22,26c-3.63,1.21-6.08,3.35-5.76,7.69a26.67,26.67,0,0,1-.6,4.92c-1.08,8.06-1.08,8.08,5.86,11.92,3.95,2.19,7.82,5.75,11.94,6.08s8.76-2.41,13.12-3.93c9.33-3.29,9.33-3.3,9.78-14Z" />
-            <path class="path-2" d="M66.11,126.56c5.91-.91,11.37-1.7,16.81-2.71a3.3,3.3,0,0,0,1.87-2.17c1-4.06,1.73-8.19,2.84-12.24.54-2-.11-3-1.55-4.15-5-4-9.9-8.12-15-12a6.19,6.19,0,0,0-4.15-1.1c-5.35.66-10.7,1.54-16,2.54A4,4,0,0,0,48.34,97a109.13,109.13,0,0,0-3,12.19,4.47,4.47,0,0,0,1.34,3.6c5.54,4.36,11.23,8.53,16.91,12.69a10.84,10.84,0,0,0,2.57,1.11Z" />
-            <path class="path-3" d="M127.42,104.12c4.1-2.1,8-3.93,11.72-6a6,6,0,0,0,2.27-3,58.22,58.22,0,0,0,3.18-29.92c-.26-1.7-8-7.28-9.71-6.85A5,5,0,0,0,133,59.65c-2.81,2.49-5.71,4.88-8.33,7.56a9.46,9.46,0,0,0-2.47,4.4c-1.29,6.49-2.38,13-3.35,19.55a5.73,5.73,0,0,0,.83,3.91c2.31,3.08,5,5.88,7.7,9Z" />
-            <path class="path-4" d="M52.58,29.89c-2.15-.36-3.78-.54-5.39-.9-2.83-.64-4.92.1-7,2.32A64.1,64.1,0,0,0,26.09,54.64c-2.64,7.92-2.62,7.84,5.15,10.87,1.76.69,2.73.45,3.93-1C39.79,59,44.54,53.65,49.22,48.2a4.2,4.2,0,0,0,1.13-2c.8-5.32,1.49-10.68,2.24-16.34Z" />
-            <path class="path-5" d="M23,68.13c0,2.51,0,4.7,0,6.87a60.49,60.49,0,0,0,9.75,32.15c1.37,2.13,6.4,3,7,1.2,1.55-5,2.68-10.2,3.82-15.34.13-.58-.58-1.38-.94-2.06-2.51-4.77-5.47-9.38-7.45-14.37C32.94,71,28.22,69.84,23,68.13Z" />
-            <path class="path-6" d="M83.91,12.86c-.32.36-.66.71-1,1.07.9,1.13,1.57,2.62,2.73,3.33,4.71,2.84,9.56,5.48,14.39,8.1a9.29,9.29,0,0,0,3.13.83c5.45.69,10.89,1.38,16.35,1.94a10.41,10.41,0,0,0,3.07-.71c-11.48-9.9-24.26-14.61-38.71-14.56Z" />
-            <path class="path-7" d="M66.28,132.51c13.36,3.78,25.62,3.5,38-.9C91.68,129.59,79.36,128,66.28,132.51Z" />
-            <path class="path-8" d="M127.2,30.66l-1.27.37a18.58,18.58,0,0,0,1,3.08c3,5.52,6.21,10.89,8.89,16.54,1.34,2.83,3.41,3.82,6.49,4.9a60.38,60.38,0,0,0-15.12-24.9Z" />
+            <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
         </svg>
-        <div class="mt-6">
-            <h2 class="text-2xl font-black uppercase tracking-tighter loader-brand-text">Coffeeland <span class="text-emerald-500">FC</span></h2>
-            <p class="text-emerald-500 font-black text-[8px] tracking-[0.5em] uppercase opacity-70 mt-1">Attendance Portal</p>
-        </div>
+        <h2 class="text-2xl font-black uppercase mt-6 tracking-tighter">Coffeeland <span class="text-emerald-500">FC</span></h2>
       </div>
     </div>
 
     <header class="sticky top-0 z-40 border-b border-black/5 backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg) 82%, transparent);">
         <div class="px-6 py-5 flex items-center justify-between">
             <button onclick="goHome()" class="text-left">
-                <div class="text-xl font-extrabold uppercase tracking-tight">CFC <span class="text-emerald-500">Attendance Manager</span></div>
-                <div class="text-[10px] font-bold uppercase tracking-[0.22em] muted mt-1">Training Session Control</div>
+                <div class="text-xl font-extrabold uppercase tracking-tight">CFC <span class="text-emerald-500">Manager</span></div>
             </button>
             <button onclick="showEditView()" class="glass text-blue-500 text-[10px] font-bold px-4 py-3 rounded-2xl uppercase">📝 Edit Logs</button>
         </div>
@@ -124,13 +64,10 @@
     <main class="px-6 py-6 space-y-6">
         <section id="lobbyView" class="space-y-5">
             <div class="glass rounded-3xl p-5 space-y-4">
-                <div class="text-[10px] font-black uppercase tracking-[0.22em] muted">Select Session Batch</div>
                 <select id="homeBatchSelect" onchange="selectBatch(this.value)" class="field w-full p-4 text-xs font-bold rounded-2xl outline-none">
                     <option value="">Quick Select Batch...</option>
                 </select>
-                <button onclick="markGlobalHoliday()" class="w-full rounded-2xl py-4 text-[10px] uppercase font-black border border-rose-500/20 text-rose-500" style="background: var(--rose-soft);">
-                    🌴 Global Holiday (Today)
-                </button>
+                <button onclick="markGlobalHoliday()" class="w-full rounded-2xl py-4 text-[10px] uppercase font-black border border-rose-500/20 text-rose-500" style="background: var(--rose-soft);">🌴 Global Holiday (Today)</button>
             </div>
             <div id="batchGrid" class="grid grid-cols-2 gap-4"></div>
         </section>
@@ -138,96 +75,33 @@
         <section id="commandView" class="hidden-view space-y-6">
             <div class="grid grid-cols-2 gap-3">
                 <div class="glass rounded-3xl p-5 border-l-4 border-l-emerald-500">
-                    <div class="text-[10px] font-black uppercase tracking-[0.2em] muted mb-2">Athletes</div>
-                    <div class="text-3xl font-extrabold">
-                        <span id="statPresent">0</span>
-                        <span class="text-sm muted font-bold"> / <span id="statTotal">0</span></span>
-                    </div>
+                    <div class="text-[10px] font-black uppercase muted mb-2">Athletes</div>
+                    <div class="text-3xl font-extrabold"><span id="statPresent">0</span><span class="text-sm muted"> / <span id="statTotal">0</span></span></div>
                 </div>
                 <div class="glass rounded-3xl p-5 border-l-4 border-l-blue-500">
-                    <div class="text-[10px] font-black uppercase tracking-[0.2em] muted mb-2">Coaches</div>
-                    <div class="text-3xl font-extrabold">
-                        <span id="coachPresent">0</span>
-                        <span class="text-sm muted font-bold"> / <span id="coachTotal">0</span></span>
-                    </div>
+                    <div class="text-[10px] font-black uppercase muted mb-2">Coaches</div>
+                    <div class="text-3xl font-extrabold"><span id="coachPresent">0</span><span class="text-sm muted"> / <span id="coachTotal">0</span></span></div>
                 </div>
             </div>
 
-            <div class="glass rounded-3xl p-3">
-                <button onclick="markBatchHoliday()" class="w-full rounded-2xl py-4 text-[10px] uppercase font-black border border-rose-500/20 text-rose-500 flex items-center justify-center gap-2" style="background: var(--rose-soft);">
-                    <span>🌴 Mark Batch as Holiday</span>
-                    <span id="holidayBtnDate" class="opacity-60 text-[9px] font-bold"></span>
-                </button>
-            </div>
+            <button onclick="markBatchHoliday()" class="w-full glass rounded-2xl py-4 text-[10px] uppercase font-black text-rose-500">🌴 Mark Batch as Holiday <span id="holidayBtnDate"></span></button>
 
             <div class="flex gap-3">
-                <select id="batchSelect" onchange="fetchRoster()" class="field p-4 text-xs font-bold rounded-2xl flex-1 outline-none">
-                    <option value="">Select Batch...</option>
-                </select>
+                <select id="batchSelect" onchange="fetchRoster()" class="field p-4 text-xs font-bold rounded-2xl flex-1 outline-none"></select>
                 <input type="date" id="attendanceDate" onchange="fetchRoster()" class="field p-4 text-xs font-bold rounded-2xl w-[38%] outline-none">
             </div>
 
-            <input type="text" id="rosterSearch" oninput="applyRosterSearch()" placeholder="Search athlete / coach..." class="field search-input w-full p-4 text-xs font-bold rounded-2xl outline-none">
-            
-            <section id="lastSessionContainer" class="hidden-view space-y-4">
-                <div class="flex items-center justify-between">
-                    <div class="text-[10px] font-black uppercase tracking-[0.22em] muted">Previous Session</div>
-                    <span id="lastSessionDate" class="px-3 py-1.5 rounded-xl text-[10px] font-bold text-emerald-500" style="background: var(--emerald-soft);">-- ---</span>
-                </div>
-                <div class="grid gap-3">
-                    <div class="glass rounded-3xl p-4 space-y-3">
-                        <div class="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-500">Athletes</div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="panel rounded-2xl p-3">
-                                <div class="text-[9px] font-black uppercase text-emerald-500 mb-2">Present</div>
-                                <div id="lastStudentPresentList" class="text-[10px] space-y-1 muted"></div>
-                            </div>
-                            <div class="panel rounded-2xl p-3">
-                                <div class="text-[9px] font-black uppercase text-rose-500 mb-2">Absent</div>
-                                <div id="lastStudentAbsentList" class="text-[10px] space-y-1 muted"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <input type="text" id="rosterSearch" oninput="applyRosterSearch()" placeholder="Search..." class="field w-full p-4 text-xs font-bold rounded-2xl outline-none">
 
-            <section class="space-y-3">
-                <div class="flex justify-between items-center rounded-2xl p-3" style="background: var(--blue-soft);">
-                    <h3 class="text-[10px] font-black uppercase tracking-[0.18em] text-blue-500">Coaches</h3>
-                    <div class="flex gap-4">
-                        <button onclick="toggleAll('attendance_coach', true)" class="text-[9px] font-black uppercase">All</button>
-                        <button onclick="toggleAll('attendance_coach', false)" class="text-[9px] font-black uppercase muted">Clear</button>
-                    </div>
-                </div>
-                <div id="coachesList" class="space-y-2"></div>
-            </section>
+            <div id="coachesList" class="space-y-2"></div>
+            <div id="studentsList" class="space-y-2"></div>
 
-            <section class="space-y-3">
-                <div class="flex justify-between items-center rounded-2xl p-3" style="background: var(--emerald-soft);">
-                    <h3 class="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-500">Athletes</h3>
-                    <div class="flex gap-4">
-                        <button onclick="toggleAll('attendance_student', true)" class="text-[9px] font-black uppercase">All</button>
-                        <button onclick="toggleAll('attendance_student', false)" class="text-[9px] font-black uppercase muted">Clear</button>
-                    </div>
-                </div>
-                <div id="studentsList" class="space-y-2"></div>
-            </section>
-
-            <button onclick="submitAttendance()" id="submitBtn" class="w-full bg-emerald-500 text-white font-extrabold py-5 rounded-3xl uppercase tracking-[0.18em] text-sm shadow-xl">Commit Records</button>
+            <button onclick="submitAttendance()" id="submitBtn" class="w-full bg-emerald-500 text-white font-extrabold py-5 rounded-3xl uppercase text-sm shadow-xl">Commit Records</button>
         </section>
 
         <section id="editView" class="hidden-view space-y-5">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xs font-black uppercase tracking-[0.2em] muted">Log Editor</h2>
-                <button onclick="goHome()" class="text-xs font-bold text-emerald-500">Close</button>
-            </div>
-            <div class="flex gap-3">
-                <input type="date" id="editDate" onchange="loadDailyLogs()" class="field p-4 text-xs font-bold rounded-2xl flex-1 outline-none">
-                <select id="editBatchSelect" onchange="loadDailyLogs()" class="field p-4 text-xs font-bold rounded-2xl w-1/2 outline-none">
-                    <option value="">All Batches</option>
-                </select>
-            </div>
-            <input type="text" id="editLogSearch" oninput="applyEditLogSearch()" placeholder="Search athlete / coach..." class="field search-input w-full p-4 text-xs font-bold rounded-2xl outline-none">
+            <div class="flex justify-between items-center"><h2 class="text-xs font-black uppercase muted">Log Editor</h2><button onclick="goHome()" class="text-xs font-bold text-emerald-500">Close</button></div>
+            <input type="date" id="editDate" onchange="loadDailyLogs()" class="field p-4 text-xs font-bold rounded-2xl w-full outline-none">
             <div id="studentLogContainer" class="space-y-2"></div>
             <div id="coachLogContainer" class="space-y-2 pb-20"></div>
         </section>
@@ -236,179 +110,121 @@
 <script>
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzpbmZlSzdOjvd3vS1PkFX4CaDn3UyfW5wqmKGa7mwMLEA5B7gJfHRTF7fptDvkZsny/exec";
 
-function hideLoader() {
-    const fader = document.querySelector('.main-fader');
-    if (fader) fader.classList.add('hidden');
-}
+function hideLoader() { document.querySelector('.main-fader').classList.add('hidden'); }
+function goHome() { document.getElementById('lobbyView').classList.remove('hidden-view'); document.getElementById('commandView').classList.add('hidden-view'); document.getElementById('editView').classList.add('hidden-view'); }
+function showEditView() { document.getElementById('lobbyView').classList.add('hidden-view'); document.getElementById('commandView').classList.add('hidden-view'); document.getElementById('editView').classList.remove('hidden-view'); document.getElementById('editDate').valueAsDate = new Date(); loadDailyLogs(); }
+function selectBatch(n) { if(!n) return; document.getElementById('batchSelect').value = n; fetchRoster(); }
 
 document.getElementById('attendanceDate').valueAsDate = new Date();
 window.onload = loadBatches;
 
-/* ================= FIXED FETCH ================= */
 async function fetchJson(url, options) {
     const res = await fetch(url, options);
-    const text = await res.text();
-
-    try {
-        const data = JSON.parse(text);
-        if (data.error) throw new Error(data.error);
-        return data;
-    } catch (e) {
-        console.error("RAW RESPONSE:", text);
-        throw new Error("Invalid JSON response");
-    }
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    return data;
 }
 
-/* ================= LOAD BATCHES ================= */
 async function loadBatches() {
     try {
         const data = await fetchJson(`${WEB_APP_URL}?action=getBatches`);
-
-        if (!data || !Array.isArray(data.batches)) {
-            console.error("Invalid batches:", data);
-            throw new Error("Bad batches response");
-        }
-
         const grid = document.getElementById('batchGrid');
         const homeSelect = document.getElementById('homeBatchSelect');
         const batchSelect = document.getElementById('batchSelect');
-        const editBatchSelect = document.getElementById('editBatchSelect');
 
         grid.innerHTML = '';
-        homeSelect.innerHTML = '<option value="">Quick Select Batch...</option>';
-        batchSelect.innerHTML = '<option value="">Select Batch...</option>';
-        editBatchSelect.innerHTML = '<option value="">All Batches</option>';
-
         data.batches.forEach(b => {
-            const name = String(b.name || '').trim();
-
-            homeSelect.innerHTML += `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`;
-            batchSelect.innerHTML += `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`;
-            editBatchSelect.innerHTML += `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`;
-
-            grid.innerHTML += `
-            <button onclick='selectBatch(${JSON.stringify(name)})'
-            class="glass p-6 rounded-[2rem] flex flex-col justify-between aspect-square text-left">
-                <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-lg">⚽</div>
-                <div>
-                    <h3 class="text-sm font-extrabold">${escapeHtml(name)}</h3>
-                    <p class="text-[10px] text-emerald-500">${Number(b.count || 0)} Active</p>
-                </div>
-            </button>`;
+            const name = b.name.trim();
+            const opt = `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`;
+            homeSelect.innerHTML += opt;
+            batchSelect.innerHTML += opt;
+            grid.innerHTML += `<button onclick='selectBatch(${JSON.stringify(name)})' class="glass p-6 rounded-[2rem] flex flex-col justify-between aspect-square text-left"><div>⚽</div><div><h3 class="text-sm font-extrabold">${escapeHtml(name)}</h3><p class="text-[10px] text-emerald-500">${b.count} Active</p></div></button>`;
         });
-
         setTimeout(hideLoader, 500);
-
-    } catch (err) {
-        console.error(err);
-        alert("Unable to load batches.");
-        hideLoader();
-    }
+    } catch (err) { alert("Failed to load batches."); hideLoader(); }
 }
 
-/* ================= FETCH ROSTER ================= */
 async function fetchRoster() {
     const batchName = document.getElementById('batchSelect').value;
     const date = document.getElementById('attendanceDate').value;
-
     if (!batchName) return;
 
+    document.getElementById('lobbyView').classList.add('hidden-view');
+    document.getElementById('commandView').classList.remove('hidden-view');
+    document.getElementById('holidayBtnDate').innerText = `(${new Date(date).toLocaleDateString('en-GB', {day:'numeric', month:'short'})})`;
+
     try {
-        const data = await fetchJson(
-            `${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`
-        );
-
-        if (!data.students || !data.coaches) {
-            console.error("Bad roster:", data);
-            throw new Error("Invalid roster");
-        }
-
+        const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
         renderList('coachesList', data.coaches, 'coach');
         renderList('studentsList', data.students, 'student');
-
-        applyRosterSearch();
         updateStats();
-
-    } catch (err) {
-        console.error(err);
-        alert("Unable to load roster.");
-    }
+    } catch (err) { alert("Failed to load roster."); }
 }
 
-/* ================= SUBMIT ================= */
-async function submitAttendance() {
-    const btn = document.getElementById('submitBtn');
+function renderList(containerId, people, type) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = people.map((p, i) => `
+        <div class="attendance-card panel rounded-2xl p-4 flex justify-between items-center" data-name="${escapeAttr(p.name.toLowerCase())}">
+            <span class="font-bold text-sm">${escapeHtml(p.name)}</span>
+            <label class="switch">
+                <input type="checkbox" name="attendance_${type}" value="${escapeAttr(p.name)}" ${p.status === 'Present' ? 'checked' : ''} onchange="updateStats()">
+                <div class="slider"></div>
+            </label>
+        </div>`).join('');
+}
+
+function updateStats() {
+    const getCount = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]`)).filter(i => i.checked && i.closest('.attendance-card').style.display !== 'none').length;
+    const getTotal = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]`)).filter(i => i.closest('.attendance-card').style.display !== 'none').length;
+    
+    document.getElementById('statPresent').innerText = getCount('attendance_student');
+    document.getElementById('statTotal').innerText = getTotal('attendance_student');
+    document.getElementById('coachPresent').innerText = getCount('attendance_coach');
+    document.getElementById('coachTotal').innerText = getTotal('attendance_coach');
+}
+
+function applyRosterSearch() {
+    const q = document.getElementById('rosterSearch').value.toLowerCase();
+    document.querySelectorAll('.attendance-card').forEach(card => {
+        card.style.display = card.dataset.name.includes(q) ? '' : 'none';
+    });
+    updateStats();
+}
+
+async function markBatchHoliday() {
     const batchName = document.getElementById('batchSelect').value;
     const date = document.getElementById('attendanceDate').value;
+    if (!batchName || !confirm(`Mark ${batchName} as Holiday?`)) return;
+    
+    const formData = new URLSearchParams();
+    formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: [{ personType: 'student', date, batchName, personName: "--- HOLIDAY ---", status: "Holiday" }] }));
+    
+    try {
+        await fetchJson(WEB_APP_URL, { method: 'POST', body: formData });
+        alert("Holiday logged."); fetchRoster();
+    } catch (e) { alert("Failed."); }
+}
 
-    if (!batchName) return alert("Select batch");
-
-    btn.disabled = true;
-    btn.innerText = "SYNCING...";
-
+async function submitAttendance() {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.innerText = "SYNCING...";
     const records = [];
-
     ['coach', 'student'].forEach(type => {
         document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
-            records.push({
-                rowId: input.dataset.rowId ? Number(input.dataset.rowId) : null,
-                personType: type,
-                date,
-                batchName,
-                personName: input.value,
-                status: input.checked ? 'Present' : 'Absent'
-            });
+            records.push({ personType: type, date: document.getElementById('attendanceDate').value, batchName: document.getElementById('batchSelect').value, personName: input.value, status: input.checked ? 'Present' : 'Absent' });
         });
     });
 
     try {
         const formData = new URLSearchParams();
-        formData.append('payload', JSON.stringify({
-            action: 'saveAttendance',
-            data: records
-        }));
-
-        const out = await fetchJson(WEB_APP_URL, {
-            method: 'POST',
-            body: formData
-        });
-
-        if (out.status === 'success') {
-            alert("✅ Saved");
-            location.reload();
-        }
-
-    } catch (err) {
-        console.error(err);
-        alert("❌ Failed");
-        btn.disabled = false;
-        btn.innerText = "Commit Records";
-    }
+        formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+        await fetchJson(WEB_APP_URL, { method: 'POST', body: formData });
+        alert("✅ Attendance Synced"); location.reload();
+    } catch (err) { alert("❌ Failed"); btn.disabled = false; btn.innerText = "Commit Records"; }
 }
 
-/* ================= HELPERS ================= */
-function renderList(containerId, people, type) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = people.map((p, i) => `
-        <div class="attendance-card flex justify-between">
-            <span>${escapeHtml(p.name)}</span>
-            <input type="checkbox" 
-                name="attendance_${type}" 
-                value="${escapeAttr(p.name)}"
-                ${p.status === 'Present' ? 'checked' : ''}>
-        </div>
-    `).join('');
-}
-
-function escapeHtml(v) {
-    return String(v || '').replace(/[&<>"']/g, s =>
-        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s])
-    );
-}
-
-function escapeAttr(v) {
-    return escapeHtml(v);
-}
+function escapeHtml(v) { return String(v || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+function escapeAttr(v) { return escapeHtml(v); }
 </script>
 </body>
 </html>
