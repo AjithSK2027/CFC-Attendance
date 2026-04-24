@@ -64,12 +64,12 @@
     <main class="px-6 py-6 space-y-6">
         <section id="lobbyView" class="space-y-5">
             <div class="glass rounded-3xl p-5 space-y-4">
-                <select id="homeBatchSelect" onchange="selectBatch(this.value)" class="field w-full p-4 text-xs font-bold rounded-2xl outline-none">
-                    <option value="">Quick Select Batch...</option>
+                <select id="homeSelect" onchange="select(this.value)" class="field w-full p-4 text-xs font-bold rounded-2xl outline-none">
+                    <option value="">Quick Select ...</option>
                 </select>
                 <button onclick="markGlobalHoliday()" class="w-full rounded-2xl py-4 text-[10px] uppercase font-black border border-rose-500/20 text-rose-500" style="background: var(--rose-soft);">🌴 Global Holiday (Today)</button>
             </div>
-            <div id="batchGrid" class="grid grid-cols-2 gap-4"></div>
+            <div id="Grid" class="grid grid-cols-2 gap-4"></div>
         </section>
 
         <section id="commandView" class="hidden-view space-y-6">
@@ -84,10 +84,10 @@
                 </div>
             </div>
 
-            <button onclick="markBatchHoliday()" class="w-full glass rounded-2xl py-4 text-[10px] uppercase font-black text-rose-500">🌴 Mark Batch as Holiday <span id="holidayBtnDate"></span></button>
+            <button onclick="markHoliday()" class="w-full glass rounded-2xl py-4 text-[10px] uppercase font-black text-rose-500">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
 
             <div class="flex gap-3">
-                <select id="batchSelect" onchange="fetchRoster()" class="field p-4 text-xs font-bold rounded-2xl flex-1 outline-none"></select>
+                <select id="Select" onchange="fetchRoster()" class="field p-4 text-xs font-bold rounded-2xl flex-1 outline-none"></select>
                 <input type="date" id="attendanceDate" onchange="fetchRoster()" class="field p-4 text-xs font-bold rounded-2xl w-[38%] outline-none">
             </div>
 
@@ -101,22 +101,34 @@
 
         <section id="editView" class="hidden-view space-y-5">
             <div class="flex justify-between items-center"><h2 class="text-xs font-black uppercase muted">Log Editor</h2><button onclick="goHome()" class="text-xs font-bold text-emerald-500">Close</button></div>
-            <input type="date" id="editDate" onchange="loadDailyLogs()" class="field p-4 text-xs font-bold rounded-2xl w-full outline-none">
+            
+            <div class="flex gap-3">
+                <input type="date" id="editDate" onchange="loadDailyLogs()" class="field p-4 text-xs font-bold rounded-2xl flex-1 outline-none">
+                <select id="editBatchSelect" onchange="loadDailyLogs()" class="field p-4 text-xs font-bold rounded-2xl w-1/2 outline-none">
+                    <option value="">All Batches</option>
+                </select>
+            </div>
+
+            <input type="text" id="editLogSearch" oninput="applyEditLogSearch()" placeholder="Search in logs..." class="field w-full p-4 text-xs font-bold rounded-2xl outline-none">
+            
             <div id="studentLogContainer" class="space-y-2"></div>
-            <div id="coachLogContainer" class="space-y-2 pb-20"></div>
+            <div id="coachLogContainer" class="space-y-2"></div>
+
+            <button onclick="submitEditChanges()" id="editSaveBtn" class="hidden-view w-full bg-blue-500 text-white font-extrabold py-5 rounded-3xl uppercase text-sm shadow-xl">Update Records</button>
+            <div class="pb-20"></div>
         </section>
     </main>
 
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZuOj8cBq3eHnqROHuDS_MqE48uuacH8YnC6NBs4cwCtmZyLmgUFu95DAF-RP5lPbs/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwwo1Fidq3vmlV2ob7G158A3cW8FfVQcxGAOX5g1-LstPTZHsxRWKWAxVq0F7s0p2Fd/exec";
 
 function hideLoader() { document.querySelector('.main-fader').classList.add('hidden'); }
 function goHome() { document.getElementById('lobbyView').classList.remove('hidden-view'); document.getElementById('commandView').classList.add('hidden-view'); document.getElementById('editView').classList.add('hidden-view'); }
 function showEditView() { document.getElementById('lobbyView').classList.add('hidden-view'); document.getElementById('commandView').classList.add('hidden-view'); document.getElementById('editView').classList.remove('hidden-view'); document.getElementById('editDate').valueAsDate = new Date(); loadDailyLogs(); }
-function selectBatch(n) { if(!n) return; document.getElementById('batchSelect').value = n; fetchRoster(); }
+function select(n) { if(!n) return; document.getElementById('Select').value = n; fetchRoster(); }
 
 document.getElementById('attendanceDate').valueAsDate = new Date();
-window.onload = loadBatches;
+window.onload = loades;
 
 async function fetchJson(url, options) {
     const res = await fetch(url, options);
@@ -125,12 +137,13 @@ async function fetchJson(url, options) {
     return data;
 }
 
-async function loadBatches() {
+async function loades() {
     try {
-        const data = await fetchJson(`${WEB_APP_URL}?action=getBatches`);
-        const grid = document.getElementById('batchGrid');
-        const homeSelect = document.getElementById('homeBatchSelect');
-        const batchSelect = document.getElementById('batchSelect');
+        const data = await fetchJson(`${WEB_APP_URL}?action=getes`);
+        const grid = document.getElementById('Grid');
+        const homeSelect = document.getElementById('homeSelect');
+        const batchSelect = document.getElementById('Select');
+        const editBatchSelect = document.getElementById('editBatchSelect');
 
         grid.innerHTML = '';
         data.batches.forEach(b => {
@@ -138,14 +151,15 @@ async function loadBatches() {
             const opt = `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`;
             homeSelect.innerHTML += opt;
             batchSelect.innerHTML += opt;
-            grid.innerHTML += `<button onclick='selectBatch(${JSON.stringify(name)})' class="glass p-6 rounded-[2rem] flex flex-col justify-between aspect-square text-left"><div>⚽</div><div><h3 class="text-sm font-extrabold">${escapeHtml(name)}</h3><p class="text-[10px] text-emerald-500">${b.count} Active</p></div></button>`;
+            editBatchSelect.innerHTML += opt;
+            grid.innerHTML += `<button onclick='select(${JSON.stringify(name)})' class="glass p-6 rounded-[2rem] flex flex-col justify-between aspect-square text-left"><div>⚽</div><div><h3 class="text-sm font-extrabold">${escapeHtml(name)}</h3><p class="text-[10px] text-emerald-500">${b.count} Active</p></div></button>`;
         });
         setTimeout(hideLoader, 500);
     } catch (err) { alert("Failed to load batches."); hideLoader(); }
 }
 
 async function fetchRoster() {
-    const batchName = document.getElementById('batchSelect').value;
+    const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
     if (!batchName) return;
 
@@ -153,87 +167,64 @@ async function fetchRoster() {
     document.getElementById('commandView').classList.remove('hidden-view');
     document.getElementById('holidayBtnDate').innerText = `(${new Date(date).toLocaleDateString('en-GB', {day:'numeric', month:'short'})})`;
 
-    // Clear and Show Section Headers immediately
-    document.getElementById('coachesList').innerHTML = `
-        <div class="flex items-center gap-2 mb-3 mt-2 px-2">
-            <div class="w-1 h-4 bg-blue-500 rounded-full"></div>
-            <span class="text-[10px] font-black uppercase tracking-widest text-blue-500">Coaches</span>
-        </div>
-        <p class="py-4 text-center text-[10px] font-bold opacity-50 uppercase">Loading...</p>`;
-    
-    document.getElementById('studentsList').innerHTML = `
-        <div class="flex items-center gap-2 mb-3 mt-6 px-2">
-            <div class="w-1 h-4 bg-emerald-500 rounded-full"></div>
-            <span class="text-[10px] font-black uppercase tracking-widest text-emerald-500">Athletes</span>
-        </div>
-        <p class="py-4 text-center text-[10px] font-bold opacity-50 uppercase">Loading...</p>`;
+    // Show loading state
+    document.getElementById('coachesList').innerHTML = `<p class="py-4 text-center text-[10px] font-bold opacity-50 uppercase">Checking for existing logs...</p>`;
+    document.getElementById('studentsList').innerHTML = `<p class="py-4 text-center text-[10px] font-bold opacity-50 uppercase">Checking for existing logs...</p>`;
 
     try {
+        // We call getRoster—but the backend will now be smart enough to include current status
         const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
         
-        // Render Coaches
         renderList('coachesList', data.coaches, 'coach', 'Coaches', 'blue');
-        // Render Athletes
         renderList('studentsList', data.students, 'student', 'Athletes', 'emerald');
         
+        // Update the button text if logs already exist
+        const btn = document.getElementById('submitBtn');
+        if (data.isLogged) {
+            btn.innerText = "Update Existing Records";
+            btn.classList.replace('bg-emerald-500', 'bg-blue-600');
+        } else {
+            btn.innerText = "Commit Records";
+            btn.classList.replace('bg-blue-600', 'bg-emerald-500');
+        }
+
         updateStats();
     } catch (err) { alert("Failed to load roster."); }
 }
 
 function renderList(containerId, people, type, label, color) {
     const container = document.getElementById(containerId);
-    
-    // Header for the section with All/Clear toggles and Total Count
     const header = `
-        <div class="flex items-center justify-between mb-3 ${type === 'student' ? 'mt-8' : 'mt-2'} px-2">
+        <div class="flex items-center justify-between mb-3 ${type.includes('student') ? 'mt-8' : 'mt-2'} px-2">
             <div class="flex items-center gap-2">
                 <div class="w-1 h-4 bg-${color}-500 rounded-full"></div>
                 <span class="text-[10px] font-black uppercase tracking-widest text-${color}-500">${label}</span>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="toggleSection('${type}', true)" class="text-[9px] font-black uppercase text-${color}-500 opacity-80 active:scale-90 transition-all">All</button>
+                <button onclick="toggleSection('${type}', true)" class="text-[9px] font-black uppercase text-${color}-500 opacity-80">All</button>
                 <div class="w-[1px] h-2 bg-black/10 dark:bg-white/10"></div>
-                <button onclick="toggleSection('${type}', false)" class="text-[9px] font-black uppercase muted active:scale-90 transition-all">Clear</button>
+                <button onclick="toggleSection('${type}', false)" class="text-[9px] font-black uppercase muted">Clear</button>
                 <span class="ml-2 text-[9px] font-bold opacity-30">${people.length} Total</span>
             </div>
         </div>`;
 
-    // Map through people and generate cards
     const listHtml = people.map((p, i) => `
-        <div class="attendance-card panel rounded-2xl p-4 mb-2 flex justify-between items-center border-l-4 border-l-${color}-500/30" 
-             data-name="${escapeAttr(p.name.toLowerCase())}">
+        <div class="attendance-card panel rounded-2xl p-4 mb-2 flex justify-between items-center border-l-4 border-l-${color}-500/30" data-name="${escapeAttr(p.name.toLowerCase())}">
             <div class="min-w-0 flex-1">
                 <p class="font-bold text-sm text-current truncate">${escapeHtml(p.name)}</p>
-                <p class="text-[8px] font-black uppercase opacity-40 tracking-tighter">
-                    ${type === 'student' ? (p.studentId || 'NO ID') : 'STAFF'}
-                </p>
+                <p class="text-[8px] font-black uppercase opacity-40 tracking-tighter">${p.studentId || 'STAFF'}</p>
             </div>
             <label class="switch">
-                <input type="checkbox" 
-                       name="attendance_${type}" 
-                       value="${escapeAttr(p.name)}" 
-                       data-sid="${p.studentId || ''}" 
-                       ${p.status === 'Present' ? 'checked' : ''} 
-                       onchange="updateStats()">
+                <input type="checkbox" name="attendance_${type}" value="${escapeAttr(p.name)}" data-sid="${p.studentId || ''}" ${p.status === 'Present' ? 'checked' : ''} onchange="updateStats()">
                 <div class="slider"></div>
             </label>
         </div>`).join('');
-
     container.innerHTML = header + listHtml;
 }
 
-/** * Restored Toggle logic for All/Clear buttons 
- * This ensures bulk marking works only on visible (searched) items
- */
 function toggleSection(type, state) {
     const checkboxes = document.querySelectorAll(`input[name="attendance_${type}"]`);
-    checkboxes.forEach(cb => {
-        const card = cb.closest('.attendance-card');
-        // Only toggle if the card isn't hidden by a search filter
-        if (card && card.style.display !== 'none') {
-            cb.checked = state;
-        }
-    });
+    checkboxes.forEach(cb => { if (cb.closest('.attendance-card').style.display !== 'none') cb.checked = state; });
     updateStats();
 }
 
@@ -241,86 +232,87 @@ function updateStats() {
     const getCount = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]`)).filter(i => i.checked && i.closest('.attendance-card').style.display !== 'none').length;
     const getTotal = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]`)).filter(i => i.closest('.attendance-card').style.display !== 'none').length;
     
-    document.getElementById('statPresent').innerText = getCount('attendance_student');
-    document.getElementById('statTotal').innerText = getTotal('attendance_student');
-    document.getElementById('coachPresent').innerText = getCount('attendance_coach');
-    document.getElementById('coachTotal').innerText = getTotal('attendance_coach');
+    if(document.getElementById('statPresent')) document.getElementById('statPresent').innerText = getCount('attendance_student');
+    if(document.getElementById('statTotal')) document.getElementById('statTotal').innerText = getTotal('attendance_student');
+    if(document.getElementById('coachPresent')) document.getElementById('coachPresent').innerText = getCount('attendance_coach');
+    if(document.getElementById('coachTotal')) document.getElementById('coachTotal').innerText = getTotal('attendance_coach');
 }
 
 function applyRosterSearch() {
     const q = document.getElementById('rosterSearch').value.toLowerCase();
-    document.querySelectorAll('.attendance-card').forEach(card => {
-        card.style.display = card.dataset.name.includes(q) ? '' : 'none';
-    });
+    document.querySelectorAll('#commandView .attendance-card').forEach(card => card.style.display = card.dataset.name.includes(q) ? '' : 'none');
     updateStats();
 }
 
-async function markBatchHoliday() {
-    const batchName = document.getElementById('batchSelect').value;
-    const date = document.getElementById('attendanceDate').value;
-    if (!batchName || !confirm(`Mark ${batchName} as Holiday?`)) return;
-    
-    const formData = new URLSearchParams();
-    formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: [{ personType: 'student', date, batchName, personName: "--- HOLIDAY ---", status: "Holiday" }] }));
-    
+async function loadDailyLogs() {
+    const date = document.getElementById('editDate').value;
+    const batch = document.getElementById('editBatchSelect').value;
+    const sContainer = document.getElementById('studentLogContainer');
+    const cContainer = document.getElementById('coachLogContainer');
+    const saveBtn = document.getElementById('editSaveBtn');
+
+    if (!date) return;
+    sContainer.innerHTML = '<p class="text-center py-10 text-[10px] font-bold animate-pulse">FETCHING LOGS...</p>';
+    cContainer.innerHTML = '';
+    saveBtn.classList.add('hidden-view');
+
     try {
-        await fetchJson(WEB_APP_URL, { method: 'POST', body: formData });
-        alert("Holiday logged."); fetchRoster();
-    } catch (e) { alert("Failed."); }
+        const data = await fetchJson(`${WEB_APP_URL}?action=getLogs&date=${date}&batchName=${encodeURIComponent(batch)}`);
+        if (data.students.length === 0 && data.coaches.length === 0) {
+            sContainer.innerHTML = '<p class="text-center py-10 text-[10px] font-bold opacity-40 uppercase">No records found</p>';
+            return;
+        }
+        renderList('coachLogContainer', data.coaches, 'edit_coach', 'Coach Logs', 'blue');
+        renderList('studentLogContainer', data.students, 'edit_student', 'Athlete Logs', 'emerald');
+        saveBtn.classList.remove('hidden-view');
+    } catch (err) { sContainer.innerHTML = '<p class="text-center py-10 text-rose-500 text-[10px] font-bold">ERROR SYNCING LOGS</p>'; }
+}
+
+async function submitEditChanges() {
+    const btn = document.getElementById('editSaveBtn');
+    btn.disabled = true; btn.innerText = "UPDATING...";
+    const records = [];
+    ['edit_coach', 'edit_student'].forEach(type => {
+        const realType = type.split('_')[1];
+        document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
+            records.push({ personType: realType, studentId: input.dataset.sid || '', date: document.getElementById('editDate').value, batchName: document.getElementById('editBatchSelect').value || 'Manual Edit', personName: input.value, status: input.checked ? 'Present' : 'Absent', isEdit: true });
+        });
+    });
+    try {
+        const formData = new URLSearchParams();
+        formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+        await fetch(WEB_APP_URL, { method: 'POST', body: formData });
+        alert("✅ Logs updated successfully."); loadDailyLogs();
+    } catch (err) { alert("Update failed."); }
+    finally { btn.disabled = false; btn.innerText = "Update Records"; }
+}
+
+function applyEditLogSearch() {
+    const q = document.getElementById('editLogSearch').value.toLowerCase();
+    document.querySelectorAll('#editView .attendance-card').forEach(card => card.style.display = card.dataset.name.includes(q) ? '' : 'none');
 }
 
 async function submitAttendance() {
     const btn = document.getElementById('submitBtn');
-    const batchName = document.getElementById('batchSelect').value;
+    const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
-
     if (!batchName) return alert("Select batch");
-
-    // 1. Visual Feedback
-    btn.disabled = true;
-    btn.innerText = "COMMITTING..."; // "Committing" sounds faster than "Syncing"
-    
+    btn.disabled = true; btn.innerText = "COMMITTING...";
     const records = [];
     ['coach', 'student'].forEach(type => {
         document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
-            records.push({
-                personType: type,
-                studentId: input.dataset.sid || '',
-                date: date,
-                batchName: batchName,
-                personName: input.value,
-                status: input.checked ? 'Present' : 'Absent'
-            });
+            records.push({ personType: type, studentId: input.dataset.sid || '', date, batchName, personName: input.value, status: input.checked ? 'Present' : 'Absent' });
         });
     });
-
-    // 2. THE SPEED TRICK: Trigger the sync, but don't wait for the reload
     try {
         const formData = new URLSearchParams();
         formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
-
-        // We use the "fire and forget" pattern for the UI
-        fetch(WEB_APP_URL, { method: 'POST', body: formData })
-        .then(res => res.json())
-        .then(out => {
-            console.log("Cloud confirmed save:", out);
-        });
-
-        // 3. SHOW SUCCESS IMMEDIATELY
-        btn.innerText = "✅ DONE!";
-        btn.style.backgroundColor = "#10B981";
-        
-        setTimeout(() => {
-            alert("Attendance Records Committed to Cloud.");
-            location.reload(); 
-        }, 300); // 300ms feels snappy but gives the brain time to see the "Done"
-
-    } catch (err) {
-        alert("❌ Sync Error. Please try again.");
-        btn.disabled = false;
-        btn.innerText = "Commit Records";
-    }
+        fetch(WEB_APP_URL, { method: 'POST', body: formData });
+        btn.innerText = "✅ DONE!"; btn.style.backgroundColor = "#10B981";
+        setTimeout(() => { alert("Attendance Committed."); location.reload(); }, 300);
+    } catch (err) { alert("❌ Error."); btn.disabled = false; btn.innerText = "Commit Records"; }
 }
+
 function escapeHtml(v) { return String(v || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
 function escapeAttr(v) { return escapeHtml(v); }
 </script>
