@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Coffeeland FC | Attendance Manager</title>
+    <!-- PWA meta -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#08D9D6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CFC Manager">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/F4xc84TQ/KM.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -53,6 +60,7 @@
             }
         }
 
+        /* Loader (your design) */
         .main-fader {
             width: 100%;
             height: 100vh;
@@ -92,6 +100,7 @@
         .glass { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
         .panel-solid { background: var(--surface-strong); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
 
+        /* toggle styles (unchanged) */
         .switch {
             position: relative;
             display: inline-block;
@@ -235,6 +244,35 @@
             background: var(--primary);
             color: #252A34;
         }
+
+        /* offline indicator */
+        .offline-indicator {
+            position: fixed;
+            top: 70px;
+            right: 16px;
+            background: var(--danger);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: bold;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
+        }
+        .sync-pending {
+            background: var(--primary);
+            color: #252A34;
+            position: fixed;
+            bottom: 90px;
+            right: 16px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: bold;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -243,6 +281,7 @@
         <div class="loader">
             <svg viewBox="0 0 164.83 151.5" xmlns="http://www.w3.org/2000/svg">
                 <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <!-- duplicate 7 more for stagger -->
                 <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
                 <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
                 <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
@@ -257,6 +296,10 @@
 
     <div id="toastContainer" class="toast-container"></div>
 
+    <!-- offline & sync indicators -->
+    <div id="offlineIndicator" class="offline-indicator" style="display: none;">📡 Offline</div>
+    <div id="syncPending" class="sync-pending" style="display: none;" onclick="manualSync()">⏳ Pending sync</div>
+
     <header class="sticky top-0 z-40 border-b border-[var(--border)] backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg) 80%, transparent); box-shadow: var(--shadow-sm);">
         <div class="px-5 py-4 flex items-center justify-between">
             <button onclick="goHome()" class="focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-xl">
@@ -270,7 +313,7 @@
     </header>
 
     <main class="px-5 py-5 max-w-2xl mx-auto space-y-6">
-        <!-- LobbyView with global player search -->
+        <!-- Same sections as before, unchanged -->
         <section id="lobbyView" class="space-y-5">
             <div class="glass rounded-2xl p-5 space-y-4">
                 <select id="homeSelect" onchange="select(this.value)" class="field w-full cursor-pointer">
@@ -283,7 +326,6 @@
             <div id="Grid" class="grid grid-cols-2 gap-4"></div>
         </section>
 
-        <!-- Command / Attendance View -->
         <section id="commandView" class="hidden space-y-6">
             <div class="grid grid-cols-2 gap-3">
                 <div class="glass rounded-2xl p-4 border-l-4" style="border-left-color: var(--primary);">
@@ -296,7 +338,6 @@
                 </div>
             </div>
 
-            <!-- Ball Inventory with new labels -->
             <div class="glass rounded-2xl p-5">
                 <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">⚽ Ball Inventory</div>
                 <div class="flex items-center justify-between gap-4 mt-2">
@@ -346,7 +387,6 @@
             </div>
         </section>
 
-        <!-- Edit Logs View -->
         <section id="editView" class="hidden space-y-5">
             <div class="flex justify-between items-center">
                 <h2 class="text-xs font-black uppercase" style="color: var(--text-muted);">📋 Log Editor</h2>
@@ -366,7 +406,188 @@
     </main>
 
 <script>
-// ======================== CONFIG ========================
+// ======================== OFFLINE QUEUE (IndexedDB) ========================
+let db = null;
+const DB_NAME = 'CFC_OfflineDB';
+const STORE_NAME = 'attendanceQueue';
+let isOnline = navigator.onLine;
+
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+            db = request.result;
+            resolve(db);
+        };
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { autoIncrement: true });
+            }
+        };
+    });
+}
+
+async function addToQueue(record) {
+    if (!db) await openDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.add(record);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+    });
+}
+
+async function getAllQueue() {
+    if (!db) await openDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+async function clearQueue() {
+    if (!db) await openDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.clear();
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+    });
+}
+
+async function syncPendingRecords() {
+    if (!isOnline) return;
+    const queue = await getAllQueue();
+    if (queue.length === 0) {
+        document.getElementById('syncPending').style.display = 'none';
+        return;
+    }
+    document.getElementById('syncPending').innerText = `⏳ Syncing (${queue.length})`;
+    let successCount = 0;
+    for (const record of queue) {
+        try {
+            const formData = new URLSearchParams();
+            formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: record.records }));
+            await fetch(WEB_APP_URL, { method: 'POST', body: formData });
+            successCount++;
+        } catch(e) { console.warn('Sync failed for one record', e); }
+    }
+    if (successCount === queue.length) {
+        await clearQueue();
+        showToast(`✓ Synced ${successCount} attendance records`, 'success');
+        document.getElementById('syncPending').style.display = 'none';
+    } else {
+        showToast(`Synced ${successCount}/${queue.length} records. Retry later.`, 'error');
+        document.getElementById('syncPending').innerText = `⏳ Pending (${queue.length - successCount})`;
+    }
+}
+
+async function manualSync() {
+    if (!isOnline) {
+        showToast('No internet connection', 'error');
+        return;
+    }
+    await syncPendingRecords();
+}
+
+// Online/offline listeners
+window.addEventListener('online', async () => {
+    isOnline = true;
+    document.getElementById('offlineIndicator').style.display = 'none';
+    showToast('Back online – syncing pending records', 'success');
+    await syncPendingRecords();
+});
+window.addEventListener('offline', () => {
+    isOnline = false;
+    document.getElementById('offlineIndicator').style.display = 'block';
+    showToast('You are offline – attendance will be saved locally', 'error');
+});
+
+// ======================== MODIFIED SUBMIT ATTENDANCE (with offline queue) ========================
+const originalSubmitAttendance = window.submitAttendance;
+window.submitAttendance = async function() {
+    const batchName = document.getElementById('Select').value;
+    const date = document.getElementById('attendanceDate').value;
+    if (!batchName) return showToast('Select batch', 'error');
+    
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    
+    // collect records
+    const records = [];
+    for (const type of ['coach', 'student']) {
+        document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
+            records.push({
+                personType: type,
+                studentId: input.dataset.sid || '',
+                date: date,
+                batchName: batchName,
+                personName: input.value,
+                status: input.checked ? 'Present' : 'Absent',
+                ballsTaken: document.getElementById('ballsTaken').value,
+                ballsLeft: document.getElementById('ballsLeft').value
+            });
+        });
+    }
+    
+    if (!isOnline) {
+        // offline: store to queue
+        await addToQueue({ records, timestamp: Date.now() });
+        showToast('Offline: Attendance saved locally. Will sync when online.', 'success');
+        btn.innerText = "✓ Saved Offline";
+        const pendingCount = (await getAllQueue()).length;
+        if (pendingCount > 0) {
+            document.getElementById('syncPending').innerText = `⏳ Pending (${pendingCount})`;
+            document.getElementById('syncPending').style.display = 'block';
+        }
+        setTimeout(() => {
+            goHome();
+            btn.disabled = false;
+            btn.innerText = "Commit Records";
+        }, 800);
+        return;
+    }
+    
+    // online: try to send immediately
+    btn.innerText = "Syncing...";
+    try {
+        const formData = new URLSearchParams();
+        formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+        await fetch(WEB_APP_URL, { method: 'POST', body: formData });
+        showToast('Attendance saved ✓', 'success');
+        goHome();
+    } catch (err) {
+        // if network fails, queue it
+        await addToQueue({ records, timestamp: Date.now() });
+        showToast('Network error – saved offline. Will retry later.', 'error');
+        const pendingCount = (await getAllQueue()).length;
+        if (pendingCount > 0) {
+            document.getElementById('syncPending').innerText = `⏳ Pending (${pendingCount})`;
+            document.getElementById('syncPending').style.display = 'block';
+        }
+        goHome();
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Commit Records";
+    }
+};
+
+// ======================== REST OF YOUR ORIGINAL SCRIPT ========================
+// (Keep all the original functions: loades, renderGrid, fetchRoster, etc.)
+// I'm including only the core unchanged ones below.
+// For brevity, I'll copy the unchanged parts from your final version.
+
+// [PASTE YOUR ENTIRE EXISTING SCRIPT HERE, EXCLUDING the old submitAttendance]
+// Actually, to avoid duplication, I'll assume you will merge manually.
+// But for completeness, here's the rest of the script:
+
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzOE5N7bji1t3ck7VA1GU-pDZNE0RXY6k1RIWcRibi1npvNHaBRP188Cn5yc6sEy0NZ/exec";
 let cachedBatches = null;
 const BATCHES_STORAGE_KEY = 'coffeeland_batches';
@@ -423,7 +644,7 @@ function setLoading(elementId, isLoading, skeletonCount = 3) {
     if (!el) return;
     if (isLoading) {
         const skeletons = Array(skeletonCount).fill(0).map(() => `<div class="skeleton h-16 w-full mb-2"></div>`).join('');
-        el.innerHTML = `<div class=" space-y-2">${skeletons}</div>`;
+        el.innerHTML = `<div class="space-y-2">${skeletons}</div>`;
     }
 }
 
@@ -438,7 +659,6 @@ function goHome() {
     document.getElementById('editView').classList.add('hidden');
     document.getElementById('globalPlayerSearch').value = '';
     document.getElementById('globalSearchResults').classList.add('hidden');
-    // reset current batch tracking
     currentBatchName = '';
     currentDate = '';
 }
@@ -563,9 +783,8 @@ function goToBatchAndSearch(batchName, playerName) {
     });
 }
 
-// ======================== ROSTER CACHING WITH AUTO‑UPDATE ========================
+// Roster caching with auto-update
 const ROSTER_CACHE_PREFIX = 'roster_';
-
 function getRosterCacheKey(batchName, date) {
     return ROSTER_CACHE_PREFIX + batchName.replace(/\s/g, '_') + '_' + date;
 }
@@ -583,7 +802,6 @@ async function fetchRoster() {
 
     const cacheKey = getRosterCacheKey(batchName, date);
     const cached = sessionStorage.getItem(cacheKey);
-
     if (cached) {
         try {
             const data = JSON.parse(cached);
@@ -592,7 +810,6 @@ async function fetchRoster() {
             return;
         } catch(e) { console.warn('Cache parse error', e); }
     }
-
     setLoading('coachesList', true);
     setLoading('studentsList', true);
     await fetchAndRenderRoster(batchName, date, cacheKey);
@@ -625,11 +842,9 @@ async function fetchAndRenderRoster(batchName, date, cacheKey) {
 async function refreshRosterInBackground(batchName, date, cacheKey) {
     try {
         const newData = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
-        // only update if the batch is still the current one (avoid race conditions)
         if (currentBatchName === batchName && currentDate === date) {
             const oldData = JSON.parse(sessionStorage.getItem(cacheKey) || '{}');
             if (JSON.stringify(oldData) !== JSON.stringify(newData)) {
-                // Update UI with new data (preserve existing toggles? We'll just re-render fully)
                 renderRosterData(newData);
                 showToast('Roster updated with latest changes', 'success');
             }
@@ -638,8 +853,8 @@ async function refreshRosterInBackground(batchName, date, cacheKey) {
     } catch(e) { console.warn('Background refresh failed', e); }
 }
 
-// ======================== INIT ========================
 async function loades() {
+    await openDB(); // initialize IndexedDB
     const cached = loadBatchesFromCache();
     if (cached && cached.length) {
         cachedBatches = cached;
@@ -648,6 +863,13 @@ async function loades() {
         hideLoader();
         refreshBatchesInBackground();
         preloadAllRosters().catch(console.warn);
+        // check pending sync
+        const pending = await getAllQueue();
+        if (pending.length) {
+            document.getElementById('syncPending').innerText = `⏳ Pending (${pending.length})`;
+            document.getElementById('syncPending').style.display = 'block';
+            if (isOnline) syncPendingRecords();
+        }
         return;
     }
     await fetchFreshBatches();
@@ -811,51 +1033,6 @@ async function markHolidayCore(date, isGlobal) {
     } catch (err) {
         showToast('Failed to mark holiday', 'error');
     }
-}
-
-async function submitAttendance() {
-    const batchName = document.getElementById('Select').value;
-    const date = document.getElementById('attendanceDate').value;
-    if (!batchName) return showToast('Select batch', 'error');
-    
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerText = "✓ Saved!";
-    showToast('Attendance saved locally ✓', 'success');
-    
-    const records = [];
-    for (const type of ['coach', 'student']) {
-        document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
-            records.push({
-                personType: type,
-                studentId: input.dataset.sid || '',
-                date: date,
-                batchName: batchName,
-                personName: input.value,
-                status: input.checked ? 'Present' : 'Absent',
-                ballsTaken: document.getElementById('ballsTaken').value,
-                ballsLeft: document.getElementById('ballsLeft').value
-            });
-        });
-    }
-    
-    (async () => {
-        try {
-            const formData = new URLSearchParams();
-            formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
-            await fetch(WEB_APP_URL, { method: 'POST', body: formData });
-            console.log('Background sync completed');
-        } catch (err) {
-            console.error('Background sync failed:', err);
-            showToast('Sync failed – data will be lost on refresh', 'error');
-        }
-    })();
-    
-    setTimeout(() => {
-        goHome();
-        btn.disabled = false;
-        btn.innerText = "Commit Records";
-    }, 800);
 }
 
 function shareSessionSummary() {
