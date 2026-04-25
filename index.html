@@ -2,302 +2,530 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CFC | Attendance Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Coffeeland FC | Attendance Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        * { -webkit-tap-highlight-color: transparent; }
+
+        /* Light mode (default) */
         :root {
-            --bg: #f6f7fb; --surface: rgba(255,255,255,0.88); --surface-strong: #ffffff;
-            --text: #111827; --muted: #6b7280; --border: rgba(17,24,39,0.08);
-            --shadow: 0 12px 30px -16px rgba(17,24,39,0.28);
-            --emerald-soft: rgba(16,185,129,0.10); --blue-soft: rgba(59,130,246,0.10);
-            --rose-soft: rgba(244,63,94,0.10); --loader-bg: #f6f7fb; --loader-text: #111827;
+            --bg: #f8fafc;
+            --surface: rgba(255,255,255,0.75);
+            --surface-strong: #ffffff;
+            --text: #001219;
+            --text-muted: #005f73;
+            --border: rgba(0,18,25,0.08);
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 28px -8px rgba(0,0,0,0.12);
+            --primary: #ee9b00;
+            --primary-hover: #ca6702;
+            --secondary: #0a9396;
+            --secondary-hover: #005f73;
+            --accent-bg: #94d2bd;
+            --accent-text: #001219;
+            --success: #e9d8a6;
+            --danger: #bb3e03;
+            --danger-hover: #ae2012;
+            --danger-dark: #9b2226;
         }
+
+        /* Dark mode */
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg: #050505; --surface: rgba(24,24,27,0.86); --surface-strong: #111111;
-                --text: #e5e7eb; --muted: #9ca3af; --border: rgba(255,255,255,0.08);
-                --shadow: 0 18px 40px -18px rgba(0,0,0,0.65);
-                --emerald-soft: rgba(16,185,129,0.14); --blue-soft: rgba(59,130,246,0.14);
-                --rose-soft: rgba(244,63,94,0.14); --loader-bg: #050505; --loader-text: #ffffff;
+                --bg: #001219;
+                --surface: rgba(0,18,25,0.7);
+                --surface-strong: #00212b;
+                --text: #e9d8a6;
+                --text-muted: #94d2bd;
+                --border: rgba(233,216,166,0.1);
+                --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
+                --shadow-md: 0 8px 28px -8px rgba(0,0,0,0.6);
+                --primary: #ee9b00;
+                --primary-hover: #ca6702;
+                --secondary: #0a9396;
+                --secondary-hover: #94d2bd;
+                --accent-bg: #0a9396;
+                --accent-text: #001219;
+                --success: #ca6702;
+                --danger: #bb3e03;
+                --danger-hover: #ae2012;
+                --danger-dark: #9b2226;
             }
         }
-        * { box-sizing: border-box; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); }
-        .main-fader { width: 100%; height: 100vh; position: fixed; top: 0; left: 0; background-color: var(--loader-bg); z-index: 10000; display: flex; align-items: center; justify-content: center; transition: opacity 0.6s ease; }
-        .main-fader.hidden { opacity: 0; visibility: hidden; }
-        .loader svg { height: 120px; display: block; margin: 0 auto; }
-        .loader svg path { animation: pulse-svg 1.2s infinite ease-in-out; transform-origin: center; fill: #10b981; }
-        @keyframes pulse-svg { 0%, 100% { opacity: 0.1; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1); } }
-        .hidden-view { display: none !important; }
-        .glass { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); backdrop-filter: blur(14px); }
-        .panel { background: var(--surface-strong); border: 1px solid var(--border); box-shadow: var(--shadow); }
-        .field { background: var(--surface-strong); border: 1px solid var(--border); color: var(--text); }
-        .switch input { display: none; }
-        .slider { width: 46px; height: 24px; background-color: rgba(244, 63, 94, 0.16); border-radius: 999px; position: relative; transition: .24s; }
-        .slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #f43f5e; border-radius: 50%; transition: .24s; }
-        input:checked + .slider { background-color: rgba(16, 185, 129, 0.20); }
-        input:checked + .slider:before { transform: translateX(22px); background-color: #10b981; }
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Poppins', 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: background 0.2s ease;
+        }
+
+        .glass {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+        .panel-solid {
+            background: var(--surface-strong);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Custom toggle using new palette */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,95,115,0.3);
+            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.2s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        input:focus-visible + .slider {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .field {
+            background: var(--surface-strong);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 1.25rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(238,155,0,0.2);
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 16px;
+            right: 16px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+        .toast {
+            pointer-events: auto;
+            background: var(--surface-strong);
+            backdrop-filter: blur(16px);
+            border-left: 4px solid;
+            border-radius: 1rem;
+            padding: 12px 16px;
+            box-shadow: var(--shadow-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: slideUp 0.2s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,0.1) 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1s infinite;
+            border-radius: 1rem;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--accent-text);
+            font-weight: 800;
+            transition: all 0.15s;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+            font-weight: 800;
+        }
+        .btn-secondary:hover {
+            background: var(--secondary-hover);
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            font-weight: 800;
+        }
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
     </style>
 </head>
-<body class="min-h-screen pb-24">
+<body class="antialiased min-h-screen pb-28">
 
-    <div class="main-fader">
-      <div class="loader text-center">
-        <svg viewBox="0 0 164.83 151.5" xmlns="http://www.w3.org/2000/svg">
-            <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
-        </svg>
-        <h2 class="text-2xl font-black uppercase mt-6 tracking-tighter">Coffeeland <span class="text-emerald-500">FC</span></h2>
-      </div>
+    <div id="splashLoader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--bg)] transition-opacity duration-500">
+        <div class="text-center">
+            <svg width="80" height="80" viewBox="0 0 164.83 151.5" xmlns="http://www.w3.org/2000/svg">
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" fill="var(--primary)" />
+            </svg>
+            <p class="mt-4 font-black text-lg tracking-tighter">Coffeeland <span style="color: var(--primary);">FC</span></p>
+        </div>
     </div>
 
-    <header class="sticky top-0 z-40 border-b border-black/5 backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg) 82%, transparent);">
-        <div class="px-6 py-5 flex items-center justify-between">
-            <button onclick="goHome()" class="text-left">
-                <div class="text-xl font-extrabold uppercase tracking-tight">CFC <span class="text-emerald-500">Manager</span></div>
+    <div id="toastContainer" class="toast-container"></div>
+
+    <header class="sticky top-0 z-40 border-b border-[var(--border)] backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg) 80%, transparent);">
+        <div class="px-5 py-4 flex items-center justify-between">
+            <button onclick="goHome()" class="focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-xl" aria-label="Go to dashboard">
+                <div class="text-base font-extrabold tracking-tight leading-tight">
+                    Coffeeland FC<br>
+                    <span style="color: var(--primary);" class="text-sm">Attendance Manager</span>
+                </div>
             </button>
-            <button onclick="showEditView()" class="glass text-blue-500 text-[10px] font-bold px-4 py-3 rounded-2xl uppercase">📝 Edit Logs</button>
+            <button onclick="showEditView()" class="glass text-xs font-bold px-4 py-2.5 rounded-2xl transition active:scale-95" style="color: var(--secondary);">📝 Edit Logs</button>
         </div>
     </header>
 
-    <main class="px-6 py-6 space-y-6">
+    <main class="px-5 py-5 max-w-2xl mx-auto space-y-6">
         <section id="lobbyView" class="space-y-5">
-            <div class="glass rounded-3xl p-5 space-y-4">
-                <select id="homeSelect" onchange="select(this.value)" class="field w-full p-4 text-xs font-bold rounded-2xl outline-none">
-                    <option value="">Quick Select ...</option>
+            <div class="glass rounded-2xl p-5 space-y-4">
+                <select id="homeSelect" onchange="select(this.value)" class="field w-full cursor-pointer">
+                    <option value="">⚡ Quick Select Batch ...</option>
                 </select>
-                <button onclick="markGlobalHoliday()" class="w-full rounded-2xl py-4 text-[10px] uppercase font-black border border-rose-500/20 text-rose-500" style="background: var(--rose-soft);">🌴 Global Holiday (Today)</button>
+                <button onclick="markGlobalHoliday()" class="w-full rounded-xl py-3.5 text-xs font-black uppercase transition active:scale-95" style="background: rgba(187,62,3,0.15); color: var(--danger); border: 1px solid var(--danger);">🌴 Global Holiday (Today)</button>
             </div>
             <div id="Grid" class="grid grid-cols-2 gap-4"></div>
         </section>
 
-        <section id="commandView" class="hidden-view space-y-6">
+        <section id="commandView" class="hidden space-y-6">
             <div class="grid grid-cols-2 gap-3">
-                <div class="glass rounded-3xl p-5 border-l-4 border-l-emerald-500">
-                    <div class="text-[10px] font-black uppercase muted mb-2">Athletes</div>
-                    <div class="text-3xl font-extrabold"><span id="statPresent">0</span><span class="text-sm muted"> / <span id="statTotal">0</span></span></div>
+                <div class="glass rounded-2xl p-4 border-l-4" style="border-left-color: var(--secondary);">
+                    <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">Athletes</div>
+                    <div class="text-3xl font-extrabold"><span id="statPresent">0</span><span class="text-sm" style="color: var(--text-muted);"> / <span id="statTotal">0</span></span></div>
                 </div>
-                <div class="glass rounded-3xl p-5 border-l-4 border-l-blue-500">
-                    <div class="text-[10px] font-black uppercase muted mb-2">Coaches</div>
-                    <div class="text-3xl font-extrabold"><span id="coachPresent">0</span><span class="text-sm muted"> / <span id="coachTotal">0</span></span></div>
+                <div class="glass rounded-2xl p-4 border-l-4" style="border-left-color: var(--primary);">
+                    <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">Coaches</div>
+                    <div class="text-3xl font-extrabold"><span id="coachPresent">0</span><span class="text-sm" style="color: var(--text-muted);"> / <span id="coachTotal">0</span></span></div>
                 </div>
             </div>
 
-            <div class="glass rounded-3xl p-5 border-l-4 border-l-orange-400">
-                <div class="text-[10px] font-black uppercase muted mb-3">Equipment Inventory</div>
-                <div class="flex items-center justify-between gap-4">
+            <div class="glass rounded-2xl p-5">
+                <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">⚽ Ball Inventory</div>
+                <div class="flex items-center justify-between gap-4 mt-2">
                     <div class="flex-1">
-                        <p class="text-[9px] font-bold uppercase opacity-50 mb-1">Taken (Start)</p>
+                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Taken (Start)</p>
                         <div class="flex items-center gap-2">
-                            <button onclick="adjustInventory('ballsTaken', -1)" class="w-7 h-7 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center font-bold text-xs">-</button>
-                            <input type="number" id="ballsTaken" value="0" class="w-8 text-center bg-transparent font-black text-sm outline-none">
-                            <button onclick="adjustInventory('ballsTaken', 1)" class="w-7 h-7 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center font-bold text-xs">+</button>
+                            <button onclick="adjustInventory('ballsTaken', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90">−</button>
+                            <input type="number" id="ballsTaken" value="0" class="w-10 text-center bg-transparent font-black text-base outline-none">
+                            <button onclick="adjustInventory('ballsTaken', 1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90">+</button>
                         </div>
                     </div>
-                    <div class="w-[1px] h-8 bg-black/5 dark:bg-white/10"></div>
+                    <div class="w-px h-8 bg-[var(--border)]"></div>
                     <div class="flex-1 text-right">
-                        <p class="text-[9px] font-bold uppercase opacity-50 mb-1">Left (End)</p>
+                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Left (End)</p>
                         <div class="flex items-center justify-end gap-2">
-                            <button onclick="adjustInventory('ballsLeft', -1)" class="w-7 h-7 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center font-bold text-xs">-</button>
-                            <input type="number" id="ballsLeft" value="0" class="w-8 text-center bg-transparent font-black text-sm outline-none">
-                            <button onclick="adjustInventory('ballsLeft', 1)" class="w-7 h-7 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center font-bold text-xs">+</button>
+                            <button onclick="adjustInventory('ballsLeft', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90">−</button>
+                            <input type="number" id="ballsLeft" value="0" class="w-10 text-center bg-transparent font-black text-base outline-none">
+                            <button onclick="adjustInventory('ballsLeft', 1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90">+</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button onclick="markHoliday()" class="w-full glass rounded-2xl py-4 text-[10px] uppercase font-black text-rose-500">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
+            <button onclick="markHoliday()" class="w-full glass rounded-xl py-3.5 text-xs font-black transition active:scale-95" style="color: var(--danger); border: 1px solid var(--danger); background: rgba(187,62,3,0.1);">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
 
             <div class="flex gap-3">
-                <select id="Select" onchange="fetchRoster()" class="field p-4 text-xs font-bold rounded-2xl flex-1 outline-none"></select>
-                <input type="date" id="attendanceDate" onchange="fetchRoster()" class="field p-4 text-xs font-bold rounded-2xl w-[38%] outline-none">
+                <select id="Select" onchange="fetchRoster()" class="field flex-1"></select>
+                <input type="date" id="attendanceDate" onchange="fetchRoster()" class="field w-[40%]">
             </div>
 
-            <input type="text" id="rosterSearch" oninput="applyRosterSearch()" placeholder="Search..." class="field w-full p-4 text-xs font-bold rounded-2xl outline-none">
+            <input type="text" id="rosterSearch" oninput="applyRosterSearch()" placeholder="🔍 Search by name..." class="field w-full">
 
             <div id="coachesList" class="space-y-2"></div>
-            <div id="studentsList" class="space-y-2"></div>
+            <div id="studentsList" class="space-y-3"></div>
 
-            <button onclick="submitAttendance()" id="submitBtn" class="w-full bg-emerald-500 text-white font-extrabold py-5 rounded-3xl uppercase text-sm shadow-xl">Commit Records</button>
+            <!-- WhatsApp number row -->
+            <div class="glass rounded-2xl p-4 flex items-center gap-3">
+                <div class="flex-1">
+                    <label class="text-[9px] font-black uppercase opacity-60">📱 WhatsApp Number</label>
+                    <input type="tel" id="whatsappNumber" class="field w-full mt-1 p-2 text-sm" placeholder="+918867742269" value="+918867742269">
+                </div>
+                <button onclick="saveWhatsAppNumber()" class="btn-primary px-4 py-2 rounded-xl text-xs font-bold">Save</button>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="submitAttendance()" id="submitBtn" class="flex-1 btn-primary py-4 rounded-xl uppercase text-sm shadow-lg transition active:scale-[0.98]">Commit Records</button>
+                <button onclick="shareSessionSummary()" id="shareBtn" class="btn-secondary py-4 px-5 rounded-xl text-sm shadow-lg transition active:scale-[0.98] flex items-center justify-center gap-1">📤 WhatsApp</button>
+            </div>
         </section>
 
-        <section id="editView" class="hidden-view space-y-5">
-            <div class="flex justify-between items-center"><h2 class="text-xs font-black uppercase muted">Log Editor</h2><button onclick="goHome()" class="text-xs font-bold text-emerald-500">Close</button></div>
-            
+        <section id="editView" class="hidden space-y-5">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xs font-black uppercase" style="color: var(--text-muted);">📋 Log Editor</h2>
+                <button onclick="goHome()" class="text-xs font-bold" style="color: var(--primary);">Close</button>
+            </div>
             <div class="flex gap-3">
-                <input type="date" id="editDate" onchange="loadDailyLogs()" class="field p-4 text-xs font-bold rounded-2xl flex-1 outline-none">
-                <select id="editBatchSelect" onchange="loadDailyLogs()" class="field p-4 text-xs font-bold rounded-2xl w-1/2 outline-none">
+                <input type="date" id="editDate" onchange="loadDailyLogs()" class="field flex-1">
+                <select id="editBatchSelect" onchange="loadDailyLogs()" class="field w-1/2">
                     <option value="">All Batches</option>
                 </select>
             </div>
-
-            <input type="text" id="editLogSearch" oninput="applyEditLogSearch()" placeholder="Search in logs..." class="field w-full p-4 text-xs font-bold rounded-2xl outline-none">
-            
+            <input type="text" id="editLogSearch" oninput="applyEditLogSearch()" placeholder="🔍 Search logs..." class="field w-full">
             <div id="studentLogContainer" class="space-y-2"></div>
             <div id="coachLogContainer" class="space-y-2"></div>
-
-            <button onclick="submitEditChanges()" id="editSaveBtn" class="hidden-view w-full bg-blue-500 text-white font-extrabold py-5 rounded-3xl uppercase text-sm shadow-xl">Update Records</button>
-            <div class="pb-20"></div>
+            <button onclick="submitEditChanges()" id="editSaveBtn" class="hidden w-full btn-primary py-4 rounded-xl uppercase text-sm shadow-lg transition">Update Records</button>
         </section>
     </main>
 
 <script>
+// ======================== CONFIG ========================
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzOE5N7bji1t3ck7VA1GU-pDZNE0RXY6k1RIWcRibi1npvNHaBRP188Cn5yc6sEy0NZ/exec";
-
-// Global Cache for speed
 let cachedBatches = null;
 
-function hideLoader() { document.querySelector('.main-fader').classList.add('hidden'); }
-function goHome() { 
-    document.getElementById('lobbyView').classList.remove('hidden-view'); 
-    document.getElementById('commandView').classList.add('hidden-view'); 
-    document.getElementById('editView').classList.add('hidden-view'); 
+const batchImageMap = {
+    "District Field Evening": "https://i.ibb.co/0jGkqXTp/DE.png",
+    "District Field Morning": "https://i.ibb.co/1YtJnfNW/DM.png",
+    "Kalyan Nagar Evening": "https://i.ibb.co/rGCHLQKw/KE.png",
+    "Kalyan Nagar Morning": "https://i.ibb.co/spy5Z9xs/KM.png",
+    "Xavier's School": "https://i.ibb.co/KpFmXLFc/XA.png",
+    "Monti Angels": "https://i.ibb.co/7qH63Jn/MA.png"
+};
+
+let whatsappNumber = localStorage.getItem('whatsappNumber') || '+918867742269';
+document.getElementById('whatsappNumber').value = whatsappNumber;
+
+function saveWhatsAppNumber() {
+    let num = document.getElementById('whatsappNumber').value.trim();
+    if (!num) return showToast('Enter a WhatsApp number', 'error');
+    if (!/^[\+\d\s\-]+$/.test(num)) {
+        showToast('Invalid number format', 'error');
+        return;
+    }
+    localStorage.setItem('whatsappNumber', num);
+    whatsappNumber = num;
+    showToast('WhatsApp number saved', 'success');
 }
 
-function showEditView() { 
-    document.getElementById('lobbyView').classList.add('hidden-view'); 
-    document.getElementById('commandView').classList.add('hidden-view'); 
-    document.getElementById('editView').classList.remove('hidden-view'); 
-    document.getElementById('editDate').valueAsDate = new Date(); 
-    loadDailyLogs(); 
+// ======================== UI HELPERS ========================
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    let borderColor = '#ee9b00';
+    if (type === 'success') borderColor = '#0a9396';
+    if (type === 'error') borderColor = '#bb3e03';
+    toast.style.borderLeftColor = borderColor;
+    toast.innerHTML = `<div class="flex items-center gap-2"><span>${message}</span></div>`;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 2800);
 }
 
-function select(n) { 
-    if(!n) return; 
-    document.getElementById('Select').value = n; 
-    fetchRoster(); 
+function setLoading(elementId, isLoading, skeletonCount = 3) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    if (isLoading) {
+        const skeletons = Array(skeletonCount).fill(0).map(() => `<div class="skeleton h-16 w-full mb-2"></div>`).join('');
+        el.innerHTML = `<div class="space-y-2">${skeletons}</div>`;
+    }
 }
 
-document.getElementById('attendanceDate').valueAsDate = new Date();
-window.onload = loades;
-
-function adjustInventory(id, amount) {
-    const el = document.getElementById(id);
-    let val = parseInt(el.value) || 0;
-    el.value = Math.max(0, val + amount);
+function hideLoader() {
+    const loader = document.getElementById('splashLoader');
+    if (loader) loader.style.opacity = '0';
+    setTimeout(() => loader?.remove(), 500);
 }
 
-// Fast fetch helper
+function goHome() {
+    document.getElementById('lobbyView').classList.remove('hidden');
+    document.getElementById('commandView').classList.add('hidden');
+    document.getElementById('editView').classList.add('hidden');
+}
+
+function showEditView() {
+    document.getElementById('lobbyView').classList.add('hidden');
+    document.getElementById('commandView').classList.add('hidden');
+    document.getElementById('editView').classList.remove('hidden');
+    document.getElementById('editDate').valueAsDate = new Date();
+    loadDailyLogs();
+}
+
+function select(batchName) {
+    if (!batchName) return;
+    document.getElementById('Select').value = batchName;
+    fetchRoster();
+}
+
+function adjustInventory(id, delta) {
+    const input = document.getElementById(id);
+    let val = parseInt(input.value) || 0;
+    input.value = Math.max(0, val + delta);
+}
+
 async function fetchJson(url, options = {}) {
     const res = await fetch(url, options);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     return data;
 }
 
+// ======================== INIT ========================
 async function loades() {
-    // If we have cached batches, render them instantly
     if (cachedBatches) {
         renderGrid(cachedBatches);
         hideLoader();
         return;
     }
-
     try {
         const data = await fetchJson(`${WEB_APP_URL}?action=getes`);
         cachedBatches = data.batches;
         renderGrid(data.batches);
-        
-        // Populate dropdowns
         const homeSelect = document.getElementById('homeSelect');
         const batchSelect = document.getElementById('Select');
         const editBatchSelect = document.getElementById('editBatchSelect');
-        
+        [homeSelect, batchSelect, editBatchSelect].forEach(sel => { if(sel) sel.innerHTML = '<option value="">Select batch</option>'; });
         data.batches.forEach(b => {
-            const opt = `<option value="${escapeAttr(b.name.trim())}">${escapeHtml(b.name.trim())}</option>`;
+            const name = b.name.trim();
+            const opt = `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
             homeSelect.innerHTML += opt;
             batchSelect.innerHTML += opt;
             editBatchSelect.innerHTML += opt;
         });
-
-        setTimeout(hideLoader, 200); // Snappier exit
-    } catch (err) { 
-        console.error("Boot Error:", err);
-        hideLoader(); 
+        hideLoader();
+    } catch (err) {
+        console.error(err);
+        showToast('Failed to load batches, refresh page', 'error');
+        hideLoader();
     }
 }
 
 function renderGrid(batches) {
     const grid = document.getElementById('Grid');
+    if (!grid) return;
     grid.innerHTML = batches.map(b => {
         const name = b.name.trim();
-        return `<button onclick='select(${JSON.stringify(name)})' class="glass p-6 rounded-[2rem] flex flex-col justify-between aspect-square text-left active:scale-95 transition-transform">
-            <div class="text-xl">⚽</div>
-            <div>
-                <h3 class="text-sm font-extrabold leading-tight">${escapeHtml(name)}</h3>
-                <p class="text-[10px] text-emerald-500 font-bold mt-1">${b.count} Active</p>
-            </div>
-        </button>`;
+        const imageUrl = batchImageMap[name];
+        const logoHtml = imageUrl 
+            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="w-12 h-12 object-contain rounded-xl mb-2 mx-auto">`
+            : `<div class="text-4xl mb-2">⚽</div>`;
+        return `
+            <button onclick='select(${JSON.stringify(name)})' class="glass p-4 rounded-2xl text-left active:scale-95 transition-all focus:ring-2 focus:ring-[var(--primary)] flex flex-col items-center text-center">
+                ${logoHtml}
+                <h3 class="font-extrabold text-sm mt-1">${escapeHtml(name)}</h3>
+                <p class="text-[10px] font-bold mt-1" style="color: var(--secondary);">${b.count} active</p>
+            </button>
+        `;
     }).join('');
 }
 
+// ======================== ROSTER FETCH ========================
 async function fetchRoster() {
     const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
-    if (!batchName) return;
-
-    // UI transitions
-    document.getElementById('lobbyView').classList.add('hidden-view');
-    document.getElementById('commandView').classList.remove('hidden-view');
+    if (!batchName) { showToast('Please select a batch', 'error'); return; }
+    document.getElementById('lobbyView').classList.add('hidden');
+    document.getElementById('commandView').classList.remove('hidden');
     document.getElementById('holidayBtnDate').innerText = `(${new Date(date).toLocaleDateString('en-GB', {day:'numeric', month:'short'})})`;
-
-    // Immediate visual reset
-    const coachList = document.getElementById('coachesList');
-    const studentList = document.getElementById('studentsList');
-    coachList.innerHTML = `<div class="p-10 text-center animate-pulse text-[10px] font-black uppercase opacity-30">Loading Session...</div>`;
-    studentList.innerHTML = "";
-
+    
+    setLoading('coachesList', true);
+    setLoading('studentsList', true);
+    
     try {
         const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
-        
-        renderList('coachesList', data.coaches, 'coach', 'Coaches', 'blue');
-        renderList('studentsList', data.students, 'student', 'Athletes', 'emerald');
-        
-        // Handle Inventory Session-Awareness
-        const takenEl = document.getElementById('ballsTaken');
-        const leftEl = document.getElementById('ballsLeft');
-        if (data.inventory) {
-            takenEl.value = data.inventory.taken || 0;
-            leftEl.value = data.inventory.left || 0;
-        } else {
-            takenEl.value = 0;
-            leftEl.value = 0;
-        }
-
+        renderList('coachesList', data.coaches, 'coach', 'Coaches', 'var(--primary)');
+        renderList('studentsList', data.students, 'student', 'Athletes', 'var(--secondary)');
+        document.getElementById('ballsTaken').value = data.inventory?.taken || 0;
+        document.getElementById('ballsLeft').value = data.inventory?.left || 0;
         const btn = document.getElementById('submitBtn');
         btn.innerText = data.isLogged ? "Update Session Log" : "Commit Records";
-        btn.className = `w-full ${data.isLogged ? 'bg-blue-600' : 'bg-emerald-500'} text-white font-extrabold py-5 rounded-3xl uppercase text-sm shadow-xl transition-colors`;
-
+        if (data.isLogged) btn.classList.add('btn-secondary');
+        else btn.classList.add('btn-primary');
+        btn.classList.remove('btn-primary', 'btn-secondary');
+        if (data.isLogged) btn.classList.add('btn-secondary');
+        else btn.classList.add('btn-primary');
         updateStats();
-    } catch (err) { 
-        coachList.innerHTML = `<div class="p-10 text-center text-rose-500 text-[10px] font-bold">FAILED TO LOAD ROSTER</div>`;
+    } catch (err) {
+        showToast('Failed to load roster', 'error');
+        document.getElementById('coachesList').innerHTML = `<div class="text-center py-8 text-rose-500 text-xs font-bold">⚠️ Error loading data</div>`;
     }
 }
 
-// Logic optimized for large lists (40+ rows)
-function renderList(containerId, people, type, label, color) {
+function renderList(containerId, people, type, label, accentColor) {
     const container = document.getElementById(containerId);
+    if (!container) return;
+    if (!people.length) {
+        container.innerHTML = `<div class="text-center py-6 text-xs font-medium" style="color: var(--text-muted);">No ${label.toLowerCase()} found</div>`;
+        return;
+    }
     let html = `
-        <div class="flex items-center justify-between mb-3 ${type.includes('student') ? 'mt-8' : 'mt-2'} px-2">
+        <div class="flex items-center justify-between mb-2 px-1">
             <div class="flex items-center gap-2">
-                <div class="w-1 h-4 bg-${color}-500 rounded-full"></div>
-                <span class="text-[10px] font-black uppercase tracking-widest text-${color}-500">${label}</span>
+                <div class="w-1 h-4 rounded-full" style="background: ${accentColor}"></div>
+                <span class="text-[10px] font-black uppercase tracking-wider" style="color: ${accentColor}">${label}</span>
             </div>
-            <div class="flex items-center gap-3">
-                <button onclick="toggleSection('${type}', true)" class="text-[9px] font-black uppercase text-${color}-500">All</button>
-                <div class="w-[1px] h-2 bg-black/10 dark:bg-white/10"></div>
-                <button onclick="toggleSection('${type}', false)" class="text-[9px] font-black uppercase muted">Clear</button>
-                <span class="ml-2 text-[9px] font-bold opacity-30">${people.length} Total</span>
+            <div class="flex items-center gap-2">
+                <button onclick="setAllPresent('${type}', true)" class="text-[9px] font-black uppercase px-2 py-1 rounded" style="background: var(--secondary); color: white;">All Present</button>
+                <button onclick="setAllPresent('${type}', false)" class="text-[9px] font-black uppercase px-2 py-1 rounded" style="background: var(--danger); color: white;">All Absent</button>
+                <span class="ml-1 text-[9px] font-bold opacity-40">${people.length}</span>
             </div>
         </div>`;
-
     html += people.map(p => `
-        <div class="attendance-card panel rounded-2xl p-4 mb-2 flex justify-between items-center border-l-4 border-l-${color}-500/30" data-name="${escapeAttr(p.name.toLowerCase())}">
+        <div class="attendance-card panel-solid rounded-xl p-3 flex justify-between items-center transition" data-name="${escapeAttr(p.name.toLowerCase())}">
             <div class="min-w-0 flex-1">
-                <p class="font-bold text-sm text-current truncate">${escapeHtml(p.name)}</p>
-                <p class="text-[8px] font-black uppercase opacity-40 tracking-tighter">${p.studentId || 'STAFF'}</p>
+                <p class="font-semibold text-sm truncate">${escapeHtml(p.name)}</p>
+                <p class="text-[9px] font-mono uppercase opacity-50">${p.studentId || 'STAFF'}</p>
             </div>
             <label class="switch">
                 <input type="checkbox" name="attendance_${type}" value="${escapeAttr(p.name)}" data-sid="${p.studentId || ''}" ${p.status === 'Present' ? 'checked' : ''} onchange="updateStats()">
@@ -307,90 +535,194 @@ function renderList(containerId, people, type, label, color) {
     container.innerHTML = html;
 }
 
-function toggleSection(type, state) {
-    const checkboxes = document.querySelectorAll(`input[name="attendance_${type}"]`);
-    checkboxes.forEach(cb => { 
-        if (cb.closest('.attendance-card').style.display !== 'none') cb.checked = state; 
+function setAllPresent(type, present) {
+    document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(cb => {
+        const card = cb.closest('.attendance-card');
+        if (card && card.style.display !== 'none') cb.checked = present;
     });
     updateStats();
 }
 
 function updateStats() {
-    const getCount = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]`)).filter(i => i.checked && i.closest('.attendance-card').style.display !== 'none').length;
-    const getTotal = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]`)).filter(i => i.closest('.attendance-card').style.display !== 'none').length;
-    
-    const sp = document.getElementById('statPresent');
-    const st = document.getElementById('statTotal');
-    const cp = document.getElementById('coachPresent');
-    const ct = document.getElementById('coachTotal');
-
-    if(sp) sp.innerText = getCount('attendance_student');
-    if(st) st.innerText = getTotal('attendance_student');
-    if(cp) cp.innerText = getCount('attendance_coach');
-    if(ct) ct.innerText = getTotal('attendance_coach');
+    const presentStudents = document.querySelectorAll('input[name="attendance_student"]:checked').length;
+    const totalStudents = document.querySelectorAll('input[name="attendance_student"]').length;
+    const presentCoaches = document.querySelectorAll('input[name="attendance_coach"]:checked').length;
+    const totalCoaches = document.querySelectorAll('input[name="attendance_coach"]').length;
+    document.getElementById('statPresent').innerText = presentStudents;
+    document.getElementById('statTotal').innerText = totalStudents;
+    document.getElementById('coachPresent').innerText = presentCoaches;
+    document.getElementById('coachTotal').innerText = totalCoaches;
 }
 
 function applyRosterSearch() {
-    const q = document.getElementById('rosterSearch').value.toLowerCase();
+    const query = document.getElementById('rosterSearch').value.toLowerCase();
     document.querySelectorAll('#commandView .attendance-card').forEach(card => {
-        card.style.display = card.dataset.name.includes(q) ? '' : 'none';
+        card.style.display = card.dataset.name.includes(query) ? 'flex' : 'none';
     });
     updateStats();
 }
 
+// ======================== MARK HOLIDAY ========================
+async function markGlobalHoliday() { 
+    const date = new Date().toISOString().slice(0,10);
+    await markHolidayCore(date, true);
+}
+async function markHoliday() { 
+    const date = document.getElementById('attendanceDate').value;
+    if (!date) return showToast('Select a date first', 'error');
+    await markHolidayCore(date, false);
+}
+async function markHolidayCore(date, isGlobal) {
+    try {
+        const payload = { action: 'markHoliday', date: date, global: isGlobal };
+        const formData = new URLSearchParams();
+        formData.append('payload', JSON.stringify(payload));
+        await fetch(WEB_APP_URL, { method: 'POST', body: formData });
+        showToast(`Holiday set for ${date}`, 'success');
+        if (!isGlobal) fetchRoster();
+        else goHome();
+    } catch (err) {
+        showToast('Failed to mark holiday', 'error');
+    }
+}
+
+// ======================== SUBMIT ATTENDANCE ========================
+async function submitAttendance() {
+    const batchName = document.getElementById('Select').value;
+    const date = document.getElementById('attendanceDate').value;
+    if (!batchName) return showToast('Select batch', 'error');
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = "Syncing...";
+    const records = [];
+    for (const type of ['coach', 'student']) {
+        document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
+            records.push({
+                personType: type,
+                studentId: input.dataset.sid || '',
+                date: date,
+                batchName: batchName,
+                personName: input.value,
+                status: input.checked ? 'Present' : 'Absent',
+                ballsTaken: document.getElementById('ballsTaken').value,
+                ballsLeft: document.getElementById('ballsLeft').value
+            });
+        });
+    }
+    try {
+        const formData = new URLSearchParams();
+        formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+        await fetch(WEB_APP_URL, { method: 'POST', body: formData });
+        showToast('Attendance saved ✓', 'success');
+        goHome();
+    } catch (err) {
+        showToast('Sync error, try again', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Commit Records";
+    }
+}
+
+// ======================== SHARE SESSION VIA WHATSAPP ========================
+function shareSessionSummary() {
+    const batchName = document.getElementById('Select').value;
+    const date = document.getElementById('attendanceDate').value;
+    if (!batchName) {
+        showToast('Select a batch first', 'error');
+        return;
+    }
+    if (!whatsappNumber || whatsappNumber === '') {
+        showToast('Please set WhatsApp number first', 'error');
+        return;
+    }
+    const athletes = [];
+    const coaches = [];
+    document.querySelectorAll('input[name="attendance_student"]').forEach(input => {
+        athletes.push({ name: input.value, isPresent: input.checked });
+    });
+    document.querySelectorAll('input[name="attendance_coach"]').forEach(input => {
+        coaches.push({ name: input.value, isPresent: input.checked });
+    });
+    const presentAthletes = athletes.filter(a => a.isPresent).map(a => a.name);
+    const absentAthletes = athletes.filter(a => !a.isPresent).map(a => a.name);
+    const presentCoaches = coaches.filter(c => c.isPresent).map(c => c.name);
+    const absentCoaches = coaches.filter(c => !c.isPresent).map(c => c.name);
+    const ballsTaken = document.getElementById('ballsTaken').value;
+    const ballsLeft = document.getElementById('ballsLeft').value;
+    const formattedDate = new Date(date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    let summary = `🏆 *Coffeeland FC Attendance Report*%0A`;
+    summary += `📅 *Date:* ${formattedDate}%0A`;
+    summary += `⚽ *Batch:* ${batchName}%0A`;
+    summary += `━━━━━━━━━━━━━━━━━━━━%0A`;
+    summary += `👥 *ATHLETES*%0A`;
+    summary += `✅ Present (${presentAthletes.length}/${athletes.length}): ${presentAthletes.length ? presentAthletes.join(', ') : 'None'}%0A`;
+    if (absentAthletes.length) summary += `❌ Absent: ${absentAthletes.join(', ')}%0A`;
+    summary += `%0A👨‍🏫 *COACHES*%0A`;
+    summary += `✅ Present (${presentCoaches.length}/${coaches.length}): ${presentCoaches.length ? presentCoaches.join(', ') : 'None'}%0A`;
+    if (absentCoaches.length) summary += `❌ Absent: ${absentCoaches.join(', ')}%0A`;
+    summary += `━━━━━━━━━━━━━━━━━━━━%0A`;
+    summary += `⚽ *Ball Inventory*: ${ballsTaken} taken / ${ballsLeft} left%0A`;
+    summary += `📊 *Attendance Rate:* ${Math.round((presentAthletes.length / athletes.length) * 100)}%%%0A`;
+    summary += `%0A🔗 *Coffeeland FC Manager*`;
+
+    let number = whatsappNumber.replace(/[\s\-]/g, '');
+    if (!number.startsWith('+')) number = '+' + number;
+    window.open(`https://wa.me/${number}?text=${summary}`, '_blank');
+    showToast('Opening WhatsApp...', 'success');
+}
+
+// ======================== EDIT LOGS ========================
 async function loadDailyLogs() {
     const date = document.getElementById('editDate').value;
     const batch = document.getElementById('editBatchSelect').value;
     if (!date) return;
-
-    const sContainer = document.getElementById('studentLogContainer');
-    sContainer.innerHTML = '<p class="text-center py-10 text-[10px] font-bold animate-pulse">SEARCHING HISTORY...</p>';
-    document.getElementById('coachLogContainer').innerHTML = '';
-    document.getElementById('editSaveBtn').classList.add('hidden-view');
-
+    setLoading('studentLogContainer', true);
+    setLoading('coachLogContainer', true);
+    document.getElementById('editSaveBtn').classList.add('hidden');
     try {
         const data = await fetchJson(`${WEB_APP_URL}?action=getLogs&date=${date}&batchName=${encodeURIComponent(batch)}`);
         if (data.students.length === 0 && data.coaches.length === 0) {
-            sContainer.innerHTML = '<p class="text-center py-10 text-[10px] font-bold opacity-40 uppercase">No records found</p>';
+            document.getElementById('studentLogContainer').innerHTML = '<div class="text-center py-10 text-xs opacity-50">No logs for this date</div>';
+            document.getElementById('coachLogContainer').innerHTML = '';
             return;
         }
-        renderList('coachLogContainer', data.coaches, 'edit_coach', 'Coach Logs', 'blue');
-        renderList('studentLogContainer', data.students, 'edit_student', 'Athlete Logs', 'emerald');
-        document.getElementById('editSaveBtn').classList.remove('hidden-view');
-    } catch (err) { 
-        sContainer.innerHTML = '<p class="text-center py-10 text-rose-500 text-[10px] font-bold">ERROR LOADING LOGS</p>'; 
+        renderList('coachLogContainer', data.coaches, 'edit_coach', 'Coach Logs', 'var(--primary)');
+        renderList('studentLogContainer', data.students, 'edit_student', 'Athlete Logs', 'var(--secondary)');
+        document.getElementById('editSaveBtn').classList.remove('hidden');
+    } catch (err) {
+        showToast('Failed to load logs', 'error');
     }
 }
 
 async function submitEditChanges() {
     const btn = document.getElementById('editSaveBtn');
-    btn.disabled = true; 
-    btn.innerText = "UPDATING...";
-    
+    btn.disabled = true;
+    btn.innerText = "Updating...";
     const records = [];
-    ['edit_coach', 'edit_student'].forEach(type => {
+    for (const type of ['edit_coach', 'edit_student']) {
         const realType = type.split('_')[1];
         document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
-            records.push({ 
-                personType: realType, 
-                studentId: input.dataset.sid || '', 
-                date: document.getElementById('editDate').value, 
-                batchName: document.getElementById('editBatchSelect').value || 'Manual Edit', 
-                personName: input.value, 
-                status: input.checked ? 'Present' : 'Absent', 
-                isEdit: true 
+            records.push({
+                personType: realType,
+                studentId: input.dataset.sid || '',
+                date: document.getElementById('editDate').value,
+                batchName: document.getElementById('editBatchSelect').value || 'Manual Edit',
+                personName: input.value,
+                status: input.checked ? 'Present' : 'Absent',
+                isEdit: true
             });
         });
-    });
-
+    }
     try {
         const formData = new URLSearchParams();
         formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
         await fetch(WEB_APP_URL, { method: 'POST', body: formData });
-        btn.innerText = "✅ UPDATED";
-        setTimeout(loadDailyLogs, 500);
-    } catch (err) { 
-        alert("Update failed."); 
+        showToast('Logs updated', 'success');
+        await loadDailyLogs();
+    } catch (err) {
+        showToast('Update failed', 'error');
+    } finally {
         btn.disabled = false;
         btn.innerText = "Update Records";
     }
@@ -399,66 +731,15 @@ async function submitEditChanges() {
 function applyEditLogSearch() {
     const q = document.getElementById('editLogSearch').value.toLowerCase();
     document.querySelectorAll('#editView .attendance-card').forEach(card => {
-        card.style.display = card.dataset.name.includes(q) ? '' : 'none';
+        card.style.display = card.dataset.name.includes(q) ? 'flex' : 'none';
     });
 }
 
-// OPTIMIZED: The "Optimistic Sync"
-async function submitAttendance() {
-    const btn = document.getElementById('submitBtn');
-    const batchName = document.getElementById('Select').value;
-    const date = document.getElementById('attendanceDate').value;
-    if (!batchName) return alert("Select batch");
-    
-    btn.disabled = true; 
-    btn.innerText = "SYNCING...";
-    
-    const taken = document.getElementById('ballsTaken').value;
-    const left = document.getElementById('ballsLeft').value;
-    
-    const records = [];
-    ['coach', 'student'].forEach(type => {
-        document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
-            records.push({ 
-                personType: type, 
-                studentId: input.dataset.sid || '', 
-                date, 
-                batchName, 
-                personName: input.value, 
-                status: input.checked ? 'Present' : 'Absent',
-                ballsTaken: taken,
-                ballsLeft: left
-            });
-        });
-    });
-    
-    try {
-        const formData = new URLSearchParams();
-        formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
-        
-        // Fire and forget (Optimistic UI)
-        fetch(WEB_APP_URL, { method: 'POST', body: formData });
-        
-        btn.innerText = "✅ DONE!"; 
-        btn.style.backgroundColor = "#10B981";
-        
-        setTimeout(() => { 
-            // Silent reset instead of hard reload for speed
-            goHome();
-            btn.disabled = false;
-            btn.innerText = "Commit Records";
-            btn.style.backgroundColor = "";
-            alert("Attendance Synced in Background");
-        }, 400);
-    } catch (err) { 
-        alert("❌ Sync Error"); 
-        btn.disabled = false; 
-        btn.innerText = "Commit Records"; 
-    }
-}
+function escapeHtml(str) { return String(str).replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+function escapeAttr(str) { return escapeHtml(str); }
 
-function escapeHtml(v) { return String(v || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
-function escapeAttr(v) { return escapeHtml(v); }
+document.getElementById('attendanceDate').valueAsDate = new Date();
+window.addEventListener('DOMContentLoaded', loades);
 </script>
 </body>
 </html>
