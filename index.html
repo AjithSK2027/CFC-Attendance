@@ -39,6 +39,7 @@
         .slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #f43f5e; border-radius: 50%; transition: .24s; }
         input:checked + .slider { background-color: rgba(16, 185, 129, 0.20); }
         input:checked + .slider:before { transform: translateX(22px); background-color: #10b981; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
 <body class="min-h-screen pb-24">
@@ -84,6 +85,29 @@
                 </div>
             </div>
 
+            <div class="glass rounded-3xl p-5 border-l-4 border-l-orange-400">
+                <div class="text-[10px] font-black uppercase muted mb-3">Equipment Inventory</div>
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <p class="text-[9px] font-bold uppercase opacity-50 mb-1">Taken (Start)</p>
+                        <div class="flex items-center gap-2">
+                            <button onclick="adjustInventory('ballsTaken', -1)" class="w-7 h-7 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center font-bold text-xs">-</button>
+                            <input type="number" id="ballsTaken" value="0" class="w-8 text-center bg-transparent font-black text-sm outline-none">
+                            <button onclick="adjustInventory('ballsTaken', 1)" class="w-7 h-7 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center font-bold text-xs">+</button>
+                        </div>
+                    </div>
+                    <div class="w-[1px] h-8 bg-black/5 dark:bg-white/10"></div>
+                    <div class="flex-1 text-right">
+                        <p class="text-[9px] font-bold uppercase opacity-50 mb-1">Left (End)</p>
+                        <div class="flex items-center justify-end gap-2">
+                            <button onclick="adjustInventory('ballsLeft', -1)" class="w-7 h-7 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center font-bold text-xs">-</button>
+                            <input type="number" id="ballsLeft" value="0" class="w-8 text-center bg-transparent font-black text-sm outline-none">
+                            <button onclick="adjustInventory('ballsLeft', 1)" class="w-7 h-7 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center font-bold text-xs">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <button onclick="markHoliday()" class="w-full glass rounded-2xl py-4 text-[10px] uppercase font-black text-rose-500">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
 
             <div class="flex gap-3">
@@ -120,17 +144,43 @@
     </main>
 
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwwo1Fidq3vmlV2ob7G158A3cW8FfVQcxGAOX5g1-LstPTZHsxRWKWAxVq0F7s0p2Fd/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzOE5N7bji1t3ck7VA1GU-pDZNE0RXY6k1RIWcRibi1npvNHaBRP188Cn5yc6sEy0NZ/exec";
+
+// Global Cache for speed
+let cachedBatches = null;
 
 function hideLoader() { document.querySelector('.main-fader').classList.add('hidden'); }
-function goHome() { document.getElementById('lobbyView').classList.remove('hidden-view'); document.getElementById('commandView').classList.add('hidden-view'); document.getElementById('editView').classList.add('hidden-view'); }
-function showEditView() { document.getElementById('lobbyView').classList.add('hidden-view'); document.getElementById('commandView').classList.add('hidden-view'); document.getElementById('editView').classList.remove('hidden-view'); document.getElementById('editDate').valueAsDate = new Date(); loadDailyLogs(); }
-function select(n) { if(!n) return; document.getElementById('Select').value = n; fetchRoster(); }
+function goHome() { 
+    document.getElementById('lobbyView').classList.remove('hidden-view'); 
+    document.getElementById('commandView').classList.add('hidden-view'); 
+    document.getElementById('editView').classList.add('hidden-view'); 
+}
+
+function showEditView() { 
+    document.getElementById('lobbyView').classList.add('hidden-view'); 
+    document.getElementById('commandView').classList.add('hidden-view'); 
+    document.getElementById('editView').classList.remove('hidden-view'); 
+    document.getElementById('editDate').valueAsDate = new Date(); 
+    loadDailyLogs(); 
+}
+
+function select(n) { 
+    if(!n) return; 
+    document.getElementById('Select').value = n; 
+    fetchRoster(); 
+}
 
 document.getElementById('attendanceDate').valueAsDate = new Date();
 window.onload = loades;
 
-async function fetchJson(url, options) {
+function adjustInventory(id, amount) {
+    const el = document.getElementById(id);
+    let val = parseInt(el.value) || 0;
+    el.value = Math.max(0, val + amount);
+}
+
+// Fast fetch helper
+async function fetchJson(url, options = {}) {
     const res = await fetch(url, options);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
@@ -138,24 +188,49 @@ async function fetchJson(url, options) {
 }
 
 async function loades() {
+    // If we have cached batches, render them instantly
+    if (cachedBatches) {
+        renderGrid(cachedBatches);
+        hideLoader();
+        return;
+    }
+
     try {
         const data = await fetchJson(`${WEB_APP_URL}?action=getes`);
-        const grid = document.getElementById('Grid');
+        cachedBatches = data.batches;
+        renderGrid(data.batches);
+        
+        // Populate dropdowns
         const homeSelect = document.getElementById('homeSelect');
         const batchSelect = document.getElementById('Select');
         const editBatchSelect = document.getElementById('editBatchSelect');
-
-        grid.innerHTML = '';
+        
         data.batches.forEach(b => {
-            const name = b.name.trim();
-            const opt = `<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`;
+            const opt = `<option value="${escapeAttr(b.name.trim())}">${escapeHtml(b.name.trim())}</option>`;
             homeSelect.innerHTML += opt;
             batchSelect.innerHTML += opt;
             editBatchSelect.innerHTML += opt;
-            grid.innerHTML += `<button onclick='select(${JSON.stringify(name)})' class="glass p-6 rounded-[2rem] flex flex-col justify-between aspect-square text-left"><div>⚽</div><div><h3 class="text-sm font-extrabold">${escapeHtml(name)}</h3><p class="text-[10px] text-emerald-500">${b.count} Active</p></div></button>`;
         });
-        setTimeout(hideLoader, 500);
-    } catch (err) { alert("Failed to load batches."); hideLoader(); }
+
+        setTimeout(hideLoader, 200); // Snappier exit
+    } catch (err) { 
+        console.error("Boot Error:", err);
+        hideLoader(); 
+    }
+}
+
+function renderGrid(batches) {
+    const grid = document.getElementById('Grid');
+    grid.innerHTML = batches.map(b => {
+        const name = b.name.trim();
+        return `<button onclick='select(${JSON.stringify(name)})' class="glass p-6 rounded-[2rem] flex flex-col justify-between aspect-square text-left active:scale-95 transition-transform">
+            <div class="text-xl">⚽</div>
+            <div>
+                <h3 class="text-sm font-extrabold leading-tight">${escapeHtml(name)}</h3>
+                <p class="text-[10px] text-emerald-500 font-bold mt-1">${b.count} Active</p>
+            </div>
+        </button>`;
+    }).join('');
 }
 
 async function fetchRoster() {
@@ -163,52 +238,62 @@ async function fetchRoster() {
     const date = document.getElementById('attendanceDate').value;
     if (!batchName) return;
 
+    // UI transitions
     document.getElementById('lobbyView').classList.add('hidden-view');
     document.getElementById('commandView').classList.remove('hidden-view');
     document.getElementById('holidayBtnDate').innerText = `(${new Date(date).toLocaleDateString('en-GB', {day:'numeric', month:'short'})})`;
 
-    // Show loading state
-    document.getElementById('coachesList').innerHTML = `<p class="py-4 text-center text-[10px] font-bold opacity-50 uppercase">Checking for existing logs...</p>`;
-    document.getElementById('studentsList').innerHTML = `<p class="py-4 text-center text-[10px] font-bold opacity-50 uppercase">Checking for existing logs...</p>`;
+    // Immediate visual reset
+    const coachList = document.getElementById('coachesList');
+    const studentList = document.getElementById('studentsList');
+    coachList.innerHTML = `<div class="p-10 text-center animate-pulse text-[10px] font-black uppercase opacity-30">Loading Session...</div>`;
+    studentList.innerHTML = "";
 
     try {
-        // We call getRoster—but the backend will now be smart enough to include current status
         const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
         
         renderList('coachesList', data.coaches, 'coach', 'Coaches', 'blue');
         renderList('studentsList', data.students, 'student', 'Athletes', 'emerald');
         
-        // Update the button text if logs already exist
-        const btn = document.getElementById('submitBtn');
-        if (data.isLogged) {
-            btn.innerText = "Update Existing Records";
-            btn.classList.replace('bg-emerald-500', 'bg-blue-600');
+        // Handle Inventory Session-Awareness
+        const takenEl = document.getElementById('ballsTaken');
+        const leftEl = document.getElementById('ballsLeft');
+        if (data.inventory) {
+            takenEl.value = data.inventory.taken || 0;
+            leftEl.value = data.inventory.left || 0;
         } else {
-            btn.innerText = "Commit Records";
-            btn.classList.replace('bg-blue-600', 'bg-emerald-500');
+            takenEl.value = 0;
+            leftEl.value = 0;
         }
 
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = data.isLogged ? "Update Session Log" : "Commit Records";
+        btn.className = `w-full ${data.isLogged ? 'bg-blue-600' : 'bg-emerald-500'} text-white font-extrabold py-5 rounded-3xl uppercase text-sm shadow-xl transition-colors`;
+
         updateStats();
-    } catch (err) { alert("Failed to load roster."); }
+    } catch (err) { 
+        coachList.innerHTML = `<div class="p-10 text-center text-rose-500 text-[10px] font-bold">FAILED TO LOAD ROSTER</div>`;
+    }
 }
 
+// Logic optimized for large lists (40+ rows)
 function renderList(containerId, people, type, label, color) {
     const container = document.getElementById(containerId);
-    const header = `
+    let html = `
         <div class="flex items-center justify-between mb-3 ${type.includes('student') ? 'mt-8' : 'mt-2'} px-2">
             <div class="flex items-center gap-2">
                 <div class="w-1 h-4 bg-${color}-500 rounded-full"></div>
                 <span class="text-[10px] font-black uppercase tracking-widest text-${color}-500">${label}</span>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="toggleSection('${type}', true)" class="text-[9px] font-black uppercase text-${color}-500 opacity-80">All</button>
+                <button onclick="toggleSection('${type}', true)" class="text-[9px] font-black uppercase text-${color}-500">All</button>
                 <div class="w-[1px] h-2 bg-black/10 dark:bg-white/10"></div>
                 <button onclick="toggleSection('${type}', false)" class="text-[9px] font-black uppercase muted">Clear</button>
                 <span class="ml-2 text-[9px] font-bold opacity-30">${people.length} Total</span>
             </div>
         </div>`;
 
-    const listHtml = people.map((p, i) => `
+    html += people.map(p => `
         <div class="attendance-card panel rounded-2xl p-4 mb-2 flex justify-between items-center border-l-4 border-l-${color}-500/30" data-name="${escapeAttr(p.name.toLowerCase())}">
             <div class="min-w-0 flex-1">
                 <p class="font-bold text-sm text-current truncate">${escapeHtml(p.name)}</p>
@@ -219,12 +304,14 @@ function renderList(containerId, people, type, label, color) {
                 <div class="slider"></div>
             </label>
         </div>`).join('');
-    container.innerHTML = header + listHtml;
+    container.innerHTML = html;
 }
 
 function toggleSection(type, state) {
     const checkboxes = document.querySelectorAll(`input[name="attendance_${type}"]`);
-    checkboxes.forEach(cb => { if (cb.closest('.attendance-card').style.display !== 'none') cb.checked = state; });
+    checkboxes.forEach(cb => { 
+        if (cb.closest('.attendance-card').style.display !== 'none') cb.checked = state; 
+    });
     updateStats();
 }
 
@@ -232,29 +319,34 @@ function updateStats() {
     const getCount = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]`)).filter(i => i.checked && i.closest('.attendance-card').style.display !== 'none').length;
     const getTotal = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]`)).filter(i => i.closest('.attendance-card').style.display !== 'none').length;
     
-    if(document.getElementById('statPresent')) document.getElementById('statPresent').innerText = getCount('attendance_student');
-    if(document.getElementById('statTotal')) document.getElementById('statTotal').innerText = getTotal('attendance_student');
-    if(document.getElementById('coachPresent')) document.getElementById('coachPresent').innerText = getCount('attendance_coach');
-    if(document.getElementById('coachTotal')) document.getElementById('coachTotal').innerText = getTotal('attendance_coach');
+    const sp = document.getElementById('statPresent');
+    const st = document.getElementById('statTotal');
+    const cp = document.getElementById('coachPresent');
+    const ct = document.getElementById('coachTotal');
+
+    if(sp) sp.innerText = getCount('attendance_student');
+    if(st) st.innerText = getTotal('attendance_student');
+    if(cp) cp.innerText = getCount('attendance_coach');
+    if(ct) ct.innerText = getTotal('attendance_coach');
 }
 
 function applyRosterSearch() {
     const q = document.getElementById('rosterSearch').value.toLowerCase();
-    document.querySelectorAll('#commandView .attendance-card').forEach(card => card.style.display = card.dataset.name.includes(q) ? '' : 'none');
+    document.querySelectorAll('#commandView .attendance-card').forEach(card => {
+        card.style.display = card.dataset.name.includes(q) ? '' : 'none';
+    });
     updateStats();
 }
 
 async function loadDailyLogs() {
     const date = document.getElementById('editDate').value;
     const batch = document.getElementById('editBatchSelect').value;
-    const sContainer = document.getElementById('studentLogContainer');
-    const cContainer = document.getElementById('coachLogContainer');
-    const saveBtn = document.getElementById('editSaveBtn');
-
     if (!date) return;
-    sContainer.innerHTML = '<p class="text-center py-10 text-[10px] font-bold animate-pulse">FETCHING LOGS...</p>';
-    cContainer.innerHTML = '';
-    saveBtn.classList.add('hidden-view');
+
+    const sContainer = document.getElementById('studentLogContainer');
+    sContainer.innerHTML = '<p class="text-center py-10 text-[10px] font-bold animate-pulse">SEARCHING HISTORY...</p>';
+    document.getElementById('coachLogContainer').innerHTML = '';
+    document.getElementById('editSaveBtn').classList.add('hidden-view');
 
     try {
         const data = await fetchJson(`${WEB_APP_URL}?action=getLogs&date=${date}&batchName=${encodeURIComponent(batch)}`);
@@ -264,53 +356,105 @@ async function loadDailyLogs() {
         }
         renderList('coachLogContainer', data.coaches, 'edit_coach', 'Coach Logs', 'blue');
         renderList('studentLogContainer', data.students, 'edit_student', 'Athlete Logs', 'emerald');
-        saveBtn.classList.remove('hidden-view');
-    } catch (err) { sContainer.innerHTML = '<p class="text-center py-10 text-rose-500 text-[10px] font-bold">ERROR SYNCING LOGS</p>'; }
+        document.getElementById('editSaveBtn').classList.remove('hidden-view');
+    } catch (err) { 
+        sContainer.innerHTML = '<p class="text-center py-10 text-rose-500 text-[10px] font-bold">ERROR LOADING LOGS</p>'; 
+    }
 }
 
 async function submitEditChanges() {
     const btn = document.getElementById('editSaveBtn');
-    btn.disabled = true; btn.innerText = "UPDATING...";
+    btn.disabled = true; 
+    btn.innerText = "UPDATING...";
+    
     const records = [];
     ['edit_coach', 'edit_student'].forEach(type => {
         const realType = type.split('_')[1];
         document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
-            records.push({ personType: realType, studentId: input.dataset.sid || '', date: document.getElementById('editDate').value, batchName: document.getElementById('editBatchSelect').value || 'Manual Edit', personName: input.value, status: input.checked ? 'Present' : 'Absent', isEdit: true });
+            records.push({ 
+                personType: realType, 
+                studentId: input.dataset.sid || '', 
+                date: document.getElementById('editDate').value, 
+                batchName: document.getElementById('editBatchSelect').value || 'Manual Edit', 
+                personName: input.value, 
+                status: input.checked ? 'Present' : 'Absent', 
+                isEdit: true 
+            });
         });
     });
+
     try {
         const formData = new URLSearchParams();
         formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
         await fetch(WEB_APP_URL, { method: 'POST', body: formData });
-        alert("✅ Logs updated successfully."); loadDailyLogs();
-    } catch (err) { alert("Update failed."); }
-    finally { btn.disabled = false; btn.innerText = "Update Records"; }
+        btn.innerText = "✅ UPDATED";
+        setTimeout(loadDailyLogs, 500);
+    } catch (err) { 
+        alert("Update failed."); 
+        btn.disabled = false;
+        btn.innerText = "Update Records";
+    }
 }
 
 function applyEditLogSearch() {
     const q = document.getElementById('editLogSearch').value.toLowerCase();
-    document.querySelectorAll('#editView .attendance-card').forEach(card => card.style.display = card.dataset.name.includes(q) ? '' : 'none');
+    document.querySelectorAll('#editView .attendance-card').forEach(card => {
+        card.style.display = card.dataset.name.includes(q) ? '' : 'none';
+    });
 }
 
+// OPTIMIZED: The "Optimistic Sync"
 async function submitAttendance() {
     const btn = document.getElementById('submitBtn');
     const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
     if (!batchName) return alert("Select batch");
-    btn.disabled = true; btn.innerText = "COMMITTING...";
+    
+    btn.disabled = true; 
+    btn.innerText = "SYNCING...";
+    
+    const taken = document.getElementById('ballsTaken').value;
+    const left = document.getElementById('ballsLeft').value;
+    
     const records = [];
     ['coach', 'student'].forEach(type => {
         document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
-            records.push({ personType: type, studentId: input.dataset.sid || '', date, batchName, personName: input.value, status: input.checked ? 'Present' : 'Absent' });
+            records.push({ 
+                personType: type, 
+                studentId: input.dataset.sid || '', 
+                date, 
+                batchName, 
+                personName: input.value, 
+                status: input.checked ? 'Present' : 'Absent',
+                ballsTaken: taken,
+                ballsLeft: left
+            });
         });
     });
+    
     try {
         const formData = new URLSearchParams();
         formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+        
+        // Fire and forget (Optimistic UI)
         fetch(WEB_APP_URL, { method: 'POST', body: formData });
-        btn.innerText = "✅ DONE!"; btn.style.backgroundColor = "#10B981";
-        setTimeout(() => { alert("Attendance Committed."); location.reload(); }, 300);
-    } catch (err) { alert("❌ Error."); btn.disabled = false; btn.innerText = "Commit Records"; }
+        
+        btn.innerText = "✅ DONE!"; 
+        btn.style.backgroundColor = "#10B981";
+        
+        setTimeout(() => { 
+            // Silent reset instead of hard reload for speed
+            goHome();
+            btn.disabled = false;
+            btn.innerText = "Commit Records";
+            btn.style.backgroundColor = "";
+            alert("Attendance Synced in Background");
+        }, 400);
+    } catch (err) { 
+        alert("❌ Sync Error"); 
+        btn.disabled = false; 
+        btn.innerText = "Commit Records"; 
+    }
 }
 
 function escapeHtml(v) { return String(v || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
