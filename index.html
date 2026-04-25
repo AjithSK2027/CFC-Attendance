@@ -32,6 +32,8 @@
             --danger: #FF2E63;
             --danger-hover: #e02454;
             --card-shadow: var(--shadow-md);
+            --mint-green: #98FB98;
+            --mint-green-hover: #7ddf7d;
         }
         @media (prefers-color-scheme: dark) {
             :root {
@@ -50,6 +52,8 @@
                 --danger: #FF2E63;
                 --danger-hover: #e02454;
                 --card-shadow: 0 12px 28px -8px rgba(0,0,0,0.5);
+                --mint-green: #5fbf5f;
+                --mint-green-hover: #4aa34a;
             }
         }
 
@@ -220,6 +224,16 @@
         .btn-danger { background: var(--danger); color: white; font-weight: 800; }
         .btn-danger:hover { background: var(--danger-hover); }
 
+        /* New mint green button style */
+        .btn-whatsapp {
+            background: var(--mint-green);
+            color: #252A34;
+            font-weight: 800;
+        }
+        .btn-whatsapp:hover {
+            background: var(--mint-green-hover);
+        }
+
         .home-tile {
             transition: all 0.2s;
             box-shadow: var(--card-shadow);
@@ -296,7 +310,6 @@
                 </div>
             </div>
 
-            <!-- Ball Inventory with new labels -->
             <div class="glass rounded-2xl p-5">
                 <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">⚽ Ball Inventory</div>
                 <div class="flex items-center justify-between gap-4 mt-2">
@@ -340,9 +353,10 @@
                 <button onclick="saveWhatsAppNumber()" class="btn-primary px-4 py-2 rounded-xl text-xs font-bold">Save</button>
             </div>
 
+            <!-- MODIFIED BUTTONS: Commit wider (flex-[2]), WhatsApp smaller (flex-1) + mint green class -->
             <div class="flex gap-3">
-                <button onclick="submitAttendance()" id="submitBtn" class="flex-1 btn-primary py-4 rounded-xl uppercase text-sm transition active:scale-[0.98]">Commit Records</button>
-                <button onclick="shareSessionSummary()" id="shareBtn" class="btn-secondary py-4 px-5 rounded-xl text-sm transition active:scale-[0.98] flex items-center justify-center gap-1">📤 WhatsApp</button>
+                <button onclick="submitAttendance()" id="submitBtn" class="flex-[2] btn-primary py-4 rounded-xl uppercase text-sm transition active:scale-[0.98]">Commit Records</button>
+                <button onclick="shareSessionSummary()" id="shareBtn" class="flex-1 btn-whatsapp py-4 rounded-xl text-sm transition active:scale-[0.98] flex items-center justify-center gap-1">📤 WhatsApp</button>
             </div>
         </section>
 
@@ -438,7 +452,6 @@ function goHome() {
     document.getElementById('editView').classList.add('hidden');
     document.getElementById('globalPlayerSearch').value = '';
     document.getElementById('globalSearchResults').classList.add('hidden');
-    // reset current batch tracking
     currentBatchName = '';
     currentDate = '';
 }
@@ -625,11 +638,9 @@ async function fetchAndRenderRoster(batchName, date, cacheKey) {
 async function refreshRosterInBackground(batchName, date, cacheKey) {
     try {
         const newData = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
-        // only update if the batch is still the current one (avoid race conditions)
         if (currentBatchName === batchName && currentDate === date) {
             const oldData = JSON.parse(sessionStorage.getItem(cacheKey) || '{}');
             if (JSON.stringify(oldData) !== JSON.stringify(newData)) {
-                // Update UI with new data (preserve existing toggles? We'll just re-render fully)
                 renderRosterData(newData);
                 showToast('Roster updated with latest changes', 'success');
             }
@@ -638,7 +649,6 @@ async function refreshRosterInBackground(batchName, date, cacheKey) {
     } catch(e) { console.warn('Background refresh failed', e); }
 }
 
-// ======================== INIT ========================
 async function loades() {
     const cached = loadBatchesFromCache();
     if (cached && cached.length) {
