@@ -2,36 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Coffeeland FC | Attendance Manager</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#08D9D6">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="CFC Manager">
-    <link rel="apple-touch-icon" href="https://i.ibb.co/F4xc84TQ/KM.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            -webkit-tap-highlight-color: transparent;
-            box-sizing: border-box;
-        }
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', 'Poppins', 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            transition: background 0.2s;
-            overflow-x: hidden;
+        * { -webkit-tap-highlight-color: transparent; }
+        body { padding: 0; margin: 0; font-family: 'Plus Jakarta Sans', 'Poppins', 'Inter', sans-serif; background: var(--bg); color: var(--text); transition: background 0.2s ease; }
+
+        :root {
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.02);
+            --shadow-lg: 0 20px 35px -8px rgba(0,0,0,0.15), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-xl: 0 25px 40px -12px rgba(0,0,0,0.25);
         }
         :root {
             --bg: #EAEAEA;
             --surface: rgba(255,255,255,0.85);
             --surface-strong: #ffffff;
             --text: #252A34;
-            --text-muted: #5a6874;
+            --text-muted: #252A34;
             --border: rgba(37,42,52,0.08);
             --primary: #08D9D6;
             --primary-hover: #06b6b3;
@@ -41,46 +31,50 @@
             --accent-text: #252A34;
             --danger: #FF2E63;
             --danger-hover: #e02454;
-            --mint-green: #98FB98;
-            --mint-green-hover: #7ddf7d;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
-            --shadow-md: 0 4px 8px -2px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-            --shadow-lg: 0 12px 20px -8px rgba(0,0,0,0.1);
+            --card-shadow: var(--shadow-md);
         }
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg: #1a1e26;
-                --surface: rgba(30,34,42,0.85);
-                --surface-strong: #252a34;
+                --bg: #252A34;
+                --surface: rgba(37,42,52,0.8);
+                --surface-strong: #1e2229;
                 --text: #EAEAEA;
-                --text-muted: #a0aab8;
-                --border: rgba(8,217,214,0.2);
+                --text-muted: #08D9D6;
+                --border: rgba(8,217,214,0.15);
                 --primary: #08D9D6;
-                --primary-hover: #2ce4e1;
+                --primary-hover: #06b6b3;
                 --secondary: #08D9D6;
+                --secondary-hover: #06b6b3;
+                --accent-bg: #08D9D6;
+                --accent-text: #252A34;
                 --danger: #FF2E63;
-                --mint-green: #5fbf5f;
-                --mint-green-hover: #4aa34a;
+                --danger-hover: #e02454;
+                --card-shadow: 0 12px 28px -8px rgba(0,0,0,0.5);
             }
         }
-        /* Loader – unchanged */
+
         .main-fader {
+            width: 100%;
+            height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(0,0,0,0.85);
+            background-color: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(4px);
             z-index: 10000;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.4s;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
         .main-fader.hidden { opacity: 0; visibility: hidden; }
-        .loader svg { height: 100px; margin: 0 auto; }
-        .loader svg path { animation: pulse 1s infinite; fill: #08D9D6; }
+        .loader svg { height: 120px; display: block; margin: 0 auto; }
+        .loader svg path {
+            animation-duration: 1s;
+            animation-name: pulse;
+            animation-iteration-count: infinite;
+            fill: #08D9D6;
+        }
         .loader svg path:nth-child(1) { animation-delay: -0.125s; }
         .loader svg path:nth-child(2) { animation-delay: -0.25s; }
         .loader svg path:nth-child(3) { animation-delay: -0.375s; }
@@ -90,241 +84,21 @@
         .loader svg path:nth-child(7) { animation-delay: -0.875s; }
         .loader svg path:nth-child(8) { animation-delay: -1s; }
         @keyframes pulse {
-            0% { opacity: 0.1; }
-            30% { opacity: 0.8; }
+            0%   { opacity: 0.1; }
+            30%  { opacity: 0.8; }
             100% { opacity: 0.1; }
         }
-        .glass {
-            background: var(--surface);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-md);
-        }
-        .panel-solid {
-            background: var(--surface-strong);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-        }
-        .app-header {
-            position: sticky;
-            top: 0;
-            z-index: 40;
-            background: color-mix(in srgb, var(--bg) 85%, transparent);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 20px;
-            padding-top: max(12px, env(safe-area-inset-top));
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .app-main {
-            padding: 24px 20px 40px;
-            max-width: 640px;
-            margin: 0 auto;
-        }
-        .stats-row {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .stat-card {
-            flex: 1;
-            background: var(--surface-strong);
-            border-radius: 28px;
-            padding: 16px;
-            border-left: 4px solid;
-            box-shadow: var(--shadow-md);
-        }
-        .stat-label {
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-        .stat-value {
-            font-size: 28px;
-            font-weight: 800;
-            line-height: 1.2;
-            color: var(--text);
-        }
-        .inventory-card {
-            background: var(--surface-strong);
-            border-radius: 28px;
-            padding: 18px 16px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-md);
-        }
-        .inventory-title {
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-        .inventory-row {
-            display: flex;
-            gap: 24px;
-            justify-content: space-between;
-        }
-        .inventory-item {
-            flex: 1;
-            text-align: center;
-        }
-        .inventory-label {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            opacity: 0.7;
-            margin-bottom: 8px;
-        }
-        .inventory-control {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        .inventory-control button {
-            width: 36px;
-            height: 36px;
-            border-radius: 999px;
-            background: rgba(0,0,0,0.05);
-            font-size: 20px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        .inventory-control input {
-            width: 60px;
-            text-align: center;
-            background: transparent;
-            font-size: 20px;
-            font-weight: 700;
-            border: none;
-            padding: 4px;
-        }
-        .holiday-btn {
-            width: 100%;
-            background: rgba(255,46,99,0.08);
-            border: 1px solid var(--danger);
-            color: var(--danger);
-            border-radius: 40px;
-            padding: 12px;
-            font-weight: 800;
-            font-size: 12px;
-            text-transform: uppercase;
-            margin-bottom: 24px;
-            cursor: pointer;
-        }
-        .filter-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-        .filter-row select {
-            flex: 2;
-            background: var(--surface-strong);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 12px 16px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text);
-        }
-        .filter-row input {
-            flex: 1;
-            background: var(--surface-strong);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 12px 12px;
-            font-size: 14px;
-        }
-        .refresh-icon {
-            background: var(--surface-strong);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            width: 48px;
-            height: 48px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .refresh-icon:active { transform: rotate(180deg); }
-        .search-input {
-            width: 100%;
-            margin-bottom: 24px;
-            background: var(--surface-strong);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 12px 18px;
-            font-size: 14px;
-        }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-            padding: 0 4px;
-        }
-        .section-title {
-            font-size: 13px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .section-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .section-actions button {
-            font-size: 10px;
-            font-weight: 800;
-            padding: 5px 12px;
-            border-radius: 40px;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-all-present { background: var(--primary); color: #252A34; }
-        .btn-all-absent { background: var(--danger); color: white; }
-        .attendance-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--surface-strong);
-            border-radius: 20px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            border-left: 4px solid var(--danger);
-            transition: 0.1s;
-            box-shadow: var(--shadow-sm);
-        }
-        .attendance-card.present-card {
-            border-left-color: var(--primary);
-        }
-        .player-name {
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 2px;
-        }
-        .player-id {
-            font-size: 10px;
-            opacity: 0.6;
-            font-family: monospace;
-        }
+
+        .glass { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+        .panel-solid { background: var(--surface-strong); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+
         .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 26px;
-            flex-shrink: 0;
+            width: 52px;
+            height: 28px;
         }
-        .switch input { opacity: 0; width: 0; height: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
         .slider {
             position: absolute;
             cursor: pointer;
@@ -333,126 +107,52 @@
             right: 0;
             bottom: 0;
             background-color: var(--danger);
-            transition: 0.2s;
+            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 34px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
         }
         .slider:before {
             position: absolute;
             content: "";
-            height: 20px;
-            width: 20px;
+            height: 22px;
+            width: 22px;
             left: 3px;
             bottom: 3px;
             background-color: white;
             transition: 0.2s;
             border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
-        input:checked + .slider {
-            background-color: var(--primary);
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        .slider:active { transform: scale(0.95); }
+        .switch:active .slider:before { transform: scale(0.9); }
+
+        .attendance-card {
+            border-left: 4px solid var(--danger);
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
         }
-        input:checked + .slider:before {
-            transform: translateX(24px);
-        }
-        .whatsapp-row {
+        .attendance-card.present-card { border-left-color: var(--primary); }
+        .attendance-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+        .field {
             background: var(--surface-strong);
-            border-radius: 28px;
-            padding: 16px;
-            margin: 20px 0 16px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        .whatsapp-row input {
-            flex: 1;
-            background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 10px 14px;
-            font-size: 13px;
+            color: var(--text);
+            border-radius: 1.25rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s;
+            box-shadow: var(--shadow-sm);
         }
-        .whatsapp-row button {
-            background: var(--primary);
-            color: #252A34;
-            border: none;
-            border-radius: 40px;
-            padding: 10px 16px;
-            font-weight: 700;
-            font-size: 12px;
+        .field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(8,217,214,0.2), var(--shadow-sm);
         }
-        /* Action buttons: Commit bigger, WhatsApp smaller & mint */
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        .btn-commit {
-            flex: 2;
-            background: var(--primary);
-            color: #252A34;
-            border: none;
-            border-radius: 40px;
-            padding: 14px;
-            font-weight: 800;
-            font-size: 14px;
-            text-transform: uppercase;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .btn-commit:active {
-            transform: scale(0.97);
-        }
-        .btn-whatsapp {
-            flex: 1;
-            background: var(--mint-green);
-            color: #252A34;
-            border: none;
-            border-radius: 40px;
-            padding: 12px 10px;
-            font-weight: 800;
-            font-size: 13px;
-            text-transform: uppercase;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.1s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .btn-whatsapp:active {
-            transform: scale(0.97);
-            background: var(--mint-green-hover);
-        }
-        .batch-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 8px;
-        }
-        .batch-tile {
-            background: var(--surface);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 20px 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .batch-tile:active { transform: scale(0.97); }
-        .batch-tile img {
-            max-width: 80px;
-            height: auto;
-            margin: 0 auto 8px;
-        }
-        .batch-name {
-            font-weight: 800;
-            font-size: 14px;
-            margin-top: 8px;
-        }
-        .hidden { display: none !important; }
-        .text-muted { color: var(--text-muted); }
+
         .toast-container {
             position: fixed;
             bottom: 24px;
@@ -461,7 +161,7 @@
             z-index: 1000;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
             pointer-events: none;
         }
         .toast {
@@ -469,372 +169,204 @@
             background: var(--surface-strong);
             backdrop-filter: blur(16px);
             border-left: 4px solid;
-            border-radius: 20px;
+            border-radius: 1rem;
             padding: 12px 16px;
-            font-size: 13px;
+            box-shadow: var(--shadow-lg);
+            font-size: 0.875rem;
             font-weight: 500;
+            animation: slideUp 0.2s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,0.1) 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1s infinite;
+            border-radius: 1rem;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .btn-primary, .btn-secondary, .btn-danger {
+            transition: all 0.2s;
+            box-shadow: var(--shadow-md);
+        }
+        .btn-primary:hover, .btn-secondary:hover, .btn-danger:hover {
+            transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
         }
-        .offline-indicator {
-            position: fixed;
-            top: calc(12px + env(safe-area-inset-top));
-            right: 16px;
-            background: var(--danger);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 40px;
-            font-size: 10px;
-            font-weight: bold;
-            z-index: 1001;
+        .btn-primary:active, .btn-secondary:active, .btn-danger:active {
+            transform: translateY(1px);
         }
-        .sync-pending {
-            position: fixed;
-            bottom: 20px;
-            right: 16px;
+        .btn-primary { background: var(--primary); color: #252A34; font-weight: 800; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: var(--secondary); color: #252A34; font-weight: 800; }
+        .btn-secondary:hover { background: var(--secondary-hover); }
+        .btn-danger { background: var(--danger); color: white; font-weight: 800; }
+        .btn-danger:hover { background: var(--danger-hover); }
+
+        .home-tile {
+            transition: all 0.2s;
+            box-shadow: var(--card-shadow);
+        }
+        .home-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-xl); }
+        .home-tile img { max-width: 100%; height: auto; background: transparent; }
+
+        .search-result-item {
+            transition: all 0.15s;
+        }
+        .search-result-item:hover {
+            transform: translateX(4px);
             background: var(--primary);
             color: #252A34;
-            padding: 5px 12px;
-            border-radius: 40px;
-            font-size: 10px;
-            font-weight: bold;
-            z-index: 1001;
-            cursor: pointer;
         }
-        .search-result-item {
-            background: var(--surface-strong);
-            border-radius: 20px;
-            padding: 12px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-        .field { width: 100%; }
     </style>
 </head>
 <body>
 
     <div id="splashLoader" class="main-fader">
         <div class="loader">
-            <svg viewBox="0 0 164.83 151.5" width="80" height="80">
-                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z"/>
-                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z"/>
-                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z"/>
-                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z"/>
-                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z"/>
-                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z"/>
-                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z"/>
-                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z"/>
+            <svg viewBox="0 0 164.83 151.5" xmlns="http://www.w3.org/2000/svg">
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
             </svg>
-            <p class="mt-3 font-black text-base" style="color: white;">Coffeeland <span style="color: #08D9D6;">FC</span></p>
+            <p class="mt-4 font-black text-lg tracking-tighter" style="color: white;">Coffeeland <span style="color: var(--primary);">FC</span></p>
         </div>
     </div>
 
     <div id="toastContainer" class="toast-container"></div>
-    <div id="offlineIndicator" class="offline-indicator" style="display: none;">📡 Offline</div>
-    <div id="syncPending" class="sync-pending" style="display: none;" onclick="manualSync()">⏳ Pending sync</div>
 
-    <header class="app-header">
-        <button onclick="goHome()" style="background: none; border: none; text-align: left;">
-            <div class="font-extrabold leading-tight">
-                Coffeeland FC<br>
-                <span style="color: var(--primary); font-size: 11px;">Attendance Manager</span>
-            </div>
-        </button>
-        <button onclick="showEditView()" class="glass text-xs font-bold px-4 py-2 rounded-full" style="color: var(--primary);">📝 Edit Logs</button>
+    <header class="sticky top-0 z-40 border-b border-[var(--border)] backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg) 80%, transparent); box-shadow: var(--shadow-sm);">
+        <div class="px-5 py-4 flex items-center justify-between">
+            <button onclick="goHome()" class="focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-xl">
+                <div class="text-base font-extrabold tracking-tight leading-tight">
+                    Coffeeland FC<br>
+                    <span style="color: var(--primary);" class="text-sm">Attendance Manager</span>
+                </div>
+            </button>
+            <button onclick="showEditView()" class="glass text-xs font-bold px-4 py-2.5 rounded-2xl transition active:scale-95" style="color: var(--primary);">📝 Edit Logs</button>
+        </div>
     </header>
 
-    <main class="app-main">
-        <!-- LobbyView -->
-        <section id="lobbyView">
-            <div class="glass rounded-2xl p-5 mb-6">
-                <select id="homeSelect" onchange="select(this.value)" class="field w-full mb-3">
+    <main class="px-5 py-5 max-w-2xl mx-auto space-y-6">
+        <!-- LobbyView with global player search -->
+        <section id="lobbyView" class="space-y-5">
+            <div class="glass rounded-2xl p-5 space-y-4">
+                <select id="homeSelect" onchange="select(this.value)" class="field w-full cursor-pointer">
                     <option value="">⚡ Quick Select Batch ...</option>
                 </select>
-                <input type="text" id="globalPlayerSearch" oninput="globalSearchPlayers()" placeholder="🔍 Search any player or coach across all batches..." class="field w-full mb-3">
-                <div id="globalSearchResults" class="hidden mt-2"></div>
-                <button onclick="markGlobalHoliday()" class="w-full rounded-full py-3 text-xs font-black uppercase" style="background: rgba(255,46,99,0.15); color: var(--danger); border: 1px solid var(--danger);">🌴 Global Holiday (Today)</button>
+                <input type="text" id="globalPlayerSearch" oninput="globalSearchPlayers()" placeholder="🔍 Search any player or coach across all batches..." class="field w-full" autocomplete="off">
+                <div id="globalSearchResults" class="hidden space-y-2 mt-2"></div>
+                <button onclick="markGlobalHoliday()" class="w-full rounded-xl py-3.5 text-xs font-black uppercase transition active:scale-95" style="background: rgba(255,46,99,0.15); color: var(--danger); border: 1px solid var(--danger); box-shadow: var(--shadow-sm);">🌴 Global Holiday (Today)</button>
             </div>
-            <div id="Grid" class="batch-grid"></div>
+            <div id="Grid" class="grid grid-cols-2 gap-4"></div>
         </section>
 
         <!-- Command / Attendance View -->
-        <section id="commandView" class="hidden">
-            <div class="stats-row">
-                <div class="stat-card" style="border-left-color: var(--primary);">
-                    <div class="stat-label">Athletes</div>
-                    <div class="stat-value"><span id="statPresent">0</span><span class="text-sm text-muted"> / <span id="statTotal">0</span></span></div>
+        <section id="commandView" class="hidden space-y-6">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="glass rounded-2xl p-4 border-l-4" style="border-left-color: var(--primary);">
+                    <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">Athletes</div>
+                    <div class="text-3xl font-extrabold"><span id="statPresent">0</span><span class="text-sm" style="color: var(--text-muted);"> / <span id="statTotal">0</span></span></div>
                 </div>
-                <div class="stat-card" style="border-left-color: var(--danger);">
-                    <div class="stat-label">Coaches</div>
-                    <div class="stat-value"><span id="coachPresent">0</span><span class="text-sm text-muted"> / <span id="coachTotal">0</span></span></div>
+                <div class="glass rounded-2xl p-4 border-l-4" style="border-left-color: var(--danger);">
+                    <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">Coaches</div>
+                    <div class="text-3xl font-extrabold"><span id="coachPresent">0</span><span class="text-sm" style="color: var(--text-muted);"> / <span id="coachTotal">0</span></span></div>
                 </div>
             </div>
 
-            <div class="inventory-card">
-                <div class="inventory-title">⚽ Ball Inventory</div>
-                <div class="inventory-row">
-                    <div class="inventory-item">
-                        <div class="inventory-label">Balls Taken</div>
-                        <div class="inventory-control">
-                            <button onclick="adjustInventory('ballsTaken', -1)">−</button>
-                            <input type="number" id="ballsTaken" value="0">
-                            <button onclick="adjustInventory('ballsTaken', 1)">+</button>
+            <!-- Ball Inventory with new labels -->
+            <div class="glass rounded-2xl p-5">
+                <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">⚽ Ball Inventory</div>
+                <div class="flex items-center justify-between gap-4 mt-2">
+                    <div class="flex-1">
+                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Balls Taken</p>
+                        <div class="flex items-center gap-2">
+                            <button onclick="adjustInventory('ballsTaken', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">−</button>
+                            <input type="number" id="ballsTaken" value="0" class="w-10 text-center bg-transparent font-black text-base outline-none">
+                            <button onclick="adjustInventory('ballsTaken', 1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">+</button>
                         </div>
                     </div>
-                    <div class="inventory-item">
-                        <div class="inventory-label">Balls Returned</div>
-                        <div class="inventory-control">
-                            <button onclick="adjustInventory('ballsLeft', -1)">−</button>
-                            <input type="number" id="ballsLeft" value="0">
-                            <button onclick="adjustInventory('ballsLeft', 1)">+</button>
+                    <div class="w-px h-8 bg-[var(--border)]"></div>
+                    <div class="flex-1 text-right">
+                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Balls Returned</p>
+                        <div class="flex items-center justify-end gap-2">
+                            <button onclick="adjustInventory('ballsLeft', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">−</button>
+                            <input type="number" id="ballsLeft" value="0" class="w-10 text-center bg-transparent font-black text-base outline-none">
+                            <button onclick="adjustInventory('ballsLeft', 1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">+</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button onclick="markHoliday()" class="holiday-btn">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
+            <button onclick="markHoliday()" class="w-full glass rounded-xl py-3.5 text-xs font-black transition active:scale-95" style="color: var(--danger); border: 1px solid var(--danger); background: rgba(255,46,99,0.1); box-shadow: var(--shadow-sm);">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
 
-            <div class="filter-row">
-                <select id="Select" onchange="fetchRoster()">
-                    <option value="">Select batch</option>
-                </select>
-                <button onclick="refreshCurrentRoster()" class="refresh-icon" title="Refresh roster">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M23 4v6h-6"></path>
-                        <path d="M1 20v-6h6"></path>
-                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
-                        <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
-                    </svg>
-                </button>
-                <input type="date" id="attendanceDate" onchange="fetchRoster()">
+            <div class="flex gap-3">
+                <select id="Select" onchange="fetchRoster()" class="field flex-1"></select>
+                <input type="date" id="attendanceDate" onchange="fetchRoster()" class="field w-[40%]">
             </div>
 
-            <input type="text" id="rosterSearch" oninput="applyRosterSearch()" placeholder="🔍 Search player by name..." class="search-input">
+            <input type="text" id="rosterSearch" oninput="applyRosterSearch()" placeholder="🔍 Search player by name..." class="field w-full">
 
-            <div id="coachesList" class="space-y-2 mb-5"></div>
-            <div id="studentsList" class="space-y-2 mb-5"></div>
+            <div id="coachesList" class="space-y-2"></div>
+            <div id="studentsList" class="space-y-3"></div>
 
-            <div class="whatsapp-row">
-                <input type="tel" id="whatsappNumber" placeholder="+918867742269" value="+918867742269">
-                <button onclick="saveWhatsAppNumber()">Save</button>
+            <div class="glass rounded-2xl p-4 flex items-center gap-3">
+                <div class="flex-1">
+                    <label class="text-[9px] font-black uppercase opacity-60">📱 WhatsApp Number</label>
+                    <input type="tel" id="whatsappNumber" class="field w-full mt-1 p-2 text-sm" placeholder="+918867742269" value="+918867742269">
+                </div>
+                <button onclick="saveWhatsAppNumber()" class="btn-primary px-4 py-2 rounded-xl text-xs font-bold">Save</button>
             </div>
 
-            <!-- Action buttons: Commit larger, WhatsApp smaller & mint green -->
-            <div class="action-buttons">
-                <button onclick="submitAttendance()" id="submitBtn" class="btn-commit">Commit Records</button>
-                <button onclick="shareSessionSummary()" class="btn-whatsapp">📤 WhatsApp</button>
+            <div class="flex gap-3">
+                <button onclick="submitAttendance()" id="submitBtn" class="flex-1 btn-primary py-4 rounded-xl uppercase text-sm transition active:scale-[0.98]">Commit Records</button>
+                <button onclick="shareSessionSummary()" id="shareBtn" class="btn-secondary py-4 px-5 rounded-xl text-sm transition active:scale-[0.98] flex items-center justify-center gap-1">📤 WhatsApp</button>
             </div>
         </section>
 
         <!-- Edit Logs View -->
-        <section id="editView" class="hidden">
-            <div class="flex justify-between items-center mb-5">
-                <h2 class="text-xs font-black uppercase text-muted">📋 Log Editor</h2>
+        <section id="editView" class="hidden space-y-5">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xs font-black uppercase" style="color: var(--text-muted);">📋 Log Editor</h2>
                 <button onclick="goHome()" class="text-xs font-bold" style="color: var(--primary);">Close</button>
             </div>
-            <div class="flex gap-3 mb-4">
+            <div class="flex gap-3">
                 <input type="date" id="editDate" onchange="loadDailyLogs()" class="field flex-1">
                 <select id="editBatchSelect" onchange="loadDailyLogs()" class="field w-1/2">
                     <option value="">All Batches</option>
                 </select>
             </div>
-            <input type="text" id="editLogSearch" oninput="applyEditLogSearch()" placeholder="🔍 Search logs..." class="field w-full mb-4">
-            <div id="studentLogContainer" class="space-y-2 mb-4"></div>
-            <div id="coachLogContainer" class="space-y-2 mb-4"></div>
-            <button onclick="submitEditChanges()" id="editSaveBtn" class="hidden w-full btn-primary py-3 rounded-full">Update Records</button>
+            <input type="text" id="editLogSearch" oninput="applyEditLogSearch()" placeholder="🔍 Search logs..." class="field w-full">
+            <div id="studentLogContainer" class="space-y-2"></div>
+            <div id="coachLogContainer" class="space-y-2"></div>
+            <button onclick="submitEditChanges()" id="editSaveBtn" class="hidden w-full btn-primary py-4 rounded-xl uppercase text-sm transition">Update Records</button>
         </section>
     </main>
 
 <script>
-// ==================== ALL ORIGINAL JAVASCRIPT (100% UNCHANGED) ====================
-let db = null;
-const DB_NAME = 'CFC_OfflineDB';
-const STORE_NAME = 'attendanceQueue';
-let isOnline = navigator.onLine;
-
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, 1);
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => {
-            db = request.result;
-            resolve(db);
-        };
-        request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME, { autoIncrement: true });
-            }
-        };
-    });
-}
-
-async function addToQueue(record) {
-    if (!db) await openDB();
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        const req = store.add(record);
-        req.onsuccess = () => resolve();
-        req.onerror = () => reject(req.error);
-    });
-}
-
-async function getAllQueue() {
-    if (!db) await openDB();
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => reject(req.error);
-    });
-}
-
-async function clearQueue() {
-    if (!db) await openDB();
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        const req = store.clear();
-        req.onsuccess = () => resolve();
-        req.onerror = () => reject(req.error);
-    });
-}
-
-async function syncPendingRecords() {
-    if (!isOnline) return;
-    const queue = await getAllQueue();
-    if (queue.length === 0) {
-        document.getElementById('syncPending').style.display = 'none';
-        return;
-    }
-    document.getElementById('syncPending').innerText = `⏳ Syncing (${queue.length})`;
-    let successCount = 0;
-    for (const record of queue) {
-        try {
-            const formData = new URLSearchParams();
-            formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: record.records }));
-            await fetch(WEB_APP_URL, { method: 'POST', body: formData });
-            successCount++;
-        } catch(e) { console.warn('Sync failed for one record', e); }
-    }
-    if (successCount === queue.length) {
-        await clearQueue();
-        showToast(`✓ Synced ${successCount} attendance records`, 'success');
-        document.getElementById('syncPending').style.display = 'none';
-    } else {
-        showToast(`Synced ${successCount}/${queue.length} records. Retry later.`, 'error');
-        document.getElementById('syncPending').innerText = `⏳ Pending (${queue.length - successCount})`;
-    }
-}
-
-async function manualSync() {
-    if (!isOnline) {
-        showToast('No internet connection', 'error');
-        return;
-    }
-    await syncPendingRecords();
-}
-
-window.addEventListener('online', async () => {
-    isOnline = true;
-    document.getElementById('offlineIndicator').style.display = 'none';
-    showToast('Back online – syncing pending records', 'success');
-    await syncPendingRecords();
-});
-window.addEventListener('offline', () => {
-    isOnline = false;
-    document.getElementById('offlineIndicator').style.display = 'block';
-    showToast('You are offline – attendance will be saved locally', 'error');
-});
-
-window.submitAttendance = async function() {
-    const batchName = document.getElementById('Select').value;
-    const date = document.getElementById('attendanceDate').value;
-    if (!batchName) return showToast('Select batch', 'error');
-    
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    
-    const records = [];
-    for (const type of ['coach', 'student']) {
-        document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
-            records.push({
-                personType: type,
-                studentId: input.dataset.sid || '',
-                date: date,
-                batchName: batchName,
-                personName: input.value,
-                status: input.checked ? 'Present' : 'Absent',
-                ballsTaken: document.getElementById('ballsTaken').value,
-                ballsLeft: document.getElementById('ballsLeft').value
-            });
-        });
-    }
-    
-    if (!isOnline) {
-        await addToQueue({ records, timestamp: Date.now() });
-        showToast('Offline: Attendance saved locally. Will sync when online.', 'success');
-        btn.innerText = "✓ Saved Offline";
-        const pendingCount = (await getAllQueue()).length;
-        if (pendingCount > 0) {
-            document.getElementById('syncPending').innerText = `⏳ Pending (${pendingCount})`;
-            document.getElementById('syncPending').style.display = 'block';
-        }
-        setTimeout(() => {
-            goHome();
-            btn.disabled = false;
-            btn.innerText = "Commit Records";
-        }, 800);
-        return;
-    }
-    
-    btn.innerText = "Syncing...";
-    try {
-        const formData = new URLSearchParams();
-        formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
-        await fetch(WEB_APP_URL, { method: 'POST', body: formData });
-        showToast('Attendance saved ✓', 'success');
-        goHome();
-    } catch (err) {
-        await addToQueue({ records, timestamp: Date.now() });
-        showToast('Network error – saved offline. Will retry later.', 'error');
-        const pendingCount = (await getAllQueue()).length;
-        if (pendingCount > 0) {
-            document.getElementById('syncPending').innerText = `⏳ Pending (${pendingCount})`;
-            document.getElementById('syncPending').style.display = 'block';
-        }
-        goHome();
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "Commit Records";
-    }
-};
-
-async function refreshCurrentRoster() {
-    const batchName = document.getElementById('Select').value;
-    const date = document.getElementById('attendanceDate').value;
-    if (!batchName) {
-        showToast('No batch selected', 'error');
-        return;
-    }
-    const refreshBtn = document.querySelector('.refresh-icon');
-    refreshBtn.style.opacity = '0.5';
-    refreshBtn.disabled = true;
-    try {
-        const cacheKey = getRosterCacheKey(batchName, date);
-        const newData = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
-        renderRosterData(newData);
-        sessionStorage.setItem(cacheKey, JSON.stringify(newData));
-        showToast('Roster refreshed from server', 'success');
-    } catch (err) {
-        showToast('Failed to refresh roster', 'error');
-    } finally {
-        refreshBtn.style.opacity = '1';
-        refreshBtn.disabled = false;
-    }
-}
-
+// ======================== CONFIG ========================
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzOE5N7bji1t3ck7VA1GU-pDZNE0RXY6k1RIWcRibi1npvNHaBRP188Cn5yc6sEy0NZ/exec";
 let cachedBatches = null;
 const BATCHES_STORAGE_KEY = 'coffeeland_batches';
@@ -891,7 +423,7 @@ function setLoading(elementId, isLoading, skeletonCount = 3) {
     if (!el) return;
     if (isLoading) {
         const skeletons = Array(skeletonCount).fill(0).map(() => `<div class="skeleton h-16 w-full mb-2"></div>`).join('');
-        el.innerHTML = `<div class="space-y-2">${skeletons}</div>`;
+        el.innerHTML = `<div class=" space-y-2">${skeletons}</div>`;
     }
 }
 
@@ -906,6 +438,7 @@ function goHome() {
     document.getElementById('editView').classList.add('hidden');
     document.getElementById('globalPlayerSearch').value = '';
     document.getElementById('globalSearchResults').classList.add('hidden');
+    // reset current batch tracking
     currentBatchName = '';
     currentDate = '';
 }
@@ -1030,7 +563,9 @@ function goToBatchAndSearch(batchName, playerName) {
     });
 }
 
+// ======================== ROSTER CACHING WITH AUTO‑UPDATE ========================
 const ROSTER_CACHE_PREFIX = 'roster_';
+
 function getRosterCacheKey(batchName, date) {
     return ROSTER_CACHE_PREFIX + batchName.replace(/\s/g, '_') + '_' + date;
 }
@@ -1048,6 +583,7 @@ async function fetchRoster() {
 
     const cacheKey = getRosterCacheKey(batchName, date);
     const cached = sessionStorage.getItem(cacheKey);
+
     if (cached) {
         try {
             const data = JSON.parse(cached);
@@ -1056,6 +592,7 @@ async function fetchRoster() {
             return;
         } catch(e) { console.warn('Cache parse error', e); }
     }
+
     setLoading('coachesList', true);
     setLoading('studentsList', true);
     await fetchAndRenderRoster(batchName, date, cacheKey);
@@ -1088,9 +625,11 @@ async function fetchAndRenderRoster(batchName, date, cacheKey) {
 async function refreshRosterInBackground(batchName, date, cacheKey) {
     try {
         const newData = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
+        // only update if the batch is still the current one (avoid race conditions)
         if (currentBatchName === batchName && currentDate === date) {
             const oldData = JSON.parse(sessionStorage.getItem(cacheKey) || '{}');
             if (JSON.stringify(oldData) !== JSON.stringify(newData)) {
+                // Update UI with new data (preserve existing toggles? We'll just re-render fully)
                 renderRosterData(newData);
                 showToast('Roster updated with latest changes', 'success');
             }
@@ -1099,8 +638,8 @@ async function refreshRosterInBackground(batchName, date, cacheKey) {
     } catch(e) { console.warn('Background refresh failed', e); }
 }
 
+// ======================== INIT ========================
 async function loades() {
-    await openDB();
     const cached = loadBatchesFromCache();
     if (cached && cached.length) {
         cachedBatches = cached;
@@ -1109,12 +648,6 @@ async function loades() {
         hideLoader();
         refreshBatchesInBackground();
         preloadAllRosters().catch(console.warn);
-        const pending = await getAllQueue();
-        if (pending.length) {
-            document.getElementById('syncPending').innerText = `⏳ Pending (${pending.length})`;
-            document.getElementById('syncPending').style.display = 'block';
-            if (isOnline) syncPendingRecords();
-        }
         return;
     }
     await fetchFreshBatches();
@@ -1169,12 +702,12 @@ function renderGrid(batches) {
         const name = b.name.trim();
         const imageUrl = batchImageMap[name];
         const logoHtml = imageUrl 
-            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="w-full h-auto max-h-28 object-contain rounded-xl mb-1">`
+            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="w-full h-auto max-h-32 object-contain rounded-xl mb-1">`
             : `<div class="text-5xl mb-1">⚽</div>`;
         return `
-            <button onclick='select(${JSON.stringify(name)})' class="batch-tile">
+            <button onclick='select(${JSON.stringify(name)})' class="home-tile glass p-3 rounded-2xl active:scale-95 transition-all focus:ring-2 focus:ring-[var(--primary)] flex flex-col items-center text-center">
                 ${logoHtml}
-                <div class="batch-name">${escapeHtml(name)}</div>
+                <h3 class="font-extrabold text-xs mt-1">${escapeHtml(name)}</h3>
                 <p class="text-[9px] font-bold mt-0.5" style="color: var(--primary);">${b.count} active</p>
             </button>
         `;
@@ -1189,14 +722,14 @@ function renderList(containerId, people, type, label, accentColor) {
         return;
     }
     let html = `
-        <div class="section-header">
+        <div class="flex items-center justify-between mb-2 px-1">
             <div class="flex items-center gap-2">
                 <div class="w-1 h-4 rounded-full" style="background: ${accentColor}"></div>
-                <span class="section-title" style="color: ${accentColor}">${label}</span>
+                <span class="text-[10px] font-black uppercase tracking-wider" style="color: ${accentColor}">${label}</span>
             </div>
-            <div class="section-actions">
-                <button class="btn-all-present" onclick="setAllPresent('${type}', true)">All Present</button>
-                <button class="btn-all-absent" onclick="setAllPresent('${type}', false)">All Absent</button>
+            <div class="flex items-center gap-2">
+                <button onclick="setAllPresent('${type}', true)" class="text-[9px] font-black uppercase px-2 py-1 rounded shadow-sm" style="background: var(--primary); color: #252A34;">All Present</button>
+                <button onclick="setAllPresent('${type}', false)" class="text-[9px] font-black uppercase px-2 py-1 rounded shadow-sm" style="background: var(--danger); color: white;">All Absent</button>
                 <span class="ml-1 text-[9px] font-bold opacity-40">${people.length}</span>
             </div>
         </div>`;
@@ -1204,10 +737,10 @@ function renderList(containerId, people, type, label, accentColor) {
         const isPresent = p.status === 'Present';
         const presentClass = isPresent ? 'present-card' : '';
         return `
-            <div class="attendance-card ${presentClass}" data-name="${escapeAttr(p.name.toLowerCase())}">
-                <div>
-                    <div class="player-name">${escapeHtml(p.name)}</div>
-                    <div class="player-id">${p.studentId || 'STAFF'}</div>
+            <div class="attendance-card panel-solid rounded-xl p-3 flex justify-between items-center transition ${presentClass}" data-name="${escapeAttr(p.name.toLowerCase())}">
+                <div class="min-w-0 flex-1">
+                    <p class="font-semibold text-sm truncate">${escapeHtml(p.name)}</p>
+                    <p class="text-[9px] font-mono uppercase opacity-50">${p.studentId || 'STAFF'}</p>
                 </div>
                 <label class="switch">
                     <input type="checkbox" name="attendance_${type}" value="${escapeAttr(p.name)}" data-sid="${p.studentId || ''}" ${isPresent ? 'checked' : ''} onchange="updateCardBorder(this); vibrate();">
@@ -1278,6 +811,51 @@ async function markHolidayCore(date, isGlobal) {
     } catch (err) {
         showToast('Failed to mark holiday', 'error');
     }
+}
+
+async function submitAttendance() {
+    const batchName = document.getElementById('Select').value;
+    const date = document.getElementById('attendanceDate').value;
+    if (!batchName) return showToast('Select batch', 'error');
+    
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = "✓ Saved!";
+    showToast('Attendance saved locally ✓', 'success');
+    
+    const records = [];
+    for (const type of ['coach', 'student']) {
+        document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
+            records.push({
+                personType: type,
+                studentId: input.dataset.sid || '',
+                date: date,
+                batchName: batchName,
+                personName: input.value,
+                status: input.checked ? 'Present' : 'Absent',
+                ballsTaken: document.getElementById('ballsTaken').value,
+                ballsLeft: document.getElementById('ballsLeft').value
+            });
+        });
+    }
+    
+    (async () => {
+        try {
+            const formData = new URLSearchParams();
+            formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+            await fetch(WEB_APP_URL, { method: 'POST', body: formData });
+            console.log('Background sync completed');
+        } catch (err) {
+            console.error('Background sync failed:', err);
+            showToast('Sync failed – data will be lost on refresh', 'error');
+        }
+    })();
+    
+    setTimeout(() => {
+        goHome();
+        btn.disabled = false;
+        btn.innerText = "Commit Records";
+    }, 800);
 }
 
 function shareSessionSummary() {
