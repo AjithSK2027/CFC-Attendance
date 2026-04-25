@@ -296,11 +296,12 @@
                 </div>
             </div>
 
+            <!-- Ball Inventory with new labels -->
             <div class="glass rounded-2xl p-5">
                 <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">⚽ Ball Inventory</div>
                 <div class="flex items-center justify-between gap-4 mt-2">
                     <div class="flex-1">
-                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Balls Taken (Start)</p>
+                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Balls Taken</p>
                         <div class="flex items-center gap-2">
                             <button onclick="adjustInventory('ballsTaken', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">−</button>
                             <input type="number" id="ballsTaken" value="0" class="w-10 text-center bg-transparent font-black text-base outline-none">
@@ -309,7 +310,7 @@
                     </div>
                     <div class="w-px h-8 bg-[var(--border)]"></div>
                     <div class="flex-1 text-right">
-                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Balls Returned (End)</p>
+                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Balls Returned</p>
                         <div class="flex items-center justify-end gap-2">
                             <button onclick="adjustInventory('ballsLeft', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">−</button>
                             <input type="number" id="ballsLeft" value="0" class="w-10 text-center bg-transparent font-black text-base outline-none">
@@ -371,6 +372,8 @@ let cachedBatches = null;
 const BATCHES_STORAGE_KEY = 'coffeeland_batches';
 let allRostersCache = {};
 let isPreloadingRosters = false;
+let currentBatchName = '';
+let currentDate = '';
 
 const batchImageMap = {
     "Xavier's School": "https://i.ibb.co/R4Scn50S/XS.png",
@@ -420,7 +423,7 @@ function setLoading(elementId, isLoading, skeletonCount = 3) {
     if (!el) return;
     if (isLoading) {
         const skeletons = Array(skeletonCount).fill(0).map(() => `<div class="skeleton h-16 w-full mb-2"></div>`).join('');
-        el.innerHTML = `<div class="space-y-2">${skeletons}</div>`;
+        el.innerHTML = `<div class=" space-y-2">${skeletons}</div>`;
     }
 }
 
@@ -435,6 +438,9 @@ function goHome() {
     document.getElementById('editView').classList.add('hidden');
     document.getElementById('globalPlayerSearch').value = '';
     document.getElementById('globalSearchResults').classList.add('hidden');
+    // reset current batch tracking
+    currentBatchName = '';
+    currentDate = '';
 }
 
 function showEditView() {
@@ -557,7 +563,7 @@ function goToBatchAndSearch(batchName, playerName) {
     });
 }
 
-// ======================== ROSTER CACHING ========================
+// ======================== ROSTER CACHING WITH AUTO‑UPDATE ========================
 const ROSTER_CACHE_PREFIX = 'roster_';
 
 function getRosterCacheKey(batchName, date) {
@@ -568,6 +574,8 @@ async function fetchRoster() {
     const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
     if (!batchName) { showToast('Please select a batch', 'error'); return; }
+    currentBatchName = batchName;
+    currentDate = date;
 
     document.getElementById('lobbyView').classList.add('hidden');
     document.getElementById('commandView').classList.remove('hidden');
@@ -579,16 +587,7 @@ async function fetchRoster() {
     if (cached) {
         try {
             const data = JSON.parse(cached);
-            renderList('coachesList', data.coaches, 'coach', 'Coaches', 'var(--danger)');
-            renderList('studentsList', data.students, 'student', 'Athletes', 'var(--primary)');
-            document.getElementById('ballsTaken').value = data.inventory?.taken || 0;
-            document.getElementById('ballsLeft').value = data.inventory?.left || 0;
-            const btn = document.getElementById('submitBtn');
-            btn.innerText = data.isLogged ? "Update Session Log" : "Commit Records";
-            btn.classList.remove('btn-primary', 'btn-secondary');
-            if (data.isLogged) btn.classList.add('btn-secondary');
-            else btn.classList.add('btn-primary');
-            updateStats();
+            renderRosterData(data);
             refreshRosterInBackground(batchName, date, cacheKey);
             return;
         } catch(e) { console.warn('Cache parse error', e); }
@@ -599,19 +598,23 @@ async function fetchRoster() {
     await fetchAndRenderRoster(batchName, date, cacheKey);
 }
 
+function renderRosterData(data) {
+    renderList('coachesList', data.coaches, 'coach', 'Coaches', 'var(--danger)');
+    renderList('studentsList', data.students, 'student', 'Athletes', 'var(--primary)');
+    document.getElementById('ballsTaken').value = data.inventory?.taken || 0;
+    document.getElementById('ballsLeft').value = data.inventory?.left || 0;
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = data.isLogged ? "Update Session Log" : "Commit Records";
+    btn.classList.remove('btn-primary', 'btn-secondary');
+    if (data.isLogged) btn.classList.add('btn-secondary');
+    else btn.classList.add('btn-primary');
+    updateStats();
+}
+
 async function fetchAndRenderRoster(batchName, date, cacheKey) {
     try {
         const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
-        renderList('coachesList', data.coaches, 'coach', 'Coaches', 'var(--danger)');
-        renderList('studentsList', data.students, 'student', 'Athletes', 'var(--primary)');
-        document.getElementById('ballsTaken').value = data.inventory?.taken || 0;
-        document.getElementById('ballsLeft').value = data.inventory?.left || 0;
-        const btn = document.getElementById('submitBtn');
-        btn.innerText = data.isLogged ? "Update Session Log" : "Commit Records";
-        btn.classList.remove('btn-primary', 'btn-secondary');
-        if (data.isLogged) btn.classList.add('btn-secondary');
-        else btn.classList.add('btn-primary');
-        updateStats();
+        renderRosterData(data);
         sessionStorage.setItem(cacheKey, JSON.stringify(data));
     } catch (err) {
         showToast('Failed to load roster', 'error');
@@ -621,9 +624,17 @@ async function fetchAndRenderRoster(batchName, date, cacheKey) {
 
 async function refreshRosterInBackground(batchName, date, cacheKey) {
     try {
-        const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
-        sessionStorage.setItem(cacheKey, JSON.stringify(data));
-        console.log('Background roster refresh complete');
+        const newData = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
+        // only update if the batch is still the current one (avoid race conditions)
+        if (currentBatchName === batchName && currentDate === date) {
+            const oldData = JSON.parse(sessionStorage.getItem(cacheKey) || '{}');
+            if (JSON.stringify(oldData) !== JSON.stringify(newData)) {
+                // Update UI with new data (preserve existing toggles? We'll just re-render fully)
+                renderRosterData(newData);
+                showToast('Roster updated with latest changes', 'success');
+            }
+        }
+        sessionStorage.setItem(cacheKey, JSON.stringify(newData));
     } catch(e) { console.warn('Background refresh failed', e); }
 }
 
@@ -882,7 +893,7 @@ function shareSessionSummary() {
     summary += `%0A👨‍🏫 *COACHES PRESENT*%0A`;
     summary += `${presentCoaches.length ? presentCoaches.join(', ') : 'None'}%0A`;
     summary += `━━━━━━━━━━━━━━━━━━━━%0A`;
-    summary += `⚽ *Ball Inventory*: ${ballsTaken} taken / ${ballsLeft} left%0A`;
+    summary += `⚽ *Ball Inventory*: ${ballsTaken} taken / ${ballsLeft} returned%0A`;
     summary += `📊 *Attendance Rate:* ${Math.round((presentAthletes.length / athletes.length) * 100)}%%%0A`;
     summary += `%0A🔗 *Coffeeland FC Manager*`;
     let number = whatsappNumber.replace(/[\s\-]/g, '');
