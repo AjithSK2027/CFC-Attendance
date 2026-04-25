@@ -300,7 +300,7 @@
                 <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">⚽ Ball Inventory</div>
                 <div class="flex items-center justify-between gap-4 mt-2">
                     <div class="flex-1">
-                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Balls Taken (Start)</p>
+                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Taken (Start)</p>
                         <div class="flex items-center gap-2">
                             <button onclick="adjustInventory('ballsTaken', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">−</button>
                             <input type="number" id="ballsTaken" value="0" class="w-10 text-center bg-transparent font-black text-base outline-none">
@@ -309,7 +309,7 @@
                     </div>
                     <div class="w-px h-8 bg-[var(--border)]"></div>
                     <div class="flex-1 text-right">
-                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Balls Returned (End)</p>
+                        <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Left (End)</p>
                         <div class="flex items-center justify-end gap-2">
                             <button onclick="adjustInventory('ballsLeft', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">−</button>
                             <input type="number" id="ballsLeft" value="0" class="w-10 text-center bg-transparent font-black text-base outline-none">
@@ -557,6 +557,77 @@ function goToBatchAndSearch(batchName, playerName) {
     });
 }
 
+// ======================== ROSTER CACHING ========================
+const ROSTER_CACHE_PREFIX = 'roster_';
+
+function getRosterCacheKey(batchName, date) {
+    return ROSTER_CACHE_PREFIX + batchName.replace(/\s/g, '_') + '_' + date;
+}
+
+async function fetchRoster() {
+    const batchName = document.getElementById('Select').value;
+    const date = document.getElementById('attendanceDate').value;
+    if (!batchName) { showToast('Please select a batch', 'error'); return; }
+
+    document.getElementById('lobbyView').classList.add('hidden');
+    document.getElementById('commandView').classList.remove('hidden');
+    document.getElementById('holidayBtnDate').innerText = `(${new Date(date).toLocaleDateString('en-GB', {day:'numeric', month:'short'})})`;
+
+    const cacheKey = getRosterCacheKey(batchName, date);
+    const cached = sessionStorage.getItem(cacheKey);
+
+    if (cached) {
+        try {
+            const data = JSON.parse(cached);
+            renderList('coachesList', data.coaches, 'coach', 'Coaches', 'var(--danger)');
+            renderList('studentsList', data.students, 'student', 'Athletes', 'var(--primary)');
+            document.getElementById('ballsTaken').value = data.inventory?.taken || 0;
+            document.getElementById('ballsLeft').value = data.inventory?.left || 0;
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = data.isLogged ? "Update Session Log" : "Commit Records";
+            btn.classList.remove('btn-primary', 'btn-secondary');
+            if (data.isLogged) btn.classList.add('btn-secondary');
+            else btn.classList.add('btn-primary');
+            updateStats();
+            refreshRosterInBackground(batchName, date, cacheKey);
+            return;
+        } catch(e) { console.warn('Cache parse error', e); }
+    }
+
+    setLoading('coachesList', true);
+    setLoading('studentsList', true);
+    await fetchAndRenderRoster(batchName, date, cacheKey);
+}
+
+async function fetchAndRenderRoster(batchName, date, cacheKey) {
+    try {
+        const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
+        renderList('coachesList', data.coaches, 'coach', 'Coaches', 'var(--danger)');
+        renderList('studentsList', data.students, 'student', 'Athletes', 'var(--primary)');
+        document.getElementById('ballsTaken').value = data.inventory?.taken || 0;
+        document.getElementById('ballsLeft').value = data.inventory?.left || 0;
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = data.isLogged ? "Update Session Log" : "Commit Records";
+        btn.classList.remove('btn-primary', 'btn-secondary');
+        if (data.isLogged) btn.classList.add('btn-secondary');
+        else btn.classList.add('btn-primary');
+        updateStats();
+        sessionStorage.setItem(cacheKey, JSON.stringify(data));
+    } catch (err) {
+        showToast('Failed to load roster', 'error');
+        document.getElementById('coachesList').innerHTML = `<div class="text-center py-8 text-rose-500 text-xs font-bold">⚠️ Error loading data</div>`;
+    }
+}
+
+async function refreshRosterInBackground(batchName, date, cacheKey) {
+    try {
+        const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
+        sessionStorage.setItem(cacheKey, JSON.stringify(data));
+        console.log('Background roster refresh complete');
+    } catch(e) { console.warn('Background refresh failed', e); }
+}
+
+// ======================== INIT ========================
 async function loades() {
     const cached = loadBatchesFromCache();
     if (cached && cached.length) {
@@ -620,45 +691,16 @@ function renderGrid(batches) {
         const name = b.name.trim();
         const imageUrl = batchImageMap[name];
         const logoHtml = imageUrl 
-            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="w-full h-auto max-h-64 object-contain rounded-xl mb-2" style="background: transparent;">`
-            : `<div class="text-6xl mb-2">⚽</div>`;
+            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="w-full h-auto max-h-32 object-contain rounded-xl mb-1">`
+            : `<div class="text-5xl mb-1">⚽</div>`;
         return `
-            <button onclick='select(${JSON.stringify(name)})' class="home-tile glass p-4 rounded-2xl active:scale-95 transition-all focus:ring-2 focus:ring-[var(--primary)] flex flex-col items-center text-center">
+            <button onclick='select(${JSON.stringify(name)})' class="home-tile glass p-3 rounded-2xl active:scale-95 transition-all focus:ring-2 focus:ring-[var(--primary)] flex flex-col items-center text-center">
                 ${logoHtml}
-                <h3 class="font-extrabold text-sm mt-2">${escapeHtml(name)}</h3>
-                <p class="text-[10px] font-bold mt-1" style="color: var(--primary);">${b.count} active</p>
+                <h3 class="font-extrabold text-xs mt-1">${escapeHtml(name)}</h3>
+                <p class="text-[9px] font-bold mt-0.5" style="color: var(--primary);">${b.count} active</p>
             </button>
         `;
     }).join('');
-}
-
-async function fetchRoster() {
-    const batchName = document.getElementById('Select').value;
-    const date = document.getElementById('attendanceDate').value;
-    if (!batchName) { showToast('Please select a batch', 'error'); return; }
-    document.getElementById('lobbyView').classList.add('hidden');
-    document.getElementById('commandView').classList.remove('hidden');
-    document.getElementById('holidayBtnDate').innerText = `(${new Date(date).toLocaleDateString('en-GB', {day:'numeric', month:'short'})})`;
-    
-    setLoading('coachesList', true);
-    setLoading('studentsList', true);
-    
-    try {
-        const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
-        renderList('coachesList', data.coaches, 'coach', 'Coaches', 'var(--danger)');
-        renderList('studentsList', data.students, 'student', 'Athletes', 'var(--primary)');
-        document.getElementById('ballsTaken').value = data.inventory?.taken || 0;
-        document.getElementById('ballsLeft').value = data.inventory?.left || 0;
-        const btn = document.getElementById('submitBtn');
-        btn.innerText = data.isLogged ? "Update Session Log" : "Commit Records";
-        btn.classList.remove('btn-primary', 'btn-secondary');
-        if (data.isLogged) btn.classList.add('btn-secondary');
-        else btn.classList.add('btn-primary');
-        updateStats();
-    } catch (err) {
-        showToast('Failed to load roster', 'error');
-        document.getElementById('coachesList').innerHTML = `<div class="text-center py-8 text-rose-500 text-xs font-bold">⚠️ Error loading data</div>`;
-    }
 }
 
 function renderList(containerId, people, type, label, accentColor) {
