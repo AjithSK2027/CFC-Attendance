@@ -8,14 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        body {
-            padding: 0;
-            margin: 0;
-            font-family: 'Plus Jakarta Sans', 'Poppins', 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            transition: background 0.2s ease;
-        }
+        body { padding: 0; margin: 0; font-family: 'Plus Jakarta Sans', 'Poppins', 'Inter', sans-serif; background: var(--bg); color: var(--text); transition: background 0.2s ease; }
 
         :root {
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
@@ -23,8 +16,6 @@
             --shadow-lg: 0 20px 35px -8px rgba(0,0,0,0.15), 0 4px 6px -2px rgba(0,0,0,0.05);
             --shadow-xl: 0 25px 40px -12px rgba(0,0,0,0.25);
         }
-
-        /* Light mode */
         :root {
             --bg: #EAEAEA;
             --surface: rgba(255,255,255,0.85);
@@ -42,8 +33,6 @@
             --danger-hover: #e02454;
             --card-shadow: var(--shadow-md);
         }
-
-        /* Dark mode */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg: #252A34;
@@ -64,7 +53,6 @@
             }
         }
 
-        /* ========= CUSTOM SPLASH LOADER (your design) ========= */
         .main-fader {
             width: 100%;
             height: 100vh;
@@ -79,25 +67,14 @@
             justify-content: center;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
-        .main-fader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        .loader {
-            text-align: center;
-        }
-        .loader svg {
-            height: 120px;
-            display: block;
-            margin: 0 auto;
-        }
+        .main-fader.hidden { opacity: 0; visibility: hidden; }
+        .loader svg { height: 120px; display: block; margin: 0 auto; }
         .loader svg path {
             animation-duration: 1s;
             animation-name: pulse;
             animation-iteration-count: infinite;
-            fill: #08D9D6;  /* use your primary cyan */
+            fill: #08D9D6;
         }
-        /* staggered delays for the 8 paths (adjust if you have fewer) */
         .loader svg path:nth-child(1) { animation-delay: -0.125s; }
         .loader svg path:nth-child(2) { animation-delay: -0.25s; }
         .loader svg path:nth-child(3) { animation-delay: -0.375s; }
@@ -106,25 +83,14 @@
         .loader svg path:nth-child(6) { animation-delay: -0.75s; }
         .loader svg path:nth-child(7) { animation-delay: -0.875s; }
         .loader svg path:nth-child(8) { animation-delay: -1s; }
-
         @keyframes pulse {
             0%   { opacity: 0.1; }
             30%  { opacity: 0.8; }
             100% { opacity: 0.1; }
         }
-        /* ================================================= */
 
-        .glass {
-            background: var(--surface);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            box-shadow: var(--card-shadow);
-        }
-        .panel-solid {
-            background: var(--surface-strong);
-            border: 1px solid var(--border);
-            box-shadow: var(--card-shadow);
-        }
+        .glass { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
+        .panel-solid { background: var(--surface-strong); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
 
         .switch {
             position: relative;
@@ -132,12 +98,7 @@
             width: 52px;
             height: 28px;
         }
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-            position: absolute;
-        }
+        .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
         .slider {
             position: absolute;
             cursor: pointer;
@@ -162,29 +123,18 @@
             border-radius: 50%;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
-        input:checked + .slider {
-            background-color: var(--primary);
-        }
-        input:checked + .slider:before {
-            transform: translateX(24px);
-        }
-        input:focus-visible + .slider {
-            outline: 2px solid var(--primary);
-            outline-offset: 2px;
-        }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        .slider:active { transform: scale(0.95); }
+        .switch:active .slider:before { transform: scale(0.9); }
 
         .attendance-card {
             border-left: 4px solid var(--danger);
             transition: all 0.2s;
             box-shadow: var(--shadow-sm);
         }
-        .attendance-card.present-card {
-            border-left-color: var(--primary);
-        }
-        .attendance-card:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
+        .attendance-card.present-card { border-left-color: var(--primary); }
+        .attendance-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
 
         .field {
             background: var(--surface-strong);
@@ -263,55 +213,38 @@
         .btn-primary:active, .btn-secondary:active, .btn-danger:active {
             transform: translateY(1px);
         }
-        .btn-primary {
-            background: var(--primary);
-            color: #252A34;
-            font-weight: 800;
-        }
-        .btn-primary:hover {
-            background: var(--primary-hover);
-        }
-        .btn-secondary {
-            background: var(--secondary);
-            color: #252A34;
-            font-weight: 800;
-        }
-        .btn-secondary:hover {
-            background: var(--secondary-hover);
-        }
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-            font-weight: 800;
-        }
-        .btn-danger:hover {
-            background: var(--danger-hover);
-        }
+        .btn-primary { background: var(--primary); color: #252A34; font-weight: 800; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: var(--secondary); color: #252A34; font-weight: 800; }
+        .btn-secondary:hover { background: var(--secondary-hover); }
+        .btn-danger { background: var(--danger); color: white; font-weight: 800; }
+        .btn-danger:hover { background: var(--danger-hover); }
 
         .home-tile {
             transition: all 0.2s;
             box-shadow: var(--card-shadow);
         }
-        .home-tile:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
+        .home-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-xl); }
+        .home-tile img { max-width: 100%; height: auto; background: transparent; }
+
+        /* Global search results */
+        .search-result-item {
+            transition: all 0.15s;
         }
-        .home-tile img {
-            max-width: 100%;
-            height: auto;
-            background: transparent;
+        .search-result-item:hover {
+            transform: translateX(4px);
+            background: var(--primary);
+            color: #252A34;
         }
     </style>
 </head>
 <body>
 
-    <!-- Improved splash loader with dark overlay & animated SVG -->
     <div id="splashLoader" class="main-fader">
         <div class="loader">
             <svg viewBox="0 0 164.83 151.5" xmlns="http://www.w3.org/2000/svg">
-                <!-- Create 8 paths from the original shape for staggered animation -->
                 <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
-                <!-- Duplicate same path 7 times for staggered effect (will be identical but opacity animation works) -->
+                <!-- duplicate 7 more for stagger -->
                 <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
                 <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
                 <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
@@ -328,7 +261,7 @@
 
     <header class="sticky top-0 z-40 border-b border-[var(--border)] backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg) 80%, transparent); box-shadow: var(--shadow-sm);">
         <div class="px-5 py-4 flex items-center justify-between">
-            <button onclick="goHome()" class="focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-xl" aria-label="Go to dashboard">
+            <button onclick="goHome()" class="focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-xl">
                 <div class="text-base font-extrabold tracking-tight leading-tight">
                     Coffeeland FC<br>
                     <span style="color: var(--primary);" class="text-sm">Attendance Manager</span>
@@ -339,17 +272,22 @@
     </header>
 
     <main class="px-5 py-5 max-w-2xl mx-auto space-y-6">
-        <!-- LobbyView, commandView, editView same as your final version -->
+        <!-- LobbyView with global player search -->
         <section id="lobbyView" class="space-y-5">
             <div class="glass rounded-2xl p-5 space-y-4">
                 <select id="homeSelect" onchange="select(this.value)" class="field w-full cursor-pointer">
                     <option value="">⚡ Quick Select Batch ...</option>
                 </select>
+                <!-- Global player search input -->
+                <input type="text" id="globalPlayerSearch" oninput="globalSearchPlayers()" placeholder="🔍 Search any player or coach across all batches..." class="field w-full" autocomplete="off">
+                <!-- Search results container -->
+                <div id="globalSearchResults" class="hidden space-y-2 mt-2"></div>
                 <button onclick="markGlobalHoliday()" class="w-full rounded-xl py-3.5 text-xs font-black uppercase transition active:scale-95" style="background: rgba(255,46,99,0.15); color: var(--danger); border: 1px solid var(--danger); box-shadow: var(--shadow-sm);">🌴 Global Holiday (Today)</button>
             </div>
             <div id="Grid" class="grid grid-cols-2 gap-4"></div>
         </section>
 
+        <!-- Command / Attendance View (same as before) -->
         <section id="commandView" class="hidden space-y-6">
             <div class="grid grid-cols-2 gap-3">
                 <div class="glass rounded-2xl p-4 border-l-4" style="border-left-color: var(--primary);">
@@ -361,7 +299,6 @@
                     <div class="text-3xl font-extrabold"><span id="coachPresent">0</span><span class="text-sm" style="color: var(--text-muted);"> / <span id="coachTotal">0</span></span></div>
                 </div>
             </div>
-
             <div class="glass rounded-2xl p-5">
                 <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">⚽ Ball Inventory</div>
                 <div class="flex items-center justify-between gap-4 mt-2">
@@ -384,19 +321,14 @@
                     </div>
                 </div>
             </div>
-
             <button onclick="markHoliday()" class="w-full glass rounded-xl py-3.5 text-xs font-black transition active:scale-95" style="color: var(--danger); border: 1px solid var(--danger); background: rgba(255,46,99,0.1); box-shadow: var(--shadow-sm);">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
-
             <div class="flex gap-3">
                 <select id="Select" onchange="fetchRoster()" class="field flex-1"></select>
                 <input type="date" id="attendanceDate" onchange="fetchRoster()" class="field w-[40%]">
             </div>
-
-            <input type="text" id="rosterSearch" oninput="applyRosterSearch()" placeholder="🔍 Search by name..." class="field w-full">
-
+            <input type="text" id="rosterSearch" oninput="applyRosterSearch()" placeholder="🔍 Search player by name..." class="field w-full">
             <div id="coachesList" class="space-y-2"></div>
             <div id="studentsList" class="space-y-3"></div>
-
             <div class="glass rounded-2xl p-4 flex items-center gap-3">
                 <div class="flex-1">
                     <label class="text-[9px] font-black uppercase opacity-60">📱 WhatsApp Number</label>
@@ -404,13 +336,13 @@
                 </div>
                 <button onclick="saveWhatsAppNumber()" class="btn-primary px-4 py-2 rounded-xl text-xs font-bold">Save</button>
             </div>
-
             <div class="flex gap-3">
                 <button onclick="submitAttendance()" id="submitBtn" class="flex-1 btn-primary py-4 rounded-xl uppercase text-sm transition active:scale-[0.98]">Commit Records</button>
                 <button onclick="shareSessionSummary()" id="shareBtn" class="btn-secondary py-4 px-5 rounded-xl text-sm transition active:scale-[0.98] flex items-center justify-center gap-1">📤 WhatsApp</button>
             </div>
         </section>
 
+        <!-- Edit Logs View -->
         <section id="editView" class="hidden space-y-5">
             <div class="flex justify-between items-center">
                 <h2 class="text-xs font-black uppercase" style="color: var(--text-muted);">📋 Log Editor</h2>
@@ -434,6 +366,8 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzOE5N7bji1t3ck7VA1GU-pDZNE0RXY6k1RIWcRibi1npvNHaBRP188Cn5yc6sEy0NZ/exec";
 let cachedBatches = null;
 const BATCHES_STORAGE_KEY = 'coffeeland_batches';
+let allRostersCache = {}; // { batchName: { coaches: [], students: [] } }
+let isPreloadingRosters = false;
 
 const batchImageMap = {
     "Xavier's School": "https://i.ibb.co/R4Scn50S/XS.png",
@@ -457,6 +391,12 @@ function saveWhatsAppNumber() {
     localStorage.setItem('whatsappNumber', num);
     whatsappNumber = num;
     showToast('WhatsApp number saved', 'success');
+}
+
+function vibrate() {
+    if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(10);
+    }
 }
 
 function showToast(message, type = 'info') {
@@ -490,6 +430,10 @@ function goHome() {
     document.getElementById('lobbyView').classList.remove('hidden');
     document.getElementById('commandView').classList.add('hidden');
     document.getElementById('editView').classList.add('hidden');
+    // clear global search results when returning home
+    const searchInput = document.getElementById('globalPlayerSearch');
+    if (searchInput) searchInput.value = '';
+    document.getElementById('globalSearchResults').classList.add('hidden');
 }
 
 function showEditView() {
@@ -534,6 +478,94 @@ function loadBatchesFromCache() {
     return null;
 }
 
+// Preload all rosters for current date (used for global search)
+async function preloadAllRosters() {
+    if (isPreloadingRosters) return;
+    isPreloadingRosters = true;
+    const date = new Date().toISOString().slice(0,10);
+    const batches = cachedBatches || [];
+    const promises = batches.map(async (batch) => {
+        const batchName = batch.name.trim();
+        try {
+            const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
+            allRostersCache[batchName] = {
+                coaches: data.coaches || [],
+                students: data.students || []
+            };
+        } catch(e) {
+            console.warn(`Failed to preload roster for ${batchName}`, e);
+            allRostersCache[batchName] = { coaches: [], students: [] };
+        }
+    });
+    await Promise.all(promises);
+    isPreloadingRosters = false;
+}
+
+// Global search across all preloaded rosters
+async function globalSearchPlayers() {
+    const query = document.getElementById('globalPlayerSearch').value.trim().toLowerCase();
+    const resultsDiv = document.getElementById('globalSearchResults');
+    if (!query) {
+        resultsDiv.classList.add('hidden');
+        resultsDiv.innerHTML = '';
+        return;
+    }
+    // If rosters not preloaded yet, trigger preload (but show loading)
+    if (Object.keys(allRostersCache).length === 0 && cachedBatches && cachedBatches.length) {
+        resultsDiv.classList.remove('hidden');
+        resultsDiv.innerHTML = '<div class="text-center py-4 text-xs opacity-60">Loading all players...</div>';
+        await preloadAllRosters();
+    }
+    const matches = [];
+    for (const [batchName, roster] of Object.entries(allRostersCache)) {
+        // search coaches
+        roster.coaches.forEach(coach => {
+            if (coach.name.toLowerCase().includes(query)) {
+                matches.push({ name: coach.name, batch: batchName, type: 'Coach', studentId: coach.studentId });
+            }
+        });
+        // search students
+        roster.students.forEach(student => {
+            if (student.name.toLowerCase().includes(query)) {
+                matches.push({ name: student.name, batch: batchName, type: 'Athlete', studentId: student.studentId });
+            }
+        });
+    }
+    if (matches.length === 0) {
+        resultsDiv.innerHTML = '<div class="text-center py-4 text-xs opacity-60">No players found</div>';
+        resultsDiv.classList.remove('hidden');
+        return;
+    }
+    // display top 10 results
+    const html = matches.slice(0, 10).map(m => `
+        <div onclick="goToBatchAndSearch('${escapeHtml(m.batch)}', '${escapeHtml(m.name)}')" class="search-result-item glass p-3 rounded-xl cursor-pointer flex justify-between items-center">
+            <div>
+                <p class="font-bold text-sm">${escapeHtml(m.name)}</p>
+                <p class="text-[9px] opacity-60">${escapeHtml(m.batch)} • ${m.type}</p>
+            </div>
+            <span class="text-primary text-xs">→</span>
+        </div>
+    `).join('');
+    resultsDiv.innerHTML = html;
+    resultsDiv.classList.remove('hidden');
+}
+
+function goToBatchAndSearch(batchName, playerName) {
+    // select batch in dropdown and go to attendance view
+    const selectEl = document.getElementById('Select');
+    selectEl.value = batchName;
+    fetchRoster().then(() => {
+        // after roster loads, set search input and filter
+        const searchInput = document.getElementById('rosterSearch');
+        searchInput.value = playerName;
+        applyRosterSearch();
+        // hide global search results
+        document.getElementById('globalSearchResults').classList.add('hidden');
+        document.getElementById('globalPlayerSearch').value = '';
+    });
+}
+
+// ======================== INIT ========================
 async function loades() {
     const cached = loadBatchesFromCache();
     if (cached && cached.length) {
@@ -542,6 +574,8 @@ async function loades() {
         populateBatchDropdowns(cachedBatches);
         hideLoader();
         refreshBatchesInBackground();
+        // preload rosters in background for global search
+        preloadAllRosters().catch(console.warn);
         return;
     }
     await fetchFreshBatches();
@@ -555,6 +589,7 @@ async function fetchFreshBatches() {
         populateBatchDropdowns(data.batches);
         saveBatchesToCache(data.batches);
         hideLoader();
+        preloadAllRosters().catch(console.warn);
     } catch (err) {
         console.error(err);
         showToast('Failed to load batches, refresh page', 'error');
@@ -607,6 +642,7 @@ function renderGrid(batches) {
     }).join('');
 }
 
+// ======================== ROSTER FETCH (always fresh) ========================
 async function fetchRoster() {
     const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
@@ -665,7 +701,7 @@ function renderList(containerId, people, type, label, accentColor) {
                     <p class="text-[9px] font-mono uppercase opacity-50">${p.studentId || 'STAFF'}</p>
                 </div>
                 <label class="switch">
-                    <input type="checkbox" name="attendance_${type}" value="${escapeAttr(p.name)}" data-sid="${p.studentId || ''}" ${isPresent ? 'checked' : ''} onchange="updateCardBorder(this)">
+                    <input type="checkbox" name="attendance_${type}" value="${escapeAttr(p.name)}" data-sid="${p.studentId || ''}" ${isPresent ? 'checked' : ''} onchange="updateCardBorder(this); vibrate();">
                     <div class="slider"></div>
                 </label>
             </div>
@@ -712,6 +748,7 @@ function applyRosterSearch() {
     updateStats();
 }
 
+// ======================== MARK HOLIDAY ========================
 async function markGlobalHoliday() { 
     const date = new Date().toISOString().slice(0,10);
     await markHolidayCore(date, true);
@@ -735,6 +772,7 @@ async function markHolidayCore(date, isGlobal) {
     }
 }
 
+// ======================== OPTIMISTIC ATTENDANCE SAVE ========================
 async function submitAttendance() {
     const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
@@ -791,7 +829,6 @@ function shareSessionSummary() {
         showToast('Please set WhatsApp number first', 'error');
         return;
     }
-
     const athletes = [];
     const coaches = [];
     document.querySelectorAll('input[name="attendance_student"]').forEach(input => {
@@ -800,15 +837,12 @@ function shareSessionSummary() {
     document.querySelectorAll('input[name="attendance_coach"]').forEach(input => {
         coaches.push({ name: input.value, isPresent: input.checked });
     });
-
     const presentAthletes = athletes.filter(a => a.isPresent).map(a => a.name);
     const absentAthletes = athletes.filter(a => !a.isPresent).map(a => a.name);
     const presentCoaches = coaches.filter(c => c.isPresent).map(c => c.name);
-
     const ballsTaken = document.getElementById('ballsTaken').value;
     const ballsLeft = document.getElementById('ballsLeft').value;
     const formattedDate = new Date(date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
     let summary = `🏆 *Coffeeland FC Attendance Report*%0A`;
     summary += `📅 *Date:* ${formattedDate}%0A`;
     summary += `⚽ *Batch:* ${batchName}%0A`;
@@ -822,13 +856,13 @@ function shareSessionSummary() {
     summary += `⚽ *Ball Inventory*: ${ballsTaken} taken / ${ballsLeft} left%0A`;
     summary += `📊 *Attendance Rate:* ${Math.round((presentAthletes.length / athletes.length) * 100)}%%%0A`;
     summary += `%0A🔗 *Coffeeland FC Manager*`;
-
     let number = whatsappNumber.replace(/[\s\-]/g, '');
     if (!number.startsWith('+')) number = '+' + number;
     window.open(`https://wa.me/${number}?text=${summary}`, '_blank');
     showToast('Opening WhatsApp...', 'success');
 }
 
+// ======================== EDIT LOGS ========================
 async function loadDailyLogs() {
     const date = document.getElementById('editDate').value;
     const batch = document.getElementById('editBatchSelect').value;
