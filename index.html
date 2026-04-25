@@ -543,7 +543,7 @@ function renderGrid(batches) {
         const name = b.name.trim();
         const imageUrl = batchImageMap[name];
         const logoHtml = imageUrl 
-            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="w-full h-auto max-h-28 object-contain rounded-xl mb-2" style="background: transparent;">`
+            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="w-full h-auto max-h-48 object-contain rounded-xl mb-2" style="background: transparent;">`
             : `<div class="text-6xl mb-2">⚽</div>`;
         return `
             <button onclick='select(${JSON.stringify(name)})' class="home-tile glass p-4 rounded-2xl active:scale-95 transition-all focus:ring-2 focus:ring-[var(--primary)] flex flex-col items-center text-center">
