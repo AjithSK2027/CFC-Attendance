@@ -9,49 +9,51 @@
     <style>
         * { -webkit-tap-highlight-color: transparent; }
 
-        /* Light mode (default) */
+        /* Enhanced shadows - modern, deep */
         :root {
-            --bg: #f8fafc;
-            --surface: rgba(255,255,255,0.75);
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.02);
+            --shadow-lg: 0 20px 35px -8px rgba(0,0,0,0.15), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-xl: 0 25px 40px -12px rgba(0,0,0,0.25);
+        }
+
+        /* Light mode (default) with new palette */
+        :root {
+            --bg: #EAEAEA;
+            --surface: rgba(255,255,255,0.85);
             --surface-strong: #ffffff;
-            --text: #001219;
-            --text-muted: #005f73;
-            --border: rgba(0,18,25,0.08);
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
-            --shadow-md: 0 8px 28px -8px rgba(0,0,0,0.12);
-            --primary: #ee9b00;
-            --primary-hover: #ca6702;
-            --secondary: #0a9396;
-            --secondary-hover: #005f73;
-            --accent-bg: #94d2bd;
-            --accent-text: #001219;
-            --success: #e9d8a6;
-            --danger: #bb3e03;
-            --danger-hover: #ae2012;
-            --danger-dark: #9b2226;
+            --text: #252A34;
+            --text-muted: #252A34;
+            --border: rgba(37,42,52,0.08);
+            --primary: #08D9D6;
+            --primary-hover: #06b6b3;
+            --secondary: #08D9D6;
+            --secondary-hover: #06b6b3;
+            --accent-bg: #08D9D6;
+            --accent-text: #252A34;
+            --danger: #FF2E63;
+            --danger-hover: #e02454;
+            --card-shadow: var(--shadow-md);
         }
 
         /* Dark mode */
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg: #001219;
-                --surface: rgba(0,18,25,0.7);
-                --surface-strong: #00212b;
-                --text: #e9d8a6;
-                --text-muted: #94d2bd;
-                --border: rgba(233,216,166,0.1);
-                --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
-                --shadow-md: 0 8px 28px -8px rgba(0,0,0,0.6);
-                --primary: #ee9b00;
-                --primary-hover: #ca6702;
-                --secondary: #0a9396;
-                --secondary-hover: #94d2bd;
-                --accent-bg: #0a9396;
-                --accent-text: #001219;
-                --success: #ca6702;
-                --danger: #bb3e03;
-                --danger-hover: #ae2012;
-                --danger-dark: #9b2226;
+                --bg: #252A34;
+                --surface: rgba(37,42,52,0.8);
+                --surface-strong: #1e2229;
+                --text: #EAEAEA;
+                --text-muted: #08D9D6;
+                --border: rgba(8,217,214,0.15);
+                --primary: #08D9D6;
+                --primary-hover: #06b6b3;
+                --secondary: #08D9D6;
+                --secondary-hover: #06b6b3;
+                --accent-bg: #08D9D6;
+                --accent-text: #252A34;
+                --danger: #FF2E63;
+                --danger-hover: #e02454;
+                --card-shadow: 0 12px 28px -8px rgba(0,0,0,0.5);
             }
         }
 
@@ -62,19 +64,20 @@
             transition: background 0.2s ease;
         }
 
+        /* Glassmorphic panels with strong shadow */
         .glass {
             background: var(--surface);
             backdrop-filter: blur(12px);
             border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--card-shadow);
         }
         .panel-solid {
             background: var(--surface-strong);
             border: 1px solid var(--border);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--card-shadow);
         }
 
-        /* Custom toggle using new palette */
+        /* Toggle design */
         .switch {
             position: relative;
             display: inline-block;
@@ -94,9 +97,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0,95,115,0.3);
+            background-color: var(--danger);
             transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 34px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
         }
         .slider:before {
             position: absolute;
@@ -111,7 +115,7 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
         input:checked + .slider {
-            background-color: var(--secondary);
+            background-color: var(--primary);
         }
         input:checked + .slider:before {
             transform: translateX(24px);
@@ -119,6 +123,20 @@
         input:focus-visible + .slider {
             outline: 2px solid var(--primary);
             outline-offset: 2px;
+        }
+
+        /* Attendance card border + shadow */
+        .attendance-card {
+            border-left: 4px solid var(--danger);
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+        .attendance-card.present-card {
+            border-left-color: var(--primary);
+        }
+        .attendance-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         .field {
@@ -130,13 +148,15 @@
             font-size: 0.875rem;
             font-weight: 500;
             transition: all 0.15s;
+            box-shadow: var(--shadow-sm);
         }
         .field:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(238,155,0,0.2);
+            box-shadow: 0 0 0 3px rgba(8,217,214,0.2), var(--shadow-sm);
         }
 
+        /* Toast */
         .toast-container {
             position: fixed;
             bottom: 24px;
@@ -155,7 +175,7 @@
             border-left: 4px solid;
             border-radius: 1rem;
             padding: 12px 16px;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-lg);
             font-size: 0.875rem;
             font-weight: 500;
             animation: slideUp 0.2s ease;
@@ -186,18 +206,29 @@
             margin: 0;
         }
 
+        /* Buttons with shadow & hover lift */
+        .btn-primary, .btn-secondary, .btn-danger {
+            transition: all 0.2s;
+            box-shadow: var(--shadow-md);
+        }
+        .btn-primary:hover, .btn-secondary:hover, .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .btn-primary:active, .btn-secondary:active, .btn-danger:active {
+            transform: translateY(1px);
+        }
         .btn-primary {
             background: var(--primary);
-            color: var(--accent-text);
+            color: #252A34;
             font-weight: 800;
-            transition: all 0.15s;
         }
         .btn-primary:hover {
             background: var(--primary-hover);
         }
         .btn-secondary {
             background: var(--secondary);
-            color: white;
+            color: #252A34;
             font-weight: 800;
         }
         .btn-secondary:hover {
@@ -210,6 +241,21 @@
         }
         .btn-danger:hover {
             background: var(--danger-hover);
+        }
+
+        /* Home tile styling: fill tile with logo, bigger, shadow */
+        .home-tile {
+            transition: all 0.2s;
+            box-shadow: var(--card-shadow);
+        }
+        .home-tile:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        .home-tile img {
+            max-width: 100%;
+            height: auto;
+            background: transparent; /* ensure no background */
         }
     </style>
 </head>
@@ -226,7 +272,7 @@
 
     <div id="toastContainer" class="toast-container"></div>
 
-    <header class="sticky top-0 z-40 border-b border-[var(--border)] backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg) 80%, transparent);">
+    <header class="sticky top-0 z-40 border-b border-[var(--border)] backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg) 80%, transparent); box-shadow: var(--shadow-sm);">
         <div class="px-5 py-4 flex items-center justify-between">
             <button onclick="goHome()" class="focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-xl" aria-label="Go to dashboard">
                 <div class="text-base font-extrabold tracking-tight leading-tight">
@@ -234,7 +280,7 @@
                     <span style="color: var(--primary);" class="text-sm">Attendance Manager</span>
                 </div>
             </button>
-            <button onclick="showEditView()" class="glass text-xs font-bold px-4 py-2.5 rounded-2xl transition active:scale-95" style="color: var(--secondary);">📝 Edit Logs</button>
+            <button onclick="showEditView()" class="glass text-xs font-bold px-4 py-2.5 rounded-2xl transition active:scale-95" style="color: var(--primary);">📝 Edit Logs</button>
         </div>
     </header>
 
@@ -244,18 +290,18 @@
                 <select id="homeSelect" onchange="select(this.value)" class="field w-full cursor-pointer">
                     <option value="">⚡ Quick Select Batch ...</option>
                 </select>
-                <button onclick="markGlobalHoliday()" class="w-full rounded-xl py-3.5 text-xs font-black uppercase transition active:scale-95" style="background: rgba(187,62,3,0.15); color: var(--danger); border: 1px solid var(--danger);">🌴 Global Holiday (Today)</button>
+                <button onclick="markGlobalHoliday()" class="w-full rounded-xl py-3.5 text-xs font-black uppercase transition active:scale-95" style="background: rgba(255,46,99,0.15); color: var(--danger); border: 1px solid var(--danger); box-shadow: var(--shadow-sm);">🌴 Global Holiday (Today)</button>
             </div>
             <div id="Grid" class="grid grid-cols-2 gap-4"></div>
         </section>
 
         <section id="commandView" class="hidden space-y-6">
             <div class="grid grid-cols-2 gap-3">
-                <div class="glass rounded-2xl p-4 border-l-4" style="border-left-color: var(--secondary);">
+                <div class="glass rounded-2xl p-4 border-l-4" style="border-left-color: var(--primary);">
                     <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">Athletes</div>
                     <div class="text-3xl font-extrabold"><span id="statPresent">0</span><span class="text-sm" style="color: var(--text-muted);"> / <span id="statTotal">0</span></span></div>
                 </div>
-                <div class="glass rounded-2xl p-4 border-l-4" style="border-left-color: var(--primary);">
+                <div class="glass rounded-2xl p-4 border-l-4" style="border-left-color: var(--danger);">
                     <div class="text-[10px] font-black uppercase" style="color: var(--text-muted);">Coaches</div>
                     <div class="text-3xl font-extrabold"><span id="coachPresent">0</span><span class="text-sm" style="color: var(--text-muted);"> / <span id="coachTotal">0</span></span></div>
                 </div>
@@ -267,24 +313,24 @@
                     <div class="flex-1">
                         <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Taken (Start)</p>
                         <div class="flex items-center gap-2">
-                            <button onclick="adjustInventory('ballsTaken', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90">−</button>
+                            <button onclick="adjustInventory('ballsTaken', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">−</button>
                             <input type="number" id="ballsTaken" value="0" class="w-10 text-center bg-transparent font-black text-base outline-none">
-                            <button onclick="adjustInventory('ballsTaken', 1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90">+</button>
+                            <button onclick="adjustInventory('ballsTaken', 1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">+</button>
                         </div>
                     </div>
                     <div class="w-px h-8 bg-[var(--border)]"></div>
                     <div class="flex-1 text-right">
                         <p class="text-[9px] font-bold uppercase opacity-60 mb-1">Left (End)</p>
                         <div class="flex items-center justify-end gap-2">
-                            <button onclick="adjustInventory('ballsLeft', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90">−</button>
+                            <button onclick="adjustInventory('ballsLeft', -1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">−</button>
                             <input type="number" id="ballsLeft" value="0" class="w-10 text-center bg-transparent font-black text-base outline-none">
-                            <button onclick="adjustInventory('ballsLeft', 1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90">+</button>
+                            <button onclick="adjustInventory('ballsLeft', 1)" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 font-bold text-sm transition active:scale-90 shadow-sm">+</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button onclick="markHoliday()" class="w-full glass rounded-xl py-3.5 text-xs font-black transition active:scale-95" style="color: var(--danger); border: 1px solid var(--danger); background: rgba(187,62,3,0.1);">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
+            <button onclick="markHoliday()" class="w-full glass rounded-xl py-3.5 text-xs font-black transition active:scale-95" style="color: var(--danger); border: 1px solid var(--danger); background: rgba(255,46,99,0.1); box-shadow: var(--shadow-sm);">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
 
             <div class="flex gap-3">
                 <select id="Select" onchange="fetchRoster()" class="field flex-1"></select>
@@ -296,7 +342,6 @@
             <div id="coachesList" class="space-y-2"></div>
             <div id="studentsList" class="space-y-3"></div>
 
-            <!-- WhatsApp number row -->
             <div class="glass rounded-2xl p-4 flex items-center gap-3">
                 <div class="flex-1">
                     <label class="text-[9px] font-black uppercase opacity-60">📱 WhatsApp Number</label>
@@ -306,8 +351,8 @@
             </div>
 
             <div class="flex gap-3">
-                <button onclick="submitAttendance()" id="submitBtn" class="flex-1 btn-primary py-4 rounded-xl uppercase text-sm shadow-lg transition active:scale-[0.98]">Commit Records</button>
-                <button onclick="shareSessionSummary()" id="shareBtn" class="btn-secondary py-4 px-5 rounded-xl text-sm shadow-lg transition active:scale-[0.98] flex items-center justify-center gap-1">📤 WhatsApp</button>
+                <button onclick="submitAttendance()" id="submitBtn" class="flex-1 btn-primary py-4 rounded-xl uppercase text-sm transition active:scale-[0.98]">Commit Records</button>
+                <button onclick="shareSessionSummary()" id="shareBtn" class="btn-secondary py-4 px-5 rounded-xl text-sm transition active:scale-[0.98] flex items-center justify-center gap-1">📤 WhatsApp</button>
             </div>
         </section>
 
@@ -325,7 +370,7 @@
             <input type="text" id="editLogSearch" oninput="applyEditLogSearch()" placeholder="🔍 Search logs..." class="field w-full">
             <div id="studentLogContainer" class="space-y-2"></div>
             <div id="coachLogContainer" class="space-y-2"></div>
-            <button onclick="submitEditChanges()" id="editSaveBtn" class="hidden w-full btn-primary py-4 rounded-xl uppercase text-sm shadow-lg transition">Update Records</button>
+            <button onclick="submitEditChanges()" id="editSaveBtn" class="hidden w-full btn-primary py-4 rounded-xl uppercase text-sm transition">Update Records</button>
         </section>
     </main>
 
@@ -334,13 +379,14 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzOE5N7bji1t3ck7VA1GU-pDZNE0RXY6k1RIWcRibi1npvNHaBRP188Cn5yc6sEy0NZ/exec";
 let cachedBatches = null;
 
+// Updated batch image mapping (new URLs, transparent backgrounds expected)
 const batchImageMap = {
-    "District Field Evening": "https://i.ibb.co/0jGkqXTp/DE.png",
-    "District Field Morning": "https://i.ibb.co/1YtJnfNW/DM.png",
-    "Kalyan Nagar Evening": "https://i.ibb.co/rGCHLQKw/KE.png",
-    "Kalyan Nagar Morning": "https://i.ibb.co/spy5Z9xs/KM.png",
-    "Xavier's School": "https://i.ibb.co/KpFmXLFc/XA.png",
-    "Monti Angels": "https://i.ibb.co/7qH63Jn/MA.png"
+    "Xavier's School": "https://i.ibb.co/r20wLV2P/XS.png",
+    "Monti Angels": "https://i.ibb.co/YB1j7ZR7/MA.png",
+    "District Field Morning": "https://i.ibb.co/tTLhYT9K/DM.png",
+    "District Field Evening": "https://i.ibb.co/m5FNrzjT/DE.png",
+    "Kalyan Nagar Evening": "https://i.ibb.co/QybwCD5/KE.png",
+    "Kalyan Nagar Morning": "https://i.ibb.co/4RvpVcZP/KM.png"
 };
 
 let whatsappNumber = localStorage.getItem('whatsappNumber') || '+918867742269';
@@ -363,9 +409,9 @@ function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     toast.className = 'toast';
-    let borderColor = '#ee9b00';
-    if (type === 'success') borderColor = '#0a9396';
-    if (type === 'error') borderColor = '#bb3e03';
+    let borderColor = '#08D9D6';
+    if (type === 'success') borderColor = '#08D9D6';
+    if (type === 'error') borderColor = '#FF2E63';
     toast.style.borderLeftColor = borderColor;
     toast.innerHTML = `<div class="flex items-center gap-2"><span>${message}</span></div>`;
     container.appendChild(toast);
@@ -457,14 +503,15 @@ function renderGrid(batches) {
     grid.innerHTML = batches.map(b => {
         const name = b.name.trim();
         const imageUrl = batchImageMap[name];
+        // Larger logo to fill tile: use w-full, h-auto, max-h-28
         const logoHtml = imageUrl 
-            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="w-12 h-12 object-contain rounded-xl mb-2 mx-auto">`
-            : `<div class="text-4xl mb-2">⚽</div>`;
+            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="w-full h-auto max-h-28 object-contain rounded-xl mb-2" style="background: transparent;">`
+            : `<div class="text-6xl mb-2">⚽</div>`;
         return `
-            <button onclick='select(${JSON.stringify(name)})' class="glass p-4 rounded-2xl text-left active:scale-95 transition-all focus:ring-2 focus:ring-[var(--primary)] flex flex-col items-center text-center">
+            <button onclick='select(${JSON.stringify(name)})' class="home-tile glass p-4 rounded-2xl active:scale-95 transition-all focus:ring-2 focus:ring-[var(--primary)] flex flex-col items-center text-center">
                 ${logoHtml}
-                <h3 class="font-extrabold text-sm mt-1">${escapeHtml(name)}</h3>
-                <p class="text-[10px] font-bold mt-1" style="color: var(--secondary);">${b.count} active</p>
+                <h3 class="font-extrabold text-sm mt-2">${escapeHtml(name)}</h3>
+                <p class="text-[10px] font-bold mt-1" style="color: var(--primary);">${b.count} active</p>
             </button>
         `;
     }).join('');
@@ -484,14 +531,12 @@ async function fetchRoster() {
     
     try {
         const data = await fetchJson(`${WEB_APP_URL}?action=getRoster&batchName=${encodeURIComponent(batchName)}&date=${encodeURIComponent(date)}`);
-        renderList('coachesList', data.coaches, 'coach', 'Coaches', 'var(--primary)');
-        renderList('studentsList', data.students, 'student', 'Athletes', 'var(--secondary)');
+        renderList('coachesList', data.coaches, 'coach', 'Coaches', 'var(--danger)');
+        renderList('studentsList', data.students, 'student', 'Athletes', 'var(--primary)');
         document.getElementById('ballsTaken').value = data.inventory?.taken || 0;
         document.getElementById('ballsLeft').value = data.inventory?.left || 0;
         const btn = document.getElementById('submitBtn');
         btn.innerText = data.isLogged ? "Update Session Log" : "Commit Records";
-        if (data.isLogged) btn.classList.add('btn-secondary');
-        else btn.classList.add('btn-primary');
         btn.classList.remove('btn-primary', 'btn-secondary');
         if (data.isLogged) btn.classList.add('btn-secondary');
         else btn.classList.add('btn-primary');
@@ -516,29 +561,48 @@ function renderList(containerId, people, type, label, accentColor) {
                 <span class="text-[10px] font-black uppercase tracking-wider" style="color: ${accentColor}">${label}</span>
             </div>
             <div class="flex items-center gap-2">
-                <button onclick="setAllPresent('${type}', true)" class="text-[9px] font-black uppercase px-2 py-1 rounded" style="background: var(--secondary); color: white;">All Present</button>
-                <button onclick="setAllPresent('${type}', false)" class="text-[9px] font-black uppercase px-2 py-1 rounded" style="background: var(--danger); color: white;">All Absent</button>
+                <button onclick="setAllPresent('${type}', true)" class="text-[9px] font-black uppercase px-2 py-1 rounded shadow-sm" style="background: var(--primary); color: #252A34;">All Present</button>
+                <button onclick="setAllPresent('${type}', false)" class="text-[9px] font-black uppercase px-2 py-1 rounded shadow-sm" style="background: var(--danger); color: white;">All Absent</button>
                 <span class="ml-1 text-[9px] font-bold opacity-40">${people.length}</span>
             </div>
         </div>`;
-    html += people.map(p => `
-        <div class="attendance-card panel-solid rounded-xl p-3 flex justify-between items-center transition" data-name="${escapeAttr(p.name.toLowerCase())}">
-            <div class="min-w-0 flex-1">
-                <p class="font-semibold text-sm truncate">${escapeHtml(p.name)}</p>
-                <p class="text-[9px] font-mono uppercase opacity-50">${p.studentId || 'STAFF'}</p>
+    html += people.map(p => {
+        const isPresent = p.status === 'Present';
+        const presentClass = isPresent ? 'present-card' : '';
+        return `
+            <div class="attendance-card panel-solid rounded-xl p-3 flex justify-between items-center transition ${presentClass}" data-name="${escapeAttr(p.name.toLowerCase())}">
+                <div class="min-w-0 flex-1">
+                    <p class="font-semibold text-sm truncate">${escapeHtml(p.name)}</p>
+                    <p class="text-[9px] font-mono uppercase opacity-50">${p.studentId || 'STAFF'}</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" name="attendance_${type}" value="${escapeAttr(p.name)}" data-sid="${p.studentId || ''}" ${isPresent ? 'checked' : ''} onchange="updateCardBorder(this)">
+                    <div class="slider"></div>
+                </label>
             </div>
-            <label class="switch">
-                <input type="checkbox" name="attendance_${type}" value="${escapeAttr(p.name)}" data-sid="${p.studentId || ''}" ${p.status === 'Present' ? 'checked' : ''} onchange="updateStats()">
-                <div class="slider"></div>
-            </label>
-        </div>`).join('');
+        `;
+    }).join('');
     container.innerHTML = html;
+    document.querySelectorAll(`#${containerId} input`).forEach(cb => updateCardBorder(cb));
+}
+
+function updateCardBorder(cb) {
+    const card = cb.closest('.attendance-card');
+    if (!card) return;
+    if (cb.checked) {
+        card.classList.add('present-card');
+    } else {
+        card.classList.remove('present-card');
+    }
 }
 
 function setAllPresent(type, present) {
     document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(cb => {
         const card = cb.closest('.attendance-card');
-        if (card && card.style.display !== 'none') cb.checked = present;
+        if (card && card.style.display !== 'none') {
+            cb.checked = present;
+            updateCardBorder(cb);
+        }
     });
     updateStats();
 }
@@ -623,7 +687,7 @@ async function submitAttendance() {
     }
 }
 
-// ======================== SHARE SESSION VIA WHATSAPP ========================
+// ======================== SHARE SESSION VIA WHATSAPP (only present coaches) ========================
 function shareSessionSummary() {
     const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
@@ -635,6 +699,7 @@ function shareSessionSummary() {
         showToast('Please set WhatsApp number first', 'error');
         return;
     }
+
     const athletes = [];
     const coaches = [];
     document.querySelectorAll('input[name="attendance_student"]').forEach(input => {
@@ -643,10 +708,11 @@ function shareSessionSummary() {
     document.querySelectorAll('input[name="attendance_coach"]').forEach(input => {
         coaches.push({ name: input.value, isPresent: input.checked });
     });
+
     const presentAthletes = athletes.filter(a => a.isPresent).map(a => a.name);
     const absentAthletes = athletes.filter(a => !a.isPresent).map(a => a.name);
     const presentCoaches = coaches.filter(c => c.isPresent).map(c => c.name);
-    const absentCoaches = coaches.filter(c => !c.isPresent).map(c => c.name);
+
     const ballsTaken = document.getElementById('ballsTaken').value;
     const ballsLeft = document.getElementById('ballsLeft').value;
     const formattedDate = new Date(date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -658,9 +724,8 @@ function shareSessionSummary() {
     summary += `👥 *ATHLETES*%0A`;
     summary += `✅ Present (${presentAthletes.length}/${athletes.length}): ${presentAthletes.length ? presentAthletes.join(', ') : 'None'}%0A`;
     if (absentAthletes.length) summary += `❌ Absent: ${absentAthletes.join(', ')}%0A`;
-    summary += `%0A👨‍🏫 *COACHES*%0A`;
-    summary += `✅ Present (${presentCoaches.length}/${coaches.length}): ${presentCoaches.length ? presentCoaches.join(', ') : 'None'}%0A`;
-    if (absentCoaches.length) summary += `❌ Absent: ${absentCoaches.join(', ')}%0A`;
+    summary += `%0A👨‍🏫 *COACHES PRESENT*%0A`;
+    summary += `${presentCoaches.length ? presentCoaches.join(', ') : 'None'}%0A`;
     summary += `━━━━━━━━━━━━━━━━━━━━%0A`;
     summary += `⚽ *Ball Inventory*: ${ballsTaken} taken / ${ballsLeft} left%0A`;
     summary += `📊 *Attendance Rate:* ${Math.round((presentAthletes.length / athletes.length) * 100)}%%%0A`;
@@ -687,8 +752,8 @@ async function loadDailyLogs() {
             document.getElementById('coachLogContainer').innerHTML = '';
             return;
         }
-        renderList('coachLogContainer', data.coaches, 'edit_coach', 'Coach Logs', 'var(--primary)');
-        renderList('studentLogContainer', data.students, 'edit_student', 'Athlete Logs', 'var(--secondary)');
+        renderList('coachLogContainer', data.coaches, 'edit_coach', 'Coach Logs', 'var(--danger)');
+        renderList('studentLogContainer', data.students, 'edit_student', 'Athlete Logs', 'var(--primary)');
         document.getElementById('editSaveBtn').classList.remove('hidden');
     } catch (err) {
         showToast('Failed to load logs', 'error');
