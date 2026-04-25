@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Coffeeland FC | Attendance Manager</title>
-    <!-- PWA meta -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#08D9D6">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,13 +15,13 @@
     <style>
         * { -webkit-tap-highlight-color: transparent; }
         body {
-            padding: 0;
             margin: 0;
-            padding-top: env(safe-area-inset-top);  /* ← FIX: push content below notch/status bar */
+            padding: 0;
             font-family: 'Plus Jakarta Sans', 'Poppins', 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
             transition: background 0.2s ease;
+            /* No body padding-top – we'll handle via header sticky top */
         }
 
         :root {
@@ -68,7 +67,7 @@
             }
         }
 
-        /* Loader (your design) */
+        /* Loader */
         .main-fader {
             width: 100%;
             height: 100vh;
@@ -105,10 +104,11 @@
             100% { opacity: 0.1; }
         }
 
+        /* Glass styles */
         .glass { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
         .panel-solid { background: var(--surface-strong); border: 1px solid var(--border); box-shadow: var(--card-shadow); }
 
-        /* toggle styles */
+        /* Toggle */
         .switch {
             position: relative;
             display: inline-block;
@@ -145,6 +145,7 @@
         .slider:active { transform: scale(0.95); }
         .switch:active .slider:before { transform: scale(0.9); }
 
+        /* Cards */
         .attendance-card {
             border-left: 4px solid var(--danger);
             transition: all 0.2s;
@@ -153,6 +154,7 @@
         .attendance-card.present-card { border-left-color: var(--primary); }
         .attendance-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
 
+        /* Form fields */
         .field {
             background: var(--surface-strong);
             border: 1px solid var(--border);
@@ -170,6 +172,7 @@
             box-shadow: 0 0 0 3px rgba(8,217,214,0.2), var(--shadow-sm);
         }
 
+        /* Toast */
         .toast-container {
             position: fixed;
             bottom: 24px;
@@ -198,6 +201,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Skeleton */
         .skeleton {
             background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,0.1) 50%, var(--border) 75%);
             background-size: 200% 100%;
@@ -209,16 +213,19 @@
             100% { background-position: -200% 0; }
         }
 
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
 
+        /* Number input */
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
+        /* Buttons */
         .btn-primary, .btn-secondary, .btn-danger {
             transition: all 0.2s;
             box-shadow: var(--shadow-md);
@@ -237,6 +244,7 @@
         .btn-danger { background: var(--danger); color: white; font-weight: 800; }
         .btn-danger:hover { background: var(--danger-hover); }
 
+        /* Home tiles */
         .home-tile {
             transition: all 0.2s;
             box-shadow: var(--card-shadow);
@@ -244,6 +252,7 @@
         .home-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-xl); }
         .home-tile img { max-width: 100%; height: auto; background: transparent; }
 
+        /* Search results */
         .search-result-item {
             transition: all 0.15s;
         }
@@ -253,10 +262,10 @@
             color: #252A34;
         }
 
-        /* offline & sync indicators */
+        /* Offline & sync indicators */
         .offline-indicator {
             position: fixed;
-            top: calc(70px + env(safe-area-inset-top));
+            top: calc(12px + env(safe-area-inset-top));
             right: 16px;
             background: var(--danger);
             color: white;
@@ -264,7 +273,7 @@
             border-radius: 999px;
             font-size: 10px;
             font-weight: bold;
-            z-index: 50;
+            z-index: 1000;
             box-shadow: var(--shadow-sm);
         }
         .sync-pending {
@@ -277,7 +286,7 @@
             border-radius: 999px;
             font-size: 10px;
             font-weight: bold;
-            z-index: 50;
+            z-index: 1000;
             box-shadow: var(--shadow-sm);
             cursor: pointer;
         }
@@ -298,9 +307,20 @@
             transition: transform 0.3s;
         }
 
-        /* Ensure header respects safe area */
-        .sticky {
+        /* FIX: Sticky header with safe area */
+        .sticky-header {
+            position: sticky;
             top: env(safe-area-inset-top);
+            z-index: 40;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            background: color-mix(in srgb, var(--bg) 80%, transparent);
+            box-shadow: var(--shadow-sm);
+        }
+        /* Ensure content scrolls under header cleanly */
+        main {
+            padding-top: 0;
+            margin-top: 0;
         }
     </style>
 </head>
@@ -308,10 +328,16 @@
 
     <div id="splashLoader" class="main-fader">
         <div class="loader">
-            <!-- SVG same as before, omitted for brevity - keep yours -->
             <svg viewBox="0 0 164.83 151.5" xmlns="http://www.w3.org/2000/svg">
                 <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
-                <!-- duplicates... keep all 8 paths from your original -->
+                <!-- repeated 7 more times for stagger (keep your original) -->
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
+                <path d="M117.24,69.24A8,8,0,0,0,115.67,67c-4.88-4-9.8-7.89-14.86-11.62A4.93,4.93,0,0,0,96.93,55c-5.76,1.89-11.4,4.17-17.18,6a4.36,4.36,0,0,0-3.42,4.12c-1,6.89-2.1,13.76-3,20.66a4,4,0,0,0,1,3.07c5.12,4.36,10.39,8.61,15.68,12.76a3.62,3.62,0,0,0,2.92.75c6.29-2.66,12.52-5.47,18.71-8.36a3.49,3.49,0,0,0,1.68-2.19c1.34-7.25,2.54-14.55,3.9-22.58Z" />
             </svg>
             <p class="mt-4 font-black text-lg tracking-tighter" style="color: white;">Coffeeland <span style="color: var(--primary);">FC</span></p>
         </div>
@@ -319,11 +345,11 @@
 
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- offline & sync indicators -->
     <div id="offlineIndicator" class="offline-indicator" style="display: none;">📡 Offline</div>
     <div id="syncPending" class="sync-pending" style="display: none;" onclick="manualSync()">⏳ Pending sync</div>
 
-    <header class="sticky top-0 z-40 border-b border-[var(--border)] backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg) 80%, transparent); box-shadow: var(--shadow-sm); margin-top: env(safe-area-inset-top);">
+    <!-- Header with safe-area sticky -->
+    <header class="sticky-header">
         <div class="px-5 py-4 flex items-center justify-between">
             <button onclick="goHome()" class="focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-xl">
                 <div class="text-base font-extrabold tracking-tight leading-tight">
@@ -336,7 +362,7 @@
     </header>
 
     <main class="px-5 py-5 max-w-2xl mx-auto space-y-6">
-        <!-- Rest of your content exactly as before -->
+        <!-- LobbyView -->
         <section id="lobbyView" class="space-y-5">
             <div class="glass rounded-2xl p-5 space-y-4">
                 <select id="homeSelect" onchange="select(this.value)" class="field w-full cursor-pointer">
@@ -387,7 +413,6 @@
 
             <button onclick="markHoliday()" class="w-full glass rounded-xl py-3.5 text-xs font-black transition active:scale-95" style="color: var(--danger); border: 1px solid var(--danger); background: rgba(255,46,99,0.1); box-shadow: var(--shadow-sm);">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
 
-            <!-- Batch dropdown + Refresh button -->
             <div class="flex gap-2">
                 <select id="Select" onchange="fetchRoster()" class="field flex-1"></select>
                 <button onclick="refreshCurrentRoster()" class="refresh-icon" title="Refresh roster from server">
@@ -531,7 +556,6 @@ async function manualSync() {
     await syncPendingRecords();
 }
 
-// Online/offline listeners
 window.addEventListener('online', async () => {
     isOnline = true;
     document.getElementById('offlineIndicator').style.display = 'none';
@@ -544,7 +568,7 @@ window.addEventListener('offline', () => {
     showToast('You are offline – attendance will be saved locally', 'error');
 });
 
-// ======================== MODIFIED SUBMIT ATTENDANCE (with offline queue) ========================
+// ======================== SUBMIT ATTENDANCE (with offline queue) ========================
 window.submitAttendance = async function() {
     const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
@@ -553,7 +577,6 @@ window.submitAttendance = async function() {
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
     
-    // collect records
     const records = [];
     for (const type of ['coach', 'student']) {
         document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
@@ -571,7 +594,6 @@ window.submitAttendance = async function() {
     }
     
     if (!isOnline) {
-        // offline: store to queue
         await addToQueue({ records, timestamp: Date.now() });
         showToast('Offline: Attendance saved locally. Will sync when online.', 'success');
         btn.innerText = "✓ Saved Offline";
@@ -588,7 +610,6 @@ window.submitAttendance = async function() {
         return;
     }
     
-    // online: try to send immediately
     btn.innerText = "Syncing...";
     try {
         const formData = new URLSearchParams();
@@ -597,7 +618,6 @@ window.submitAttendance = async function() {
         showToast('Attendance saved ✓', 'success');
         goHome();
     } catch (err) {
-        // if network fails, queue it
         await addToQueue({ records, timestamp: Date.now() });
         showToast('Network error – saved offline. Will retry later.', 'error');
         const pendingCount = (await getAllQueue()).length;
@@ -833,7 +853,7 @@ function goToBatchAndSearch(batchName, playerName) {
     });
 }
 
-// Roster caching with auto-update
+// Roster caching
 const ROSTER_CACHE_PREFIX = 'roster_';
 function getRosterCacheKey(batchName, date) {
     return ROSTER_CACHE_PREFIX + batchName.replace(/\s/g, '_') + '_' + date;
@@ -904,7 +924,7 @@ async function refreshRosterInBackground(batchName, date, cacheKey) {
 }
 
 async function loades() {
-    await openDB(); // initialize IndexedDB
+    await openDB();
     const cached = loadBatchesFromCache();
     if (cached && cached.length) {
         cachedBatches = cached;
@@ -913,7 +933,6 @@ async function loades() {
         hideLoader();
         refreshBatchesInBackground();
         preloadAllRosters().catch(console.warn);
-        // check pending sync
         const pending = await getAllQueue();
         if (pending.length) {
             document.getElementById('syncPending').innerText = `⏳ Pending (${pending.length})`;
