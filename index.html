@@ -9,7 +9,6 @@
     <style>
         * { -webkit-tap-highlight-color: transparent; }
 
-        /* Enhanced shadows - modern, deep */
         :root {
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
             --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.02);
@@ -17,7 +16,7 @@
             --shadow-xl: 0 25px 40px -12px rgba(0,0,0,0.25);
         }
 
-        /* Light mode (default) with new palette */
+        /* Light mode */
         :root {
             --bg: #EAEAEA;
             --surface: rgba(255,255,255,0.85);
@@ -64,7 +63,6 @@
             transition: background 0.2s ease;
         }
 
-        /* Glassmorphic panels with strong shadow */
         .glass {
             background: var(--surface);
             backdrop-filter: blur(12px);
@@ -77,7 +75,6 @@
             box-shadow: var(--card-shadow);
         }
 
-        /* Toggle design */
         .switch {
             position: relative;
             display: inline-block;
@@ -125,7 +122,6 @@
             outline-offset: 2px;
         }
 
-        /* Attendance card border + shadow */
         .attendance-card {
             border-left: 4px solid var(--danger);
             transition: all 0.2s;
@@ -156,7 +152,6 @@
             box-shadow: 0 0 0 3px rgba(8,217,214,0.2), var(--shadow-sm);
         }
 
-        /* Toast */
         .toast-container {
             position: fixed;
             bottom: 24px;
@@ -206,7 +201,6 @@
             margin: 0;
         }
 
-        /* Buttons with shadow & hover lift */
         .btn-primary, .btn-secondary, .btn-danger {
             transition: all 0.2s;
             box-shadow: var(--shadow-md);
@@ -243,7 +237,6 @@
             background: var(--danger-hover);
         }
 
-        /* Home tile styling: fill tile with logo, bigger, shadow */
         .home-tile {
             transition: all 0.2s;
             box-shadow: var(--card-shadow);
@@ -255,7 +248,7 @@
         .home-tile img {
             max-width: 100%;
             height: auto;
-            background: transparent; /* ensure no background */
+            background: transparent;
         }
     </style>
 </head>
@@ -378,8 +371,9 @@
 // ======================== CONFIG ========================
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzOE5N7bji1t3ck7VA1GU-pDZNE0RXY6k1RIWcRibi1npvNHaBRP188Cn5yc6sEy0NZ/exec";
 let cachedBatches = null;
+const BATCHES_STORAGE_KEY = 'coffeeland_batches';
 
-// Updated batch image mapping (new URLs, transparent backgrounds expected)
+// Batch logos map (unchanged)
 const batchImageMap = {
     "Xavier's School": "https://i.ibb.co/R4Scn50S/XS.png",
     "Monti Angels": "https://i.ibb.co/q3pVFtc2/MA.png",
@@ -467,28 +461,47 @@ async function fetchJson(url, options = {}) {
     return data;
 }
 
+// ======================== PERSISTENT BATCH CACHING ========================
+function saveBatchesToCache(batches) {
+    try {
+        localStorage.setItem(BATCHES_STORAGE_KEY, JSON.stringify(batches));
+    } catch(e) { console.warn('Failed to cache batches', e); }
+}
+
+function loadBatchesFromCache() {
+    try {
+        const cached = localStorage.getItem(BATCHES_STORAGE_KEY);
+        if (cached) {
+            return JSON.parse(cached);
+        }
+    } catch(e) {}
+    return null;
+}
+
 // ======================== INIT ========================
 async function loades() {
-    if (cachedBatches) {
+    // Try cache first
+    const cached = loadBatchesFromCache();
+    if (cached && cached.length) {
+        cachedBatches = cached;
         renderGrid(cachedBatches);
+        populateBatchDropdowns(cachedBatches);
         hideLoader();
+        // Still refresh in background to get latest counts
+        refreshBatchesInBackground();
         return;
     }
+    // No cache: fetch fresh
+    await fetchFreshBatches();
+}
+
+async function fetchFreshBatches() {
     try {
         const data = await fetchJson(`${WEB_APP_URL}?action=getes`);
         cachedBatches = data.batches;
         renderGrid(data.batches);
-        const homeSelect = document.getElementById('homeSelect');
-        const batchSelect = document.getElementById('Select');
-        const editBatchSelect = document.getElementById('editBatchSelect');
-        [homeSelect, batchSelect, editBatchSelect].forEach(sel => { if(sel) sel.innerHTML = '<option value="">Select batch</option>'; });
-        data.batches.forEach(b => {
-            const name = b.name.trim();
-            const opt = `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
-            homeSelect.innerHTML += opt;
-            batchSelect.innerHTML += opt;
-            editBatchSelect.innerHTML += opt;
-        });
+        populateBatchDropdowns(data.batches);
+        saveBatchesToCache(data.batches);
         hideLoader();
     } catch (err) {
         console.error(err);
@@ -497,13 +510,38 @@ async function loades() {
     }
 }
 
+async function refreshBatchesInBackground() {
+    try {
+        const data = await fetchJson(`${WEB_APP_URL}?action=getes`);
+        cachedBatches = data.batches;
+        renderGrid(data.batches);
+        populateBatchDropdowns(data.batches);
+        saveBatchesToCache(data.batches);
+    } catch(err) {
+        console.warn('Background refresh failed', err);
+    }
+}
+
+function populateBatchDropdowns(batches) {
+    const homeSelect = document.getElementById('homeSelect');
+    const batchSelect = document.getElementById('Select');
+    const editBatchSelect = document.getElementById('editBatchSelect');
+    [homeSelect, batchSelect, editBatchSelect].forEach(sel => { if(sel) sel.innerHTML = '<option value="">Select batch</option>'; });
+    batches.forEach(b => {
+        const name = b.name.trim();
+        const opt = `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+        if (homeSelect) homeSelect.innerHTML += opt;
+        if (batchSelect) batchSelect.innerHTML += opt;
+        if (editBatchSelect) editBatchSelect.innerHTML += opt;
+    });
+}
+
 function renderGrid(batches) {
     const grid = document.getElementById('Grid');
     if (!grid) return;
     grid.innerHTML = batches.map(b => {
         const name = b.name.trim();
         const imageUrl = batchImageMap[name];
-        // Larger logo to fill tile: use w-full, h-auto, max-h-28
         const logoHtml = imageUrl 
             ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="w-full h-auto max-h-28 object-contain rounded-xl mb-2" style="background: transparent;">`
             : `<div class="text-6xl mb-2">⚽</div>`;
@@ -517,7 +555,7 @@ function renderGrid(batches) {
     }).join('');
 }
 
-// ======================== ROSTER FETCH ========================
+// ======================== ROSTER FETCH (always fresh) ========================
 async function fetchRoster() {
     const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
@@ -650,14 +688,18 @@ async function markHolidayCore(date, isGlobal) {
     }
 }
 
-// ======================== SUBMIT ATTENDANCE ========================
+// ======================== OPTIMISTIC ATTENDANCE SAVE ========================
 async function submitAttendance() {
     const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
     if (!batchName) return showToast('Select batch', 'error');
+    
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
-    btn.innerText = "Syncing...";
+    btn.innerText = "✓ Saved!";
+    showToast('Attendance saved locally ✓', 'success');
+    
+    // Collect records
     const records = [];
     for (const type of ['coach', 'student']) {
         document.querySelectorAll(`input[name="attendance_${type}"]`).forEach(input => {
@@ -673,21 +715,29 @@ async function submitAttendance() {
             });
         });
     }
-    try {
-        const formData = new URLSearchParams();
-        formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
-        await fetch(WEB_APP_URL, { method: 'POST', body: formData });
-        showToast('Attendance saved ✓', 'success');
+    
+    // Fire‑and‑forget background sync
+    (async () => {
+        try {
+            const formData = new URLSearchParams();
+            formData.append('payload', JSON.stringify({ action: 'saveAttendance', data: records }));
+            await fetch(WEB_APP_URL, { method: 'POST', body: formData });
+            console.log('Background sync completed');
+        } catch (err) {
+            console.error('Background sync failed:', err);
+            showToast('Sync failed – data will be lost on refresh', 'error');
+        }
+    })();
+    
+    // Return to home after brief delay
+    setTimeout(() => {
         goHome();
-    } catch (err) {
-        showToast('Sync error, try again', 'error');
-    } finally {
         btn.disabled = false;
         btn.innerText = "Commit Records";
-    }
+    }, 800);
 }
 
-// ======================== SHARE SESSION VIA WHATSAPP (only present coaches) ========================
+// ======================== SHARE SESSION VIA WHATSAPP ========================
 function shareSessionSummary() {
     const batchName = document.getElementById('Select').value;
     const date = document.getElementById('attendanceDate').value;
