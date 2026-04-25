@@ -294,7 +294,7 @@
             transition: transform 0.3s;
         }
 
-        /* FIX: Sticky header with proper content spacing */
+        /* FIX: Sticky header - stays at top */
         .sticky-header {
             position: sticky;
             top: 0;
@@ -304,15 +304,9 @@
             background: color-mix(in srgb, var(--bg) 80%, transparent);
             box-shadow: var(--shadow-sm);
         }
-        /* Ensure main content has enough top padding to clear the header */
+        /* PROPER LAYOUT: fixed top padding to clear header */
         main {
-            padding-top: calc(env(safe-area-inset-top) + 80px) !important;
-        }
-        /* On non-safe-area browsers, fallback */
-        @supports not (padding-top: env(safe-area-inset-top)) {
-            main {
-                padding-top: 80px !important;
-            }
+            padding-top: 100px !important;
         }
     </style>
 </head>
