@@ -41,6 +41,8 @@
             --accent-text: #252A34;
             --danger: #FF2E63;
             --danger-hover: #e02454;
+            --mint-green: #98FB98;
+            --mint-green-hover: #7ddf7d;
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
             --shadow-md: 0 4px 8px -2px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
             --shadow-lg: 0 12px 20px -8px rgba(0,0,0,0.1);
@@ -57,6 +59,8 @@
                 --primary-hover: #2ce4e1;
                 --secondary: #08D9D6;
                 --danger: #FF2E63;
+                --mint-green: #5fbf5f;
+                --mint-green-hover: #4aa34a;
             }
         }
         /* Loader – unchanged */
@@ -90,7 +94,6 @@
             30% { opacity: 0.8; }
             100% { opacity: 0.1; }
         }
-        /* Core components */
         .glass {
             background: var(--surface);
             backdrop-filter: blur(12px);
@@ -102,7 +105,6 @@
             border: 1px solid var(--border);
             box-shadow: var(--shadow-sm);
         }
-        /* Header – sticky, respects safe area */
         .app-header {
             position: sticky;
             top: 0;
@@ -116,13 +118,11 @@
             justify-content: space-between;
             align-items: center;
         }
-        /* Main content – clean spacing */
         .app-main {
             padding: 24px 20px 40px;
             max-width: 640px;
             margin: 0 auto;
         }
-        /* Stats row */
         .stats-row {
             display: flex;
             gap: 16px;
@@ -150,7 +150,6 @@
             line-height: 1.2;
             color: var(--text);
         }
-        /* Inventory card */
         .inventory-card {
             background: var(--surface-strong);
             border-radius: 28px;
@@ -206,7 +205,6 @@
             border: none;
             padding: 4px;
         }
-        /* Holiday button */
         .holiday-btn {
             width: 100%;
             background: rgba(255,46,99,0.08);
@@ -220,7 +218,6 @@
             margin-bottom: 24px;
             cursor: pointer;
         }
-        /* Filter row (batch, refresh, date) */
         .filter-row {
             display: flex;
             gap: 12px;
@@ -258,7 +255,6 @@
             transition: 0.1s;
         }
         .refresh-icon:active { transform: rotate(180deg); }
-        /* Search */
         .search-input {
             width: 100%;
             margin-bottom: 24px;
@@ -268,7 +264,6 @@
             padding: 12px 18px;
             font-size: 14px;
         }
-        /* Section header (Coaches/Athletes) */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -297,7 +292,6 @@
         }
         .btn-all-present { background: var(--primary); color: #252A34; }
         .btn-all-absent { background: var(--danger); color: white; }
-        /* Attendance card */
         .attendance-card {
             display: flex;
             justify-content: space-between;
@@ -323,7 +317,6 @@
             opacity: 0.6;
             font-family: monospace;
         }
-        /* Toggle switch */
         .switch {
             position: relative;
             display: inline-block;
@@ -360,7 +353,6 @@
         input:checked + .slider:before {
             transform: translateX(24px);
         }
-        /* WhatsApp row */
         .whatsapp-row {
             background: var(--surface-strong);
             border-radius: 28px;
@@ -387,13 +379,16 @@
             font-weight: 700;
             font-size: 12px;
         }
-        /* Action buttons */
+        /* Action buttons: Commit bigger, WhatsApp smaller & mint */
         .action-buttons {
             display: flex;
             gap: 12px;
+            align-items: center;
         }
-        .btn {
-            flex: 1;
+        .btn-commit {
+            flex: 2;
+            background: var(--primary);
+            color: #252A34;
             border: none;
             border-radius: 40px;
             padding: 14px;
@@ -402,16 +397,33 @@
             text-transform: uppercase;
             text-align: center;
             cursor: pointer;
+            transition: 0.1s;
         }
-        .btn-primary {
-            background: var(--primary);
+        .btn-commit:active {
+            transform: scale(0.97);
+        }
+        .btn-whatsapp {
+            flex: 1;
+            background: var(--mint-green);
             color: #252A34;
+            border: none;
+            border-radius: 40px;
+            padding: 12px 10px;
+            font-weight: 800;
+            font-size: 13px;
+            text-transform: uppercase;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
-        .btn-secondary {
-            background: var(--secondary);
-            color: #252A34;
+        .btn-whatsapp:active {
+            transform: scale(0.97);
+            background: var(--mint-green-hover);
         }
-        /* Home page grid */
         .batch-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -439,12 +451,8 @@
             font-size: 14px;
             margin-top: 8px;
         }
-        /* Utilities */
         .hidden { display: none !important; }
         .text-muted { color: var(--text-muted); }
-        .mt-2 { margin-top: 8px; }
-        .mb-2 { margin-bottom: 8px; }
-        /* Toast */
         .toast-container {
             position: fixed;
             bottom: 24px;
@@ -467,7 +475,6 @@
             font-weight: 500;
             box-shadow: var(--shadow-lg);
         }
-        /* Offline/sync indicators */
         .offline-indicator {
             position: fixed;
             top: calc(12px + env(safe-area-inset-top));
@@ -493,7 +500,6 @@
             z-index: 1001;
             cursor: pointer;
         }
-        /* Search result items */
         .search-result-item {
             background: var(--surface-strong);
             border-radius: 20px;
@@ -501,6 +507,7 @@
             margin-bottom: 8px;
             cursor: pointer;
         }
+        .field { width: 100%; }
     </style>
 </head>
 <body>
@@ -551,7 +558,6 @@
 
         <!-- Command / Attendance View -->
         <section id="commandView" class="hidden">
-            <!-- Stats -->
             <div class="stats-row">
                 <div class="stat-card" style="border-left-color: var(--primary);">
                     <div class="stat-label">Athletes</div>
@@ -563,7 +569,6 @@
                 </div>
             </div>
 
-            <!-- Ball Inventory -->
             <div class="inventory-card">
                 <div class="inventory-title">⚽ Ball Inventory</div>
                 <div class="inventory-row">
@@ -588,7 +593,6 @@
 
             <button onclick="markHoliday()" class="holiday-btn">🌴 Mark as Holiday <span id="holidayBtnDate"></span></button>
 
-            <!-- Filter row (dropdown + refresh + date) -->
             <div class="filter-row">
                 <select id="Select" onchange="fetchRoster()">
                     <option value="">Select batch</option>
@@ -609,15 +613,15 @@
             <div id="coachesList" class="space-y-2 mb-5"></div>
             <div id="studentsList" class="space-y-2 mb-5"></div>
 
-            <!-- WhatsApp number row -->
             <div class="whatsapp-row">
                 <input type="tel" id="whatsappNumber" placeholder="+918867742269" value="+918867742269">
                 <button onclick="saveWhatsAppNumber()">Save</button>
             </div>
 
+            <!-- Action buttons: Commit larger, WhatsApp smaller & mint green -->
             <div class="action-buttons">
-                <button onclick="submitAttendance()" id="submitBtn" class="btn btn-primary">Commit Records</button>
-                <button onclick="shareSessionSummary()" class="btn btn-secondary">📤 WhatsApp</button>
+                <button onclick="submitAttendance()" id="submitBtn" class="btn-commit">Commit Records</button>
+                <button onclick="shareSessionSummary()" class="btn-whatsapp">📤 WhatsApp</button>
             </div>
         </section>
 
